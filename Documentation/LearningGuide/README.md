@@ -23,6 +23,22 @@
 | [07_implementation_templates.md](./07_implementation_templates.md) | Copy-paste templates for common systems |
 | [08_checklist.md](./08_checklist.md) | Quick reference checklist for your own projects |
 
+### 🔬 Deep Dive Guides
+| Document | What You'll Learn |
+|----------|-------------------|
+| [09_action_system_deepdive.md](./09_action_system_deepdive.md) | Complete breakdown of the Action/Ability system with code analysis |
+| [10_connection_state_machine.md](./10_connection_state_machine.md) | Connection management, host/client flows, reconnection logic |
+| [11_infrastructure_patterns.md](./11_infrastructure_patterns.md) | PubSub, Object Pooling, Dependency Injection infrastructure |
+| [12_system_flow_diagrams.md](./12_system_flow_diagrams.md) | Visual diagrams of all major system flows |
+| [13_code_reading_walkthroughs.md](./13_code_reading_walkthroughs.md) | Guided exercises to learn to navigate the code yourself |
+
+### 🌍 Universal Patterns (Apply to ANY Game)
+| Document | What You'll Learn |
+|----------|-------------------|
+| [14_antipatterns_guide.md](./14_antipatterns_guide.md) | What NOT to do - God classes, singletons, tight coupling |
+| [15_testability_debugging.md](./15_testability_debugging.md) | How DI enables testing, mock creation, debugging workflow |
+| [16_performance_patterns.md](./16_performance_patterns.md) | GC avoidance, object pooling, caching, optimization |
+| [17_architecture_decision_framework.md](./17_architecture_decision_framework.md) | When to use which pattern - decision flowcharts |
 
 ---
 

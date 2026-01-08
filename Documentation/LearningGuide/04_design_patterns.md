@@ -2,6 +2,13 @@
 
 > **Goal:** Recognize and apply design patterns used in Boss Room. These patterns work in ANY programming context.
 
+> 📍 **Key Implementation Files:**
+> - [ConnectionState.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionState/ConnectionState.cs) — State Machine base
+> - [MessageChannel.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Infrastructure/PubSub/MessageChannel.cs) — PubSub/Observer
+> - [ActionFactory.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/Action/ActionFactory.cs) — Factory + Object Pool
+> - [NetworkObjectPool.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Infrastructure/NetworkObjectPool.cs) — Object Pool
+> - [ConnectionMethod.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionMethod.cs) — Strategy Pattern
+
 ---
 
 ## Pattern 1: State Machine
@@ -43,9 +50,13 @@ public class StateMachine {
 }
 ```
 
-**In Boss Room:** `ConnectionState`, `GameStateBehaviour`
+**In Boss Room:** 
+- [ConnectionState.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionState/ConnectionState.cs) (lines 12-44)
+- [ConnectionManager.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionManager.cs#L112-L122) — `ChangeState()` method
 
 **Use when:** Player states, AI states, menu flows, game phases
+
+> 📚 **Deep Dive:** See [10_connection_state_machine.md](./10_connection_state_machine.md) for complete analysis.
 
 ---
 
@@ -78,9 +89,13 @@ void OnDestroy() {
 }
 ```
 
-**In Boss Room:** `MessageChannel<T>`, `ISubscriber<T>`
+**In Boss Room:** 
+- [MessageChannel.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Infrastructure/PubSub/MessageChannel.cs) (lines 28-50)
+- [NetworkedMessageChannel.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs) — Server-to-client broadcasting
 
 **Use when:** UI updates, achievements, sound triggers, analytics
+
+> 📚 **Deep Dive:** See [11_infrastructure_patterns.md](./11_infrastructure_patterns.md) for complete analysis.
 
 ---
 
@@ -307,10 +322,10 @@ public class UIMediator : MonoBehaviour {
 
 For each scenario, which pattern would you use?
 
-1. Player can walk, run, swim, or fly - different physics each
-2. Game state: Menu → Playing → Paused → GameOver
-3. Spawning hundreds of bullets per second
-4. Health bar needs to update when player takes damage
-5. Building an action queue for a turn-based game
+1. Player can walk, run, swim, or fly - different physics each → **State Machine**
+2. Game state: Menu → Playing → Paused → GameOver → **State Machine**
+3. Spawning hundreds of bullets per second → **Object Pool**
+4. Health bar needs to update when player takes damage → **Observer/PubSub**
+5. Building an action queue for a turn-based game → **Command**
 
-Write your answers, then find examples in Boss Room code.
+> 📖 **Find examples in code:** Use [13_code_reading_walkthroughs.md](./13_code_reading_walkthroughs.md) to trace these patterns yourself.

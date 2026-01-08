@@ -2,6 +2,12 @@
 
 > **Goal:** Understand the fundamental architecture decisions in this project and WHY they were made. These principles apply to ANY game.
 
+> 📍 **Key Files to Study:**
+> - [ApplicationController.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ApplicationLifecycle/ApplicationController.cs) — DI container setup
+> - [ServerCharacter.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs) — Server-side game logic
+> - [ClientCharacter.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs) — Client-side visuals
+> - [ConnectionManager.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionManager.cs) — State machine pattern
+
 ---
 
 ## The 5 Core Principles
@@ -243,6 +249,8 @@ public class Enemy : MonoBehaviour {
 
 **Rule:** Upper layers can call lower layers. Never the reverse.
 
+> 📚 **Deep Dive:** See [10_connection_state_machine.md](./10_connection_state_machine.md) and [11_infrastructure_patterns.md](./11_infrastructure_patterns.md) for complete code analysis of these patterns.
+
 ---
 
 ## Quick Reference
@@ -261,9 +269,9 @@ public class Enemy : MonoBehaviour {
 
 Open these files and identify which principles they demonstrate:
 
-1. `ConnectionManager.cs` - Which principle?
-2. `ActionConfig.cs` - Which principle?
-3. `MessageChannel.cs` - Which principle?
-4. `ServerCharacter.cs` vs `ClientCharacter.cs` - Which principle?
+1. [ConnectionManager.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/ConnectionManagement/ConnectionManager.cs) - Which principle? → State Machine
+2. [ActionConfig.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/Action/ActionConfig.cs) - Which principle? → Data-Driven Design
+3. [MessageChannel.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Infrastructure/PubSub/MessageChannel.cs) - Which principle? → Event-Driven (PubSub)
+4. [ServerCharacter.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs) vs [ClientCharacter.cs](file:///d:/unity_projects/com.unity.multiplayer.samples.coop/Assets/Scripts/Gameplay/GameplayObjects/Character/ClientCharacter.cs) - Which principle? → Separation of Concerns
 
-Write your answers in a notebook before checking the code comments.
+> 📖 **For detailed code walkthroughs**, see [13_code_reading_walkthroughs.md](./13_code_reading_walkthroughs.md).
