@@ -483,33 +483,587 @@ After completing these walkthroughs, you should be able to:
 
 ---
 
-## Additional Exercises
+## Additional Walkthroughs
+
+---
+
+## Walkthrough 7: Understanding the Input → Action Flow
+
+### The Question
+
+When a player clicks to move or presses an ability key, what is the complete path from input to the action executing on the server?
+
+### Starting Point
+
+**File:** `Assets/Scripts/Gameplay/Input/ClientInputSender.cs`
+
+### Hints
+
+<details>
+<summary>Hint 1: Where does input get captured?</summary>
+
+Look for Unity's new Input System callbacks or `Update()` reading input. `ClientInputSender` is attached to the player's character.
+
+</details>
+
+<details>
+<summary>Hint 2: How does it reach the server?</summary>
+
+Look for `Rpc` attributes or methods that call RPCs on `ServerCharacter`.
+
+</details>
+
+<details>
+<summary>Hint 3: What happens on the server?</summary>
+
+Find `ServerPlayActionRpc` in ServerCharacter. It calls into ServerActionPlayer.
+
+</details>
+
+### Key Findings
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                       INPUT → ACTION FLOW                             │
+└──────────────────────────────────────────────────────────────────────┘
+
+1. Player presses ability key
+         │
+         ▼
+2. ClientInputSender.OnAction1()
+         │
+         ├─► Create ActionRequestData
+         │
+         ▼
+3. ClientCharacter.AnticipateAction()     ← Client anticipation (visuals)
+         │
+         ▼
+4. ServerCharacter.ServerPlayActionRpc()  ← RPC to server
+         │
+         ▼
+5. ServerCharacter.PlayAction()
+         │
+         ▼
+6. ServerActionPlayer.PlayAction()
+         │
+         ├─► Check cooldown
+         ├─► Synthesize Chase/Target if needed
+         │
+         ▼
+7. Action.OnStart() → OnUpdate() → OnEnd()  ← Server logic runs
+         │
+         ▼
+8. ClientCharacter.ClientPlayActionRpc()  ← RPC to all clients
+         │
+         ▼
+9. ClientActionPlayer.PlayAction()        ← All clients see visuals
+```
+
+### Key Code Locations
+
+| Step | File | Method |
+|------|------|--------|
+| Input capture | ClientInputSender.cs | OnAction1(), OnClick() |
+| Anticipation | ClientCharacter.cs | AnticipateAction() |
+| Server RPC | ServerCharacter.cs | ServerPlayActionRpc() |
+| Queue management | ServerActionPlayer.cs | PlayAction() |
+| Action execution | Action.cs (subclasses) | OnStart/OnUpdate/OnEnd |
+| Client sync | ClientCharacter.cs | ClientPlayActionRpc() |
+
+### Answer: The Complete Flow
+
+```csharp
+// 1. ClientInputSender reads input
+void OnAction1(InputAction.CallbackContext context)
+{
+    var data = new ActionRequestData { ActionID = ability1ID };
+    m_ServerCharacter.ServerPlayActionRpc(data);
+    m_ClientCharacter.AnticipateAction(ref data);  // Local feedback
+}
+
+// 2. ServerCharacter receives RPC
+[Rpc(SendTo.Server)]
+public void ServerPlayActionRpc(ActionRequestData data)
+{
+    PlayAction(ref data);
+}
+
+// 3. ServerActionPlayer queues and executes
+public void PlayAction(ref ActionRequestData data)
+{
+    var action = ActionFactory.CreateActionFromData(ref data);
+    m_Queue.Add(action);
+    StartAction();
+}
+
+// 4. Action runs on server
+public override bool OnUpdate(ServerCharacter parent)
+{
+    // Deal damage, apply effects - SERVER ONLY
+}
+
+// 5. Server notifies clients
+m_ClientCharacter.ClientPlayActionRpc(data);
+
+// 6. ClientActionPlayer shows visuals on ALL clients
+public void PlayAction(ref ActionRequestData data)
+{
+    // Animation, VFX - CLIENT ONLY
+}
+```
+
+---
+
+## Walkthrough 8: Connection Approval Deep Dive
+
+### The Question
+
+When a client tries to connect, what checks does the server perform to decide whether to approve or reject the connection?
+
+### Starting Point
+
+**File:** `Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs`
+
+Search for `ApprovalCheck`
+
+### Key Findings
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                    CONNECTION APPROVAL CHECKS                         │
+└──────────────────────────────────────────────────────────────────────┘
+
+Client connects with ConnectionPayload
+         │
+         ▼
+1. Payload size check (DOS protection)
+         │
+         ├─► Too big? → REJECT (ServerFull as generic error)
+         │
+         ▼
+2. Parse ConnectionPayload (JSON)
+         │
+         ├─► Parse failed? → REJECT
+         │
+         ▼
+3. IsDuplicateConnection(playerId)
+         │
+         ├─► Same playerId already connected? → REJECT (ServerFull)
+         │
+         ▼
+4. Server capacity check
+         │
+         ├─► ConnectedClients >= MaxPlayers? → REJECT (ServerFull)
+         │
+         ▼
+5. Build type compatibility
+         │
+         ├─► Debug client + Release server? → REJECT (IncompatibleBuildType)
+         │
+         ▼
+6. APPROVED!
+         │
+         ├─► response.Approved = true
+         ├─► response.CreatePlayerObject = true
+         └─► SetupConnectingPlayerSessionData(...)
+```
+
+### Answer: The Code
+
+```csharp
+public override void ApprovalCheck(Request request, Response response)
+{
+    // 1. DOS check
+    if (request.Payload.Length > MaxConnectPayload)
+    {
+        response.Approved = false;
+        return;
+    }
+    
+    // 2. Parse payload
+    var payload = JsonUtility.FromJson<ConnectionPayload>(payloadString);
+    
+    // 3. Duplicate check
+    if (IsDuplicateConnection(payload.playerId))
+    {
+        response.Approved = false;
+        response.Reason = ConnectStatus.ServerFull;
+        return;
+    }
+    
+    // 4. Capacity check
+    if (NetworkManager.ConnectedClients.Count >= m_ConnectionManager.MaxConnectedPlayers)
+    {
+        response.Approved = false;
+        response.Reason = ConnectStatus.ServerFull;
+        return;
+    }
+    
+    // 5. Build check
+    if (payload.isDebug != Debug.isDebugBuild)
+    {
+        response.Approved = false;
+        response.Reason = ConnectStatus.IncompatibleBuildType;
+        return;
+    }
+    
+    // 6. APPROVE!
+    response.Approved = true;
+    response.CreatePlayerObject = true;
+    
+    SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(
+        request.ClientNetworkId, payload.playerId, playerData);
+}
+```
+
+---
+
+## Walkthrough 9: Tracing the Game State Flow
+
+### The Question
+
+How does the game transition from MainMenu → CharSelect → BossRoom → PostGame? Who initiates each transition?
+
+### Starting Point
+
+**File:** `Assets/Scripts/Gameplay/GameState/ServerBossRoomState.cs`
+
+Also look at: `HostingState.cs`, `ServerCharSelectState.cs`
+
+### Key Findings
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                      SCENE TRANSITION MAP                             │
+└──────────────────────────────────────────────────────────────────────┘
+
+┌─────────────┐       ┌─────────────┐       ┌─────────────┐       ┌─────────────┐
+│  MainMenu   │ ────► │  CharSelect │ ────► │  BossRoom   │ ────► │  PostGame   │
+└─────────────┘       └─────────────┘       └─────────────┘       └─────────────┘
+       │                     │                     │                     │
+       ▼                     ▼                     ▼                     ▼
+   WHO TRIGGERS?          WHO?                  WHO?                  WHO?
+   HostingState.Enter()   ServerCharSelectState ServerBossRoomState   User clicks
+   after StartHost        after AllLockedIn    after Win/Loss        ReturnToMenu
+```
+
+### Answer: Transition Details
+
+| From | To | Triggered By | File | Condition |
+|------|----| -------------|------|-----------|
+| MainMenu | CharSelect | HostingState | HostingState.cs | Host starts successfully |
+| CharSelect | BossRoom | ServerCharSelectState | ServerCharSelectState.cs | All players locked in |
+| BossRoom | PostGame | ServerBossRoomState | ServerBossRoomState.cs | Boss dies OR all players fainted |
+| PostGame | MainMenu | User | ClientPostGameState.cs | User clicks button |
+
+### Code Traces
+
+```csharp
+// Transition 1: MainMenu → CharSelect
+// File: HostingState.cs
+public override void Enter()
+{
+    await m_ConnectionMethod.SetupHostConnectionAsync();
+    NetworkManager.Singleton.StartHost();
+    SceneLoaderWrapper.Instance.LoadScene("CharSelect", true);  // ← HERE
+}
+
+// Transition 2: CharSelect → BossRoom
+// File: ServerCharSelectState.cs
+void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
+{
+    if (AllSeatsLockedIn())
+    {
+        SaveLobbyResults();
+        SceneLoaderWrapper.Instance.LoadScene("BossRoom", true);  // ← HERE
+    }
+}
+
+// Transition 3: BossRoom → PostGame
+// File: ServerBossRoomState.cs
+void OnLifeStateChanged(LifeStateChangedEventMessage msg)
+{
+    if (msg.CharacterType == CharacterTypeEnum.ImpBoss && msg.LifeState == LifeState.Dead)
+    {
+        BossDefeated();  // → LoadScene("PostGame")  // ← HERE
+    }
+    
+    if (AllPlayersFainted())
+    {
+        GameOver(false);  // → LoadScene("PostGame")  // ← HERE
+    }
+}
+```
+
+---
+
+## Walkthrough 10: Object Pooling Investigation
+
+### The Question
+
+How does Boss Room implement object pooling for networked objects? Trace how a projectile is spawned from the pool and returned.
+
+### Starting Point
+
+**File:** `Assets/Scripts/Infrastructure/NetworkObjectPool.cs`
+
+### Key Findings
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                    OBJECT POOL LIFECYCLE                              │
+└──────────────────────────────────────────────────────────────────────┘
+
+INITIALIZATION (on scene load)
+         │
+         ▼
+PooledPrefabsList (configured in Inspector)
+         │
+         ├─► For each prefab: Create N instances
+         ├─► SetActive(false)
+         └─► Queue into m_PooledObjects[prefab]
+
+═══════════════════════════════════════════════════════════════════════
+
+SPAWN REQUEST (projectile fired)
+         │
+         ▼
+GetNetworkObject(prefab, position, rotation)
+         │
+         ├─► Is queue empty?
+         │   │
+         │   ├─► NO: Dequeue, SetActive(true), return
+         │   │
+         │   └─► YES: Instantiate new (fallback)
+         │
+         ▼
+Projectile flies, hits something
+         │
+         ▼
+ReturnNetworkObject(obj, prefab)
+         │
+         ├─► SetActive(false)
+         └─► Enqueue back into pool
+```
+
+### Answer: The Implementation
+
+```csharp
+public class NetworkObjectPool : NetworkBehaviour
+{
+    [SerializeField] List<PoolConfigObject> PooledPrefabsList;
+    
+    Dictionary<GameObject, Queue<NetworkObject>> m_PooledObjects = new();
+    
+    // Called at initialization
+    void RegisterPrefab(GameObject prefab, int prewarmCount)
+    {
+        m_PooledObjects[prefab] = new Queue<NetworkObject>();
+        
+        for (int i = 0; i < prewarmCount; i++)
+        {
+            var obj = Instantiate(prefab).GetComponent<NetworkObject>();
+            obj.gameObject.SetActive(false);
+            m_PooledObjects[prefab].Enqueue(obj);
+        }
+    }
+    
+    // Get from pool
+    public NetworkObject GetNetworkObject(GameObject prefab, Vector3 pos, Quaternion rot)
+    {
+        var queue = m_PooledObjects[prefab];
+        
+        if (queue.Count > 0)
+        {
+            var obj = queue.Dequeue();
+            obj.transform.SetPositionAndRotation(pos, rot);
+            obj.gameObject.SetActive(true);
+            return obj;
+        }
+        
+        // Fallback: create new
+        return Instantiate(prefab, pos, rot).GetComponent<NetworkObject>();
+    }
+    
+    // Return to pool
+    public void ReturnNetworkObject(NetworkObject obj, GameObject prefab)
+    {
+        obj.gameObject.SetActive(false);
+        m_PooledObjects[prefab].Enqueue(obj);
+    }
+}
+
+// Usage in LaunchProjectileAction:
+var projectile = NetworkObjectPool.Singleton.GetNetworkObject(
+    Config.Spawns, 
+    spawnPoint.position, 
+    Quaternion.identity);
+    
+projectile.Spawn();  // Network spawn
+
+// When projectile hits or expires:
+projectile.Despawn();
+NetworkObjectPool.Singleton.ReturnNetworkObject(projectile, Config.Spawns);
+```
+
+---
+
+## Exercises with Full Answers
 
 ### Exercise A: Network Variable Debugging
 
-1. Find all `NetworkVariable` declarations in ServerCharacter
-2. For each one, find where it's modified (server-side)
-3. Find where each has a value-changed callback (client-side)
+**Task:** Find all `NetworkVariable` declarations in ServerCharacter.
+
+**Answer:**
+```csharp
+// In ServerCharacter.cs and related components:
+public NetworkVariable<MovementStatus> MovementStatus { get; }
+public NetworkVariable<ulong> HeldNetworkObject { get; }
+public NetworkVariable<bool> IsStealthy { get; }
+public NetworkVariable<ulong> TargetId { get; }
+
+// In NetworkHealthState.cs:
+public NetworkVariable<int> HitPoints { get; }
+
+// In NetworkLifeState.cs:
+public NetworkVariable<LifeState> LifeState { get; }
+```
+
+**Where modified (server):** 
+- `ServerCharacter.ReceiveHP()` modifies HitPoints
+- `ServerCharacter.SetLifeState()` modifies LifeState
+- `Action` subclasses modify other state
+
+**Where callbacks (client):**
+- `ClientCharacter.OnNetworkSpawn()` subscribes to `.OnValueChanged`
+
+---
 
 ### Exercise B: Scene Loading
 
-1. Find `SceneLoaderWrapper.cs`
-2. Trace what happens when the host moves from CharSelect to BossRoom
-3. How do clients know to load the scene?
+**Task:** Trace what happens when host moves from CharSelect to BossRoom.
+
+**Answer:**
+```
+1. ServerCharSelectState.OnClientChangedSeat() detects all locked in
+         │
+         ▼
+2. SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true)
+         │
+         ▼
+3. NetworkSceneManager synchronizes load across all clients
+         │
+         ▼
+4. All clients load BossRoom scene
+         │
+         ▼
+5. ServerBossRoomState.OnNetworkSpawn() called
+         │
+         ▼
+6. ServerBossRoomState subscribes to LifeStateChangedEventMessage
+         │
+         ▼
+7. SceneLoaderWrapper.OnSceneEvent() fires OnSceneLoaded
+         │
+         ▼
+8. ServerBossRoomState.OnLoadEventCompleted() spawns players
+```
+
+---
 
 ### Exercise C: Boss AI
 
-1. Find the boss enemy prefab
-2. Locate its AI/behavior logic
-3. How does it decide which player to target?
+**Task:** Find the boss AI logic.
 
-### Exercise D: Projectile Lifecycle
+**Answer:**
+- **Boss prefab:** Look in `Assets/Prefabs/Characters/Enemies/`
+- **AI logic:** `Assets/Scripts/Gameplay/GameplayObjects/Character/AI/`
+- **AIBrain** class handles decision-making
+- The boss uses the same `ServerActionPlayer` as players
+- AI decides which action to play based on target distance, health, etc.
 
-1. Find `LaunchProjectileAction`
-2. Trace how the projectile prefab is spawned
-3. How is hit detection performed?
-4. When is the projectile despawned?
+```csharp
+// In AIBrain.cs:
+public void Update()
+{
+    if (m_ServerCharacter.LifeState != LifeState.Alive) return;
+    
+    var target = FindTarget();
+    var action = SelectAction(target);
+    
+    m_ServerActionPlayer.PlayAction(ref action);
+}
+```
+
+---
+
+### Exercise D: Projectile Lifecycle (Full Answer)
+
+**Task:** Trace how projectiles work.
+
+**Answer:**
+
+```
+1. LaunchProjectileAction.OnStart()
+         │
+         ├─► Get projectile from NetworkObjectPool
+         ├─► Set position, rotation
+         └─► Spawn as NetworkObject
+         
+2. Projectile.Update() (on server)
+         │
+         ├─► Move forward
+         ├─► Check for collision (Physics.OverlapSphere or Raycast)
+         └─► On hit: Apply damage, Despawn
+         
+3. Projectile.OnDespawn()
+         │
+         └─► Return to pool via NetworkObjectPool.ReturnNetworkObject()
+```
+
+**Key files:**
+- `LaunchProjectileAction.cs` - Creates projectile
+- `PhysicsProjectile.cs` or similar - Movement and hit detection
+- `NetworkObjectPool.cs` - Pooling
+
+---
+
+## Self-Assessment Checklist
+
+After completing these walkthroughs, you should be able to:
+
+### Core Understanding
+
+- [x] Explain how a player's input becomes an action on the server
+- [x] Trace data flow from server to all clients via NetworkVariables
+- [x] Describe the state machine pattern used for connections
+- [x] Explain why client anticipation exists and how it works
+- [x] Trace connection approval checks
+- [x] Understand scene transition triggers
+
+### Code Navigation
+
+- [x] Find where any Action is configured (ScriptableObject location)
+- [x] Locate the server-side logic for any gameplay feature
+- [x] Identify which component is responsible for a given behavior
+- [x] Trace a message from publisher to all subscribers
+- [x] Find the object pool implementation
+
+### Patterns Recognition
+
+- [x] Identify State Machine pattern in code
+- [x] Recognize Factory pattern usage
+- [x] Find examples of Object Pooling
+- [x] Locate Strategy pattern implementations
+
+### Modification Skills
+
+- [x] Know what files to modify to add a new action
+- [x] Understand how to add a new connection state
+- [x] Know how to create a new message channel
+- [x] Understand how to add a new character class
 
 ---
 
 > **Congratulations!** You've completed the guided walkthroughs. Return to the [README](./README.md) for the full learning path.
+

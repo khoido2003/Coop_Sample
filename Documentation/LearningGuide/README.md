@@ -4,12 +4,24 @@
 
 ---
 
+## 🚀 Quick Start: Your First 30 Minutes
+
+**New to the codebase?** Start here:
+
+1. **Read** [A1_code_navigation_guide.md](./A1_code_navigation_guide.md) - "Where do I find X?"
+2. **Read** [18_character_system_deepdive.md](./18_character_system_deepdive.md) - THE most important pattern
+3. **Open** `ServerCharacter.cs` and `ClientCharacter.cs` in your IDE
+4. **Understand** why they're separate (this is the core insight!)
+
+---
+
 ## 📚 Documentation Index
 
 ### 🗓️ Start Here
 | Document | What You'll Learn |
 |----------|-------------------|
-| [00_discovery_plan.md](./00_discovery_plan.md) | **30-day step-by-step plan** - daily instructions with files, exercises |
+| [00_discovery_plan.md](./00_discovery_plan.md) | **30-day beginner plan** - detailed daily instructions with exercises |
+| [00_accelerated_plan.md](./00_accelerated_plan.md) | **7-day advanced plan** - fast-paced for experienced developers |
 
 ### 📖 Reference Guides
 | Document | What You'll Learn |
@@ -31,6 +43,9 @@
 | [11_infrastructure_patterns.md](./11_infrastructure_patterns.md) | PubSub, Object Pooling, Dependency Injection infrastructure |
 | [12_system_flow_diagrams.md](./12_system_flow_diagrams.md) | Visual diagrams of all major system flows |
 | [13_code_reading_walkthroughs.md](./13_code_reading_walkthroughs.md) | Guided exercises to learn to navigate the code yourself |
+| [18_character_system_deepdive.md](./18_character_system_deepdive.md) | **ServerCharacter/ClientCharacter split** - the core networking pattern |
+| [19_game_flow_deepdive.md](./19_game_flow_deepdive.md) | **Complete game flow** - startup, scenes, states, and transitions |
+| [20_session_reconnection.md](./20_session_reconnection.md) | **Session management** - reconnection, PlayerId vs ClientID |
 
 ### 🌍 Universal Patterns (Apply to ANY Game)
 | Document | What You'll Learn |
@@ -39,6 +54,11 @@
 | [15_testability_debugging.md](./15_testability_debugging.md) | How DI enables testing, mock creation, debugging workflow |
 | [16_performance_patterns.md](./16_performance_patterns.md) | GC avoidance, object pooling, caching, optimization |
 | [17_architecture_decision_framework.md](./17_architecture_decision_framework.md) | When to use which pattern - decision flowcharts |
+
+### 📋 Quick Reference Appendices
+| Document | What You'll Learn |
+|----------|-------------------|
+| [A1_code_navigation_guide.md](./A1_code_navigation_guide.md) | **"I want to find X"** - file lookup tables, directory map |
 
 ---
 
@@ -57,10 +77,18 @@ This is an **official Unity sample** made by professional developers. It demonst
 ## 🧭 How to Use This Documentation
 
 ### For Learning (First Time)
-1. Read `01_architecture_principles.md` completely
-2. Read `02_clean_code_patterns.md` 
-3. Open code files mentioned and see patterns in action
-4. Complete exercises at end of each document
+**Beginner Path (1-2 weeks):**
+1. Start with [A1_code_navigation_guide.md](./A1_code_navigation_guide.md) to orient yourself
+2. Read [18_character_system_deepdive.md](./18_character_system_deepdive.md) - understand the core pattern
+3. Read [19_game_flow_deepdive.md](./19_game_flow_deepdive.md) - understand how the game starts
+4. Read [01_architecture_principles.md](./01_architecture_principles.md) for theory
+5. Complete exercises at the end of each document
+
+**Advanced Path (3-4 weeks):**
+1. Follow beginner path first
+2. Deep dive into [09_action_system_deepdive.md](./09_action_system_deepdive.md)
+3. Study [11_infrastructure_patterns.md](./11_infrastructure_patterns.md)
+4. Complete all exercises in [13_code_reading_walkthroughs.md](./13_code_reading_walkthroughs.md)
 
 ### For Reference (During Your Own Project)
 1. Use `08_checklist.md` when starting a new project
@@ -68,6 +96,7 @@ This is an **official Unity sample** made by professional developers. It demonst
 3. Reference specific patterns when you need them
 
 ### For Quick Lookup
+- Use [A1_code_navigation_guide.md](./A1_code_navigation_guide.md) to find any file
 - Each document has a **Quick Reference** section at the end
 - Use Ctrl+F to find specific patterns
 
@@ -80,9 +109,26 @@ The #1 lesson from this codebase:
 > **Separate WHAT from HOW, and WHO CONTROLS from WHO DISPLAYS.**
 
 This means:
+- **ServerCharacter** controls game state, **ClientCharacter** displays it
 - Interfaces define WHAT, implementations define HOW
-- Server controls game state, clients display it
 - Data is separate from behavior
 - Configuration is separate from logic
 
 Keep this in mind as you study. You'll see it everywhere.
+
+---
+
+## 📂 Reading Order by Experience Level
+
+```
+BEGINNER                          INTERMEDIATE                      ADVANCED
+────────                          ────────────                      ────────
+A1_code_navigation_guide  ──►     09_action_system_deepdive   ──►  11_infrastructure_patterns
+        │                                 │                                │
+        ▼                                 ▼                                ▼
+18_character_system_deepdive ──►  10_connection_state_machine ──►  16_performance_patterns
+        │                                 │                                │
+        ▼                                 ▼                                ▼
+19_game_flow_deepdive  ─────────► 13_code_reading_walkthroughs ──► 17_architecture_decision_framework
+```
+

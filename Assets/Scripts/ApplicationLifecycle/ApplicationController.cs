@@ -24,8 +24,10 @@ namespace Unity.BossRoom.ApplicationLifecycle
     {
         [SerializeField]
         UpdateRunner m_UpdateRunner;
+
         [SerializeField]
         ConnectionManager m_ConnectionManager;
+
         [SerializeField]
         NetworkManager m_NetworkManager;
 
@@ -52,24 +54,40 @@ namespace Unity.BossRoom.ApplicationLifecycle
 
             // These message channels are essential and persist for the lifetime of the Session and relay services
             // Registering as instance to prevent code stripping on iOS
-            builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
-            builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterInstance(new MessageChannel<QuitApplicationMessage>())
+                .AsImplementedInterfaces();
+            builder
+                .RegisterInstance(new MessageChannel<UnityServiceErrorMessage>())
+                .AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<ConnectStatus>()).AsImplementedInterfaces();
-            builder.RegisterInstance(new MessageChannel<DoorStateChangedEventMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterInstance(new MessageChannel<DoorStateChangedEventMessage>())
+                .AsImplementedInterfaces();
 
             // These message channels are essential and persist for the lifetime of the Session and relay services
             // They are networked so that the clients can subscribe to those messages that are published by the server
-            builder.RegisterComponent(new NetworkedMessageChannel<LifeStateChangedEventMessage>()).AsImplementedInterfaces();
-            builder.RegisterComponent(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterComponent(new NetworkedMessageChannel<LifeStateChangedEventMessage>())
+                .AsImplementedInterfaces();
+            builder
+                .RegisterComponent(new NetworkedMessageChannel<ConnectionEventMessage>())
+                .AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            builder.RegisterComponent(new NetworkedMessageChannel<CheatUsedMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterComponent(new NetworkedMessageChannel<CheatUsedMessage>())
+                .AsImplementedInterfaces();
 #endif
 
             // This message channel is essential and persists for the lifetime of the Session and relay services
-            builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterInstance(new MessageChannel<ReconnectMessage>())
+                .AsImplementedInterfaces();
 
             // Buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            builder.RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>()).AsImplementedInterfaces();
+            builder
+                .RegisterInstance(new BufferedMessageChannel<SessionListFetchedMessage>())
+                .AsImplementedInterfaces();
 
             // All the Session service stuff, bound here so that it persists through scene loads
             builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
