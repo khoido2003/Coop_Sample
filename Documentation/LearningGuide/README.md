@@ -47,6 +47,15 @@
 | [19_game_flow_deepdive.md](./19_game_flow_deepdive.md) | **Complete game flow** - startup, scenes, states, and transitions |
 | [20_session_reconnection.md](./20_session_reconnection.md) | **Session management** - reconnection, PlayerId vs ClientID |
 
+### 🎮 System-Specific Guides
+| Document | What You'll Learn |
+|----------|-------------------|
+| [21_ai_enemy_system.md](./21_ai_enemy_system.md) | AI state machine, enemy behavior, boss AI, wave spawning |
+| [22_ui_architecture.md](./22_ui_architecture.md) | UI mediator pattern, event-driven updates, action bars |
+| [23_unity_gaming_services.md](./23_unity_gaming_services.md) | Authentication, Sessions/Lobby, Relay integration |
+| [24_animation_vfx_system.md](./24_animation_vfx_system.md) | Animation-triggered FX, particle management, sound effects |
+| [25_level_gameplay_objects.md](./25_level_gameplay_objects.md) | Portals, switches, doors, breakables, interactive objects |
+
 ### 🌍 Universal Patterns (Apply to ANY Game)
 | Document | What You'll Learn |
 |----------|-------------------|
@@ -59,6 +68,7 @@
 | Document | What You'll Learn |
 |----------|-------------------|
 | [A1_code_navigation_guide.md](./A1_code_navigation_guide.md) | **"I want to find X"** - file lookup tables, directory map |
+
 
 ---
 
