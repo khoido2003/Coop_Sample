@@ -20,6 +20,7 @@
 ### 🗓️ Start Here
 | Document | What You'll Learn |
 |----------|-------------------|
+| [00_combined_dsa_project_plan.md](./00_combined_dsa_project_plan.md) | **6-week DSA + Project plan** - interview prep + game architecture |
 | [00_discovery_plan.md](./00_discovery_plan.md) | **30-day beginner plan** - detailed daily instructions with exercises |
 | [00_accelerated_plan.md](./00_accelerated_plan.md) | **7-day advanced plan** - fast-paced for experienced developers |
 
@@ -55,6 +56,15 @@
 | [23_unity_gaming_services.md](./23_unity_gaming_services.md) | Authentication, Sessions/Lobby, Relay integration |
 | [24_animation_vfx_system.md](./24_animation_vfx_system.md) | Animation-triggered FX, particle management, sound effects |
 | [25_level_gameplay_objects.md](./25_level_gameplay_objects.md) | Portals, switches, doors, breakables, interactive objects |
+
+### 🚀 Advanced Topics
+| Document | What You'll Learn |
+|----------|-------------------|
+| [26_scriptableobject_architecture.md](./26_scriptableobject_architecture.md) | Data-driven design, GUIDs, registries, SO best practices |
+| [27_error_handling_resilience.md](./27_error_handling_resilience.md) | Error handling, retries, graceful degradation |
+| [28_scene_management.md](./28_scene_management.md) | Bootstrap pattern, networked scene loading |
+| [29_unity_clean_code.md](./29_unity_clean_code.md) | Assembly definitions, namespaces, Unity patterns |
+| [30_debugging_multiplayer.md](./30_debugging_multiplayer.md) | Logging, profiling, common pitfalls, debugging tools |
 
 ### 🌍 Universal Patterns (Apply to ANY Game)
 | Document | What You'll Learn |
