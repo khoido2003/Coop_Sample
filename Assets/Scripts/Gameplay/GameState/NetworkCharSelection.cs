@@ -24,7 +24,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         /// Putting FixedString inside an INetworkSerializeByMemcpy struct is not recommended because it will lose the
         /// bandwidth optimization provided by INetworkSerializable -- an empty FixedString128Bytes serialized normally
         /// or through INetworkSerializable will use 4 bytes of bandwidth, but inside an INetworkSerializeByMemcpy, that
-        /// same empty value would consume 132 bytes of bandwidth. 
+        /// same empty value would consume 132 bytes of bandwidth.
         /// </remarks>
         public struct SessionPlayerState : INetworkSerializable, IEquatable<SessionPlayerState>
         {
@@ -38,8 +38,14 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             public SeatState SeatState;
 
-
-            public SessionPlayerState(ulong clientId, string name, int playerNumber, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
+            public SessionPlayerState(
+                ulong clientId,
+                string name,
+                int playerNumber,
+                SeatState state,
+                int seatIdx = -1,
+                float lastChangeTime = 0
+            )
             {
                 ClientId = clientId;
                 PlayerNumber = playerNumber;
@@ -57,7 +63,8 @@ namespace Unity.BossRoom.Gameplay.GameState
                 private set => m_PlayerName = value;
             }
 
-            public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+            public void NetworkSerialize<T>(BufferSerializer<T> serializer)
+                where T : IReaderWriter
             {
                 serializer.SerializeValue(ref ClientId);
                 serializer.SerializeValue(ref m_PlayerName);
@@ -69,12 +76,12 @@ namespace Unity.BossRoom.Gameplay.GameState
 
             public bool Equals(SessionPlayerState other)
             {
-                return ClientId == other.ClientId &&
-                       m_PlayerName.Equals(other.m_PlayerName) &&
-                       PlayerNumber == other.PlayerNumber &&
-                       SeatIdx == other.SeatIdx &&
-                       LastChangeTime.Equals(other.LastChangeTime) &&
-                       SeatState == other.SeatState;
+                return ClientId == other.ClientId
+                    && m_PlayerName.Equals(other.m_PlayerName)
+                    && PlayerNumber == other.PlayerNumber
+                    && SeatIdx == other.SeatIdx
+                    && LastChangeTime.Equals(other.LastChangeTime)
+                    && SeatState == other.SeatState;
             }
         }
 

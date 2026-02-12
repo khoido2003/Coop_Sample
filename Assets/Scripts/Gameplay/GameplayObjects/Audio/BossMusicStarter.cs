@@ -55,7 +55,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Audio
         private void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if battle is over
-            if (m_Won) { return; }
+            if (m_Won)
+            {
+                return;
+            }
 
             // make sure battle music started anytime boss is hurt
             if (newValue < previousValue)

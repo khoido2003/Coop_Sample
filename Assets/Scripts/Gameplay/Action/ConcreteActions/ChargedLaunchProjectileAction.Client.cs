@@ -46,7 +46,10 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(
+            ClientCharacter clientCharacter,
+            float finalChargeUpPercentage
+        )
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)

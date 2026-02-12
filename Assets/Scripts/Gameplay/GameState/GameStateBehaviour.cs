@@ -9,7 +9,7 @@ namespace Unity.BossRoom.Gameplay.GameState
         MainMenu,
         CharSelect,
         BossRoom,
-        PostGame
+        PostGame,
     }
 
     /// <summary>

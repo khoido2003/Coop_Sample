@@ -33,11 +33,18 @@ namespace Unity.BossRoom.Gameplay.Actions
                 bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(ClientCharacter); // only call OnUpdate() on actions that are past anticipation
                 bool expirable = action.Config.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && action.TimeRunning >= action.Config.DurationSeconds;
-                bool timedOut = action.AnticipatedClient && action.TimeRunning >= k_AnticipationTimeoutSeconds;
+                bool timedOut =
+                    action.AnticipatedClient && action.TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.CancelClient(ClientCharacter); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
-                    else { action.EndClient(ClientCharacter); }
+                    if (timedOut)
+                    {
+                        action.CancelClient(ClientCharacter);
+                    } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
+                    else
+                    {
+                        action.EndClient(ClientCharacter);
+                    }
 
                     m_PlayingActions.RemoveAt(i);
                     ActionFactory.ReturnAction(action);
@@ -48,7 +55,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         //helper wrapper for a FindIndex call on m_PlayingActions.
         private int FindAction(ActionID actionID, bool anticipatedOnly)
         {
-            return m_PlayingActions.FindIndex(a => a.ActionID == actionID && (!anticipatedOnly || a.AnticipatedClient));
+            return m_PlayingActions.FindIndex(a =>
+                a.ActionID == actionID && (!anticipatedOnly || a.AnticipatedClient)
+            );
         }
 
         public void OnAnimEvent(string id)
@@ -103,7 +112,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!ClientCharacter.IsAnimating() && Action.ShouldClientAnticipate(ClientCharacter, ref data))
+            if (
+                !ClientCharacter.IsAnimating()
+                && Action.ShouldClientAnticipate(ClientCharacter, ref data)
+            )
             {
                 var actionFX = ActionFactory.CreateActionFromData(ref data);
                 actionFX.AnticipateActionClient(ClientCharacter);
@@ -115,7 +127,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             var anticipatedActionIndex = FindAction(data.ActionID, true);
 
-            var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
+            var actionFX =
+                anticipatedActionIndex >= 0
+                    ? m_PlayingActions[anticipatedActionIndex]
+                    : ActionFactory.CreateActionFromData(ref data);
             if (actionFX.OnStartClient(ClientCharacter))
             {
                 if (anticipatedActionIndex < 0)
@@ -160,5 +175,3 @@ namespace Unity.BossRoom.Gameplay.Actions
         }
     }
 }
-
-

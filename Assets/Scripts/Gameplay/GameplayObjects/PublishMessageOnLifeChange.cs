@@ -50,12 +50,17 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void OnLifeStateChanged(LifeState previousState, LifeState newState)
         {
-            m_Publisher.Publish(new LifeStateChangedEventMessage()
-            {
-                CharacterName = m_NameState != null ? m_NameState.Name.Value : (FixedPlayerName)m_CharacterName,
-                CharacterType = m_ServerCharacter.CharacterClass.CharacterType,
-                NewLifeState = newState
-            });
+            m_Publisher.Publish(
+                new LifeStateChangedEventMessage()
+                {
+                    CharacterName =
+                        m_NameState != null
+                            ? m_NameState.Name.Value
+                            : (FixedPlayerName)m_CharacterName,
+                    CharacterType = m_ServerCharacter.CharacterClass.CharacterType,
+                    NewLifeState = newState,
+                }
+            );
         }
     }
 }

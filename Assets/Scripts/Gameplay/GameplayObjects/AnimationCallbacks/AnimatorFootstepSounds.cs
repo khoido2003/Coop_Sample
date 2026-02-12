@@ -25,7 +25,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
         private Animator m_Animator;
 
         [SerializeField]
-        [Tooltip("A Float parameter on the Animator, with values between 0 (stationary) and 1 (full movement).")]
+        [Tooltip(
+            "A Float parameter on the Animator, with values between 0 (stationary) and 1 (full movement)."
+        )]
         private string m_AnimatorVariable;
 
         [SerializeField]
@@ -53,7 +55,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
         private float m_RunFootstepVolume = 1;
 
         [SerializeField]
-        [Tooltip("If the speed variable is this or below, we're moving too slowly for footsteps (no sounds played)")]
+        [Tooltip(
+            "If the speed variable is this or below, we're moving too slowly for footsteps (no sounds played)"
+        )]
         private float m_TooSlowThreshold = 0.3f;
 
         [SerializeField]
@@ -61,7 +65,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
         private float m_WalkSpeedThreshold = 0.6f;
 
         [SerializeField]
-        [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
+        [Tooltip(
+            "If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)"
+        )]
         private float m_RunSpeedThreshold = 1.2f;
 
         float m_LastSpeed;

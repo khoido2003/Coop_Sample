@@ -10,7 +10,10 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
-        protected override void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
+        protected override void AddOtherPlayerProgressBar(
+            ulong clientId,
+            NetworkedLoadingProgressTracker progressTracker
+        )
         {
             base.AddOtherPlayerProgressBar(clientId, progressTracker);
             m_LoadingProgressBars[clientId].NameText.text = GetPlayerName(clientId);

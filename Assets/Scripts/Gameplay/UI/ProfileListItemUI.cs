@@ -11,7 +11,8 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         TextMeshProUGUI m_ProfileNameText;
 
-        [Inject] ProfileManager m_ProfileManager;
+        [Inject]
+        ProfileManager m_ProfileManager;
 
         public void SetProfileName(string profileName)
         {

@@ -1,7 +1,7 @@
 using System;
-using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
 using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Infrastructure;
 using Unity.BossRoom.UnityServices.Auth;
 using Unity.BossRoom.UnityServices.Sessions;
@@ -16,20 +16,28 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         CanvasGroup m_CanvasGroup;
+
         [SerializeField]
         SessionJoiningUI m_SessionJoiningUI;
+
         [SerializeField]
         SessionCreationUI m_SessionCreationUI;
+
         [SerializeField]
         UITinter m_JoinToggleHighlight;
+
         [SerializeField]
         UITinter m_JoinToggleTabBlocker;
+
         [SerializeField]
         UITinter m_CreateToggleHighlight;
+
         [SerializeField]
         UITinter m_CreateToggleTabBlocker;
+
         [SerializeField]
         TextMeshProUGUI m_PlayerNameLabel;
+
         [SerializeField]
         GameObject m_LoadingSpinner;
 
@@ -103,7 +111,11 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartHostSession(m_LocalUser.DisplayName);
 
-            var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(sessionName, k_MaxPlayers, isPrivate);
+            var result = await m_MultiplayerServicesFacade.TryCreateSessionAsync(
+                sessionName,
+                k_MaxPlayers,
+                isPrivate
+            );
 
             HandleSessionJoinResult(result);
         }
@@ -169,7 +181,9 @@ namespace Unity.BossRoom.Gameplay.UI
 
             m_ConnectionManager.StartClientSession(m_LocalUser.DisplayName);
 
-            var result = await m_MultiplayerServicesFacade.TryJoinSessionByNameAsync(sessionInfo.Id);
+            var result = await m_MultiplayerServicesFacade.TryJoinSessionByNameAsync(
+                sessionInfo.Id
+            );
 
             HandleSessionJoinResult(result);
         }

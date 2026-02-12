@@ -17,7 +17,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     public class NetworkLifeState : NetworkBehaviour
     {
         [SerializeField]
-        NetworkVariable<LifeState> m_LifeState = new NetworkVariable<LifeState>(GameplayObjects.LifeState.Alive);
+        NetworkVariable<LifeState> m_LifeState = new NetworkVariable<LifeState>(
+            GameplayObjects.LifeState.Alive
+        );
 
         public NetworkVariable<LifeState> LifeState => m_LifeState;
 

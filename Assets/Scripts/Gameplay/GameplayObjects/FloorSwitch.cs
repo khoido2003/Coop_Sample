@@ -71,7 +71,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void OnValidate()
         {
-            m_AnimatorPressedDownBoolVarID = Animator.StringToHash(k_AnimatorPressedDownBoolVarName);
+            m_AnimatorPressedDownBoolVarID = Animator.StringToHash(
+                k_AnimatorPressedDownBoolVarName
+            );
         }
     }
 }

@@ -22,7 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// solution that handles security better.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public class SessionManager<T> where T : struct, ISessionPlayerData
+    public class SessionManager<T>
+        where T : struct, ISessionPlayerData
     {
         SessionManager()
         {
@@ -107,14 +108,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="playerId">This is the playerId that is unique to this client and persists across multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
-        public void SetupConnectingPlayerSessionData(ulong clientId, string playerId, T sessionPlayerData)
+        public void SetupConnectingPlayerSessionData(
+            ulong clientId,
+            string playerId,
+            T sessionPlayerData
+        )
         {
             var isReconnecting = false;
 
             // Test for duplicate connection
             if (IsDuplicateConnection(playerId))
             {
-                Debug.LogError($"Player ID {playerId} already exists. This is a duplicate connection. Rejecting this session data.");
+                Debug.LogError(
+                    $"Player ID {playerId} already exists. This is a duplicate connection. Rejecting this session data."
+                );
                 return;
             }
 
@@ -126,7 +133,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     // If this connecting client has the same player Id as a disconnected client, this is a reconnection.
                     isReconnecting = true;
                 }
-
             }
 
             // Reconnecting. Give data from old player to new player
@@ -206,7 +212,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             else
             {
-                Debug.LogError($"No client player ID found mapped to the given client ID: {clientId}");
+                Debug.LogError(
+                    $"No client player ID found mapped to the given client ID: {clientId}"
+                );
             }
         }
 

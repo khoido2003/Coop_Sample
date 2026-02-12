@@ -64,6 +64,5 @@ namespace Unity.BossRoom.Utils
         {
             PlayerPrefs.SetString(k_AvailableProfilesKey, availableProfiles);
         }
-
     }
 }

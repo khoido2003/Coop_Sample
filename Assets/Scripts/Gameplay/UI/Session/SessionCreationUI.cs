@@ -7,11 +7,20 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     public class SessionCreationUI : MonoBehaviour
     {
-        [SerializeField] InputField m_SessionNameInputField;
-        [SerializeField] GameObject m_LoadingIndicatorObject;
-        [SerializeField] Toggle m_IsPrivate;
-        [SerializeField] CanvasGroup m_CanvasGroup;
-        [Inject] SessionUIMediator m_SessionUIMediator;
+        [SerializeField]
+        InputField m_SessionNameInputField;
+
+        [SerializeField]
+        GameObject m_LoadingIndicatorObject;
+
+        [SerializeField]
+        Toggle m_IsPrivate;
+
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+
+        [Inject]
+        SessionUIMediator m_SessionUIMediator;
 
         void Awake()
         {
@@ -25,7 +34,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void OnCreateClick()
         {
-            m_SessionUIMediator.CreateSessionRequest(m_SessionNameInputField.text, m_IsPrivate.isOn);
+            m_SessionUIMediator.CreateSessionRequest(
+                m_SessionNameInputField.text,
+                m_IsPrivate.isOn
+            );
         }
 
         public void Show()

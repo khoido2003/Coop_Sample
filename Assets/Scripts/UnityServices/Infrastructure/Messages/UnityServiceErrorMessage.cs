@@ -15,7 +15,12 @@ namespace Unity.BossRoom.UnityServices
         public Service AffectedService;
         public Exception OriginalException;
 
-        public UnityServiceErrorMessage(string title, string message, Service service, Exception originalException = null)
+        public UnityServiceErrorMessage(
+            string title,
+            string message,
+            Service service,
+            Exception originalException = null
+        )
         {
             Title = title;
             Message = message;

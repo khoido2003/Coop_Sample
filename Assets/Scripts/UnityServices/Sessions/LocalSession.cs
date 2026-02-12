@@ -104,7 +104,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             if (!m_SessionUsers.ContainsKey(user.ID))
             {
-                Debug.LogWarning($"Player {user.DisplayName}({user.ID}) does not exist in session: {SessionID}");
+                Debug.LogWarning(
+                    $"Player {user.DisplayName}({user.ID}) does not exist in session: {SessionID}"
+                );
                 return;
             }
 
@@ -163,10 +165,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
         }
 
         public Dictionary<string, SessionProperty> GetDataForUnityServices() =>
-            new()
-            {
-                { "RelayJoinCode", new SessionProperty(RelayJoinCode) }
-            };
+            new() { { "RelayJoinCode", new SessionProperty(RelayJoinCode) } };
 
         public void ApplyRemoteData(ISession session)
         {
@@ -179,7 +178,12 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             if (session.Properties != null)
             {
-                info.RelayJoinCode = session.Properties.TryGetValue("RelayJoinCode", out var property) ? property.Value : null; // By providing RelayCode through the session properties with Member visibility, we ensure a client is connected to the session before they could attempt a relay connection, preventing timing issues between them.
+                info.RelayJoinCode = session.Properties.TryGetValue(
+                    "RelayJoinCode",
+                    out var property
+                )
+                    ? property.Value
+                    : null; // By providing RelayCode through the session properties with Member visibility, we ensure a client is connected to the session before they could attempt a relay connection, preventing timing issues between them.
             }
             else
             {
@@ -203,8 +207,12 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 var incomingData = new LocalSessionUser
                 {
                     IsHost = session.Host.Equals(player.Id),
-                    DisplayName = player.Properties != null && player.Properties.TryGetValue("DisplayName", out var property) ? property.Value : default,
-                    ID = player.Id
+                    DisplayName =
+                        player.Properties != null
+                        && player.Properties.TryGetValue("DisplayName", out var property)
+                            ? property.Value
+                            : default,
+                    ID = player.Id,
                 };
 
                 localSessionUsers.Add(incomingData.ID, incomingData);

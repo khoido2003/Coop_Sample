@@ -12,7 +12,7 @@ namespace Unity.BossRoom.Gameplay.UI
         enum QuitMode
         {
             ReturnToMenu,
-            QuitApplication
+            QuitApplication,
         }
 
         [SerializeField]

@@ -11,16 +11,16 @@ namespace Unity.BossRoom.ConnectionManagement
     public enum ConnectStatus
     {
         Undefined,
-        Success,                  //client successfully connected. This may also be a successful reconnect.
-        ServerFull,               //can't join, server is already at capacity.
-        LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
-        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
-        GenericDisconnect,        //server disconnected, but no specific reason given.
-        Reconnecting,             //client lost connection and is attempting to reconnect.
-        IncompatibleBuildType,    //client build type is incompatible with server.
-        HostEndedSession,         //host intentionally ended the session.
-        StartHostFailed,          // server failed to bind
-        StartClientFailed         // failed to connect to server and/or invalid network endpoint
+        Success, //client successfully connected. This may also be a successful reconnect.
+        ServerFull, //can't join, server is already at capacity.
+        LoggedInAgain, //logged in on a separate client, causing this one to be kicked out.
+        UserRequestedDisconnect, //Intentional Disconnect triggered by the user.
+        GenericDisconnect, //server disconnected, but no specific reason given.
+        Reconnecting, //client lost connection and is attempting to reconnect.
+        IncompatibleBuildType, //client build type is incompatible with server.
+        HostEndedSession, //host intentionally ended the session.
+        StartHostFailed, // server failed to bind
+        StartClientFailed, // failed to connect to server and/or invalid network endpoint
     }
 
     public struct ReconnectMessage
@@ -74,7 +74,8 @@ namespace Unity.BossRoom.ConnectionManagement
         internal readonly OfflineState m_Offline = new OfflineState();
         internal readonly ClientConnectingState m_ClientConnecting = new ClientConnectingState();
         internal readonly ClientConnectedState m_ClientConnected = new ClientConnectedState();
-        internal readonly ClientReconnectingState m_ClientReconnecting = new ClientReconnectingState();
+        internal readonly ClientReconnectingState m_ClientReconnecting =
+            new ClientReconnectingState();
         internal readonly StartingHostState m_StartingHost = new StartingHostState();
         internal readonly HostingState m_Hosting = new HostingState();
 
@@ -85,7 +86,15 @@ namespace Unity.BossRoom.ConnectionManagement
 
         void Start()
         {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_StartingHost, m_Hosting };
+            List<ConnectionState> states = new()
+            {
+                m_Offline,
+                m_ClientConnecting,
+                m_ClientConnected,
+                m_ClientReconnecting,
+                m_StartingHost,
+                m_Hosting,
+            };
             foreach (var connectionState in states)
             {
                 m_Resolver.Inject(connectionState);
@@ -111,7 +120,9 @@ namespace Unity.BossRoom.ConnectionManagement
 
         internal void ChangeState(ConnectionState nextState)
         {
-            Debug.Log($"{name}: Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
+            Debug.Log(
+                $"{name}: Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}."
+            );
 
             if (m_CurrentState != null)
             {
@@ -121,7 +132,10 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.Enter();
         }
 
-        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        void OnConnectionEvent(
+            NetworkManager networkManager,
+            ConnectionEventData connectionEventData
+        )
         {
             switch (connectionEventData.EventType)
             {
@@ -139,7 +153,10 @@ namespace Unity.BossRoom.ConnectionManagement
             m_CurrentState.OnServerStarted();
         }
 
-        void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+        void ApprovalCheck(
+            NetworkManager.ConnectionApprovalRequest request,
+            NetworkManager.ConnectionApprovalResponse response
+        )
         {
             m_CurrentState.ApprovalCheck(request, response);
         }

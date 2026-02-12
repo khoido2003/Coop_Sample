@@ -30,41 +30,61 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         float m_PlayerProximityValidationTimestep = 2;
 
         [SerializeField]
-        [Tooltip("The detection range of spawned entities. Only meaningful for NPCs (not breakables). -1 = \"use default for this NPC\"")]
+        [Tooltip(
+            "The detection range of spawned entities. Only meaningful for NPCs (not breakables). -1 = \"use default for this NPC\""
+        )]
         float m_SpawnedEntityDetectDistance = -1;
 
         [Header("Wave parameters")]
         [Tooltip("Total number of waves.")]
         [SerializeField]
         int m_NumberOfWaves = 2;
+
         [Tooltip("Number of spawns per wave.")]
         [SerializeField]
         int m_SpawnsPerWave = 2;
+
         [Tooltip("Time between individual spawns, in seconds.")]
         [SerializeField]
         float m_TimeBetweenSpawns = 0.5f;
+
         [Tooltip("Time between waves, in seconds.")]
         [SerializeField]
         float m_TimeBetweenWaves = 5;
-        [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
+
+        [Tooltip(
+            "Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds."
+        )]
         [SerializeField]
         float m_RestartDelay = 10;
+
         [Tooltip("A player must be within this distance to commence first wave spawn.")]
         [SerializeField]
         float m_ProximityDistance = 30;
+
         [SerializeField]
-        [Tooltip("When looking for players within proximity distance, should we count players in stealth mode?")]
+        [Tooltip(
+            "When looking for players within proximity distance, should we count players in stealth mode?"
+        )]
         bool m_DetectStealthyPlayers = true;
 
         [Header("Spawn Cap (i.e. number of simultaneously spawned entities)")]
         [SerializeField]
-        [Tooltip("The minimum number of entities this spawner will try to maintain (regardless of player count)")]
+        [Tooltip(
+            "The minimum number of entities this spawner will try to maintain (regardless of player count)"
+        )]
         int m_MinSpawnCap = 2;
+
         [SerializeField]
-        [Tooltip("The maximum number of entities this spawner will try to maintain (regardless of player count)")]
+        [Tooltip(
+            "The maximum number of entities this spawner will try to maintain (regardless of player count)"
+        )]
         int m_MaxSpawnCap = 10;
+
         [SerializeField]
-        [Tooltip("For each player in the game, the Spawn Cap is raised above the minimum by this amount. (Rounds up to nearest whole number.)")]
+        [Tooltip(
+            "For each player in the game, the Spawn Cap is raised above the minimum by this amount. (Rounds up to nearest whole number.)"
+        )]
         float m_SpawnCapIncreasePerPlayer = 1;
 
         // cache reference to our own transform
@@ -223,7 +243,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             }
 
             int posIdx = m_SpawnedCount++ % m_SpawnPositions.Count;
-            var clone = Instantiate(m_NetworkedPrefab, m_SpawnPositions[posIdx].position, m_SpawnPositions[posIdx].rotation);
+            var clone = Instantiate(
+                m_NetworkedPrefab,
+                m_SpawnPositions[posIdx].position,
+                m_SpawnPositions[posIdx].rotation
+            );
             if (!clone.IsSpawned)
             {
                 clone.Spawn(true);
@@ -245,7 +269,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         {
             // references to spawned components that no longer exist will become null,
             // so clear those out. Then we know how many we have left
-            m_ActiveSpawns.RemoveAll(spawnedNetworkObject => { return spawnedNetworkObject == null; });
+            m_ActiveSpawns.RemoveAll(spawnedNetworkObject =>
+            {
+                return spawnedNetworkObject == null;
+            });
             return m_ActiveSpawns.Count < GetCurrentSpawnCap();
         }
 
@@ -265,7 +292,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            return Mathf.CeilToInt(Mathf.Min(m_MinSpawnCap + (numPlayers * m_SpawnCapIncreasePerPlayer), m_MaxSpawnCap));
+            return Mathf.CeilToInt(
+                Mathf.Min(m_MinSpawnCap + (numPlayers * m_SpawnCapIncreasePerPlayer), m_MaxSpawnCap)
+            );
         }
 
         /// <summary>
@@ -302,8 +331,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 ray.origin = spawnerPosition;
                 ray.direction = direction;
 
-                var hit = Physics.RaycastNonAlloc(ray, m_Hit,
-                    Mathf.Min(direction.magnitude, m_ProximityDistance), m_BlockingMask);
+                var hit = Physics.RaycastNonAlloc(
+                    ray,
+                    m_Hit,
+                    Mathf.Min(direction.magnitude, m_ProximityDistance),
+                    m_BlockingMask
+                );
                 if (hit == 0)
                 {
                     return true;

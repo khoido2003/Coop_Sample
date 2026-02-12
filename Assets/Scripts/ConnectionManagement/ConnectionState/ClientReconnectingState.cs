@@ -37,7 +37,12 @@ namespace Unity.BossRoom.ConnectionManagement
                 m_ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
                 m_ReconnectCoroutine = null;
             }
-            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_ConnectionManager.NbReconnectAttempts, m_ConnectionManager.NbReconnectAttempts));
+            m_ReconnectMessagePublisher.Publish(
+                new ReconnectMessage(
+                    m_ConnectionManager.NbReconnectAttempts,
+                    m_ConnectionManager.NbReconnectAttempts
+                )
+            );
         }
 
         public override void OnClientConnected(ulong _)
@@ -67,7 +72,9 @@ namespace Unity.BossRoom.ConnectionManagement
                             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
                             break;
                         default:
-                            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(
+                                ReconnectCoroutine()
+                            );
                             break;
                     }
                 }
@@ -104,8 +111,12 @@ namespace Unity.BossRoom.ConnectionManagement
             m_ConnectionManager.NetworkManager.Shutdown();
 
             yield return new WaitWhile(() => m_ConnectionManager.NetworkManager.ShutdownInProgress); // wait until NetworkManager completes shutting down
-            Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
-            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
+            Debug.Log(
+                $"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}..."
+            );
+            m_ReconnectMessagePublisher.Publish(
+                new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts)
+            );
 
             // If first attempt, wait some time before attempting to reconnect to give time to services to update
             // (i.e. if in a Session and the host shuts down unexpectedly, this will give enough time for the Session to be

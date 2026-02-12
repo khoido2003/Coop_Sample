@@ -23,10 +23,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
     {
         private AnimatorTriggeredSpecialFX[] m_CachedTriggerRefs;
 
-        override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        public override void OnStateEnter(
+            Animator animator,
+            AnimatorStateInfo stateInfo,
+            int layerIndex
+        )
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs =
+                    animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)
@@ -36,10 +41,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             }
         }
 
-        override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        public override void OnStateExit(
+            Animator animator,
+            AnimatorStateInfo stateInfo,
+            int layerIndex
+        )
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs =
+                    animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)

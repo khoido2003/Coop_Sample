@@ -5,7 +5,6 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.VisualEffects;
 using UnityEngine;
 using UnityEngine.Serialization;
-
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
@@ -21,7 +20,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
     public class AnimatorTriggeredSpecialFX : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("Unused by the game and provided only for internal dev comments; put whatever you want here")]
+        [Tooltip(
+            "Unused by the game and provided only for internal dev comments; put whatever you want here"
+        )]
         [TextArea]
         private string DevNotes; // e.g. "this is for the tank class". Documentation for the artists, because all 4 class's AnimatorTriggeredSpecialFX components are on the same GameObject. Can remove later if desired
 
@@ -30,33 +31,57 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
         {
             [Tooltip("The name of a node in the Animator's state machine.")]
             public string m_AnimatorNodeName;
+
             [HideInInspector]
             public int m_AnimatorNodeNameHash; // this is maintained via OnValidate() in the editor
 
             [Header("Particle Prefab")]
-            [Tooltip("The prefab that should be instantiated when we enter an Animator node with this name")]
+            [Tooltip(
+                "The prefab that should be instantiated when we enter an Animator node with this name"
+            )]
             public SpecialFXGraphic m_Prefab;
-            [Tooltip("Wait this many seconds before instantiating the Prefab. (If we leave the animation node before this point, no FX are played.)")]
+
+            [Tooltip(
+                "Wait this many seconds before instantiating the Prefab. (If we leave the animation node before this point, no FX are played.)"
+            )]
             public float m_PrefabSpawnDelaySeconds;
-            [Tooltip("If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'")]
+
+            [Tooltip(
+                "If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'"
+            )]
             public float m_PrefabCanBeAbortedUntilSecs;
-            [Tooltip("If the particle should be parented to a specific bone, link that bone here. (If null, plays at character's feet.)")]
+
+            [Tooltip(
+                "If the particle should be parented to a specific bone, link that bone here. (If null, plays at character's feet.)"
+            )]
             public Transform m_PrefabParent;
-            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
+
+            [Tooltip(
+                "Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)"
+            )]
             public Vector3 m_PrefabParentOffset;
-            [Tooltip("Should we disconnect the prefab from the character? (So the prefab's transform has no parent)")]
+
+            [Tooltip(
+                "Should we disconnect the prefab from the character? (So the prefab's transform has no parent)"
+            )]
             public bool m_DeParentPrefab;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
             public AudioClip m_SoundEffect;
-            [Tooltip("Time (in seconds) before we start playing this sound. If we leave the animation node before this time, no sound plays")]
+
+            [Tooltip(
+                "Time (in seconds) before we start playing this sound. If we leave the animation node before this time, no sound plays"
+            )]
             public float m_SoundStartDelaySeconds;
+
             [Tooltip("Relative volume to play at.")]
             public float m_VolumeMultiplier = 1;
+
             [Tooltip("Should we loop the sound for as long as we're in the animation node?")]
             public bool m_LoopSound = false;
         }
+
         [SerializeField]
         internal AnimatorNodeEntryEvent[] m_EventsOnNodeEntry;
 
@@ -86,7 +111,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 
         private void Awake()
         {
-            Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
+            Debug.Assert(
+                m_AudioSources != null && m_AudioSources.Length > 0,
+                "No AudioSource plugged into AnimatorTriggeredSpecialFX!",
+                gameObject
+            );
 
             if (!m_ClientCharacter)
             {
@@ -128,7 +157,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_ClientCharacter.transform;
+            Transform parent =
+                eventInfo.m_PrefabParent != null
+                    ? eventInfo.m_PrefabParent
+                    : m_ClientCharacter.transform;
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
             instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
 
@@ -142,7 +174,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             // now we just need to watch and see if we end up needing to prematurely end these new graphics
             if (eventInfo.m_PrefabCanBeAbortedUntilSecs > 0)
             {
-                float timeRemaining = eventInfo.m_PrefabCanBeAbortedUntilSecs - eventInfo.m_PrefabSpawnDelaySeconds;
+                float timeRemaining =
+                    eventInfo.m_PrefabCanBeAbortedUntilSecs - eventInfo.m_PrefabSpawnDelaySeconds;
                 while (timeRemaining > 0 && instantiatedFX)
                 {
                     yield return new WaitForFixedUpdate();
@@ -170,7 +203,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 
             if (!eventInfo.m_LoopSound)
             {
-                m_AudioSources[0].PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+                m_AudioSources[0]
+                    .PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
             }
             else
             {
@@ -181,7 +215,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
                 audioSource.loop = true;
                 audioSource.clip = eventInfo.m_SoundEffect;
                 audioSource.Play();
-                while (m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash) && audioSource.isPlaying)
+                while (
+                    m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash)
+                    && audioSource.isPlaying
+                )
                 {
                     yield return new WaitForFixedUpdate();
                 }
@@ -199,7 +236,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
                 if (audioSource && !audioSource.isPlaying)
                     return audioSource;
             }
-            Debug.LogWarning($"{name} doesn't have enough AudioSources to loop all desired sound effects. (Have {m_AudioSources.Length}, need at least 1 more)", gameObject);
+            Debug.LogWarning(
+                $"{name} doesn't have enough AudioSources to loop all desired sound effects. (Have {m_AudioSources.Length}, need at least 1 more)",
+                gameObject
+            );
             return null;
         }
 
@@ -221,7 +261,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             {
                 for (int i = 0; i < m_EventsOnNodeEntry.Length; ++i)
                 {
-                    m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash = Animator.StringToHash(m_EventsOnNodeEntry[i].m_AnimatorNodeName);
+                    m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash = Animator.StringToHash(
+                        m_EventsOnNodeEntry[i].m_AnimatorNodeName
+                    );
                 }
             }
 
@@ -230,9 +272,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
                 m_AudioSources = GetComponents<AudioSource>();
             }
         }
-
     }
-
 
 #if UNITY_EDITOR
     /// <summary>
@@ -245,6 +285,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
     public class AnimatorTriggeredSpecialFXEditor : UnityEditor.Editor
     {
         private GUIStyle m_ErrorStyle = null;
+
         public override void OnInspectorGUI()
         {
             // let Unity do all the normal Inspector stuff...
@@ -295,13 +336,21 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             if (!animator)
             {
                 // should be impossible because we explicitly RequireComponent the Animator
-                EditorUtility.DisplayDialog("Error", "No Animator found on this GameObject!?", "OK");
+                EditorUtility.DisplayDialog(
+                    "Error",
+                    "No Animator found on this GameObject!?",
+                    "OK"
+                );
                 return;
             }
             if (animator.runtimeAnimatorController == null)
             {
                 // perfectly normal user error: they haven't plugged a controller into the Animator
-                EditorUtility.DisplayDialog("Error", "The Animator does not have an AnimatorController in it!", "OK");
+                EditorUtility.DisplayDialog(
+                    "Error",
+                    "The Animator does not have an AnimatorController in it!",
+                    "OK"
+                );
                 return;
             }
 
@@ -311,13 +360,19 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             {
                 for (int j = i + 1; j < fx.m_EventsOnNodeEntry.Length; ++j)
                 {
-                    if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash
+                    if (
+                        fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash
+                            == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash
                         && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0
                         && fx.m_EventsOnNodeEntry[i].m_Prefab == fx.m_EventsOnNodeEntry[j].m_Prefab
-                        && fx.m_EventsOnNodeEntry[i].m_SoundEffect == fx.m_EventsOnNodeEntry[j].m_SoundEffect)
+                        && fx.m_EventsOnNodeEntry[i].m_SoundEffect
+                            == fx.m_EventsOnNodeEntry[j].m_SoundEffect
+                    )
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName}) and have the same prefab/sounds! This is probably a copy-paste error.");
+                        Debug.LogError(
+                            $"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName}) and have the same prefab/sounds! This is probably a copy-paste error."
+                        );
                     }
                 }
             }
@@ -326,7 +381,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             Dictionary<int, string> usedNames = new Dictionary<int, string>();
             for (int i = 0; i < fx.m_EventsOnNodeEntry.Length; ++i)
             {
-                usedNames[fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash] = $"{fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName} (EventsOnNodeEntry index {i})";
+                usedNames[fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash] =
+                    $"{fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName} (EventsOnNodeEntry index {i})";
             }
 
             int totalUsedNames = usedNames.Count;
@@ -350,11 +406,19 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 
             if (totalErrors == 0)
             {
-                EditorUtility.DisplayDialog("Success", $"All {totalUsedNames} referenced node names were found in the Animator. No errors found!", "OK!");
+                EditorUtility.DisplayDialog(
+                    "Success",
+                    $"All {totalUsedNames} referenced node names were found in the Animator. No errors found!",
+                    "OK!"
+                );
             }
             else
             {
-                EditorUtility.DisplayDialog("Errors", $"Found {totalErrors} errors. See the log in the Console tab for more information.", "OK");
+                EditorUtility.DisplayDialog(
+                    "Errors",
+                    $"Found {totalErrors} errors. See the log in the Console tab for more information.",
+                    "OK"
+                );
             }
         }
 
@@ -373,11 +437,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why
             // AnimatorController is in the UnityEditor namespace.) But this *isn't* runtime, so when we retrieve the
             // runtime controller, it will actually be a reference to our real AnimatorController.
-            AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
+            AnimatorController controller =
+                animator.runtimeAnimatorController as AnimatorController;
             if (controller == null)
             {
                 // if it's not an AnimatorController, it must be an AnimatorOverrideController (because those are currently the only two on-disk representations)
-                var overrideController = animator.runtimeAnimatorController as AnimatorOverrideController;
+                var overrideController =
+                    animator.runtimeAnimatorController as AnimatorOverrideController;
                 if (overrideController)
                 {
                     // override controllers are not allowed to be nested, so the thing it's overriding has to be our real AnimatorController
@@ -388,11 +454,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
             {
                 // It's neither of the two standard disk representations! ... it must be a new Unity feature or a custom variation
                 // Either way, we don't know how to get the real AnimatorController out of it, so we have to stop
-                throw new System.Exception($"Unrecognized class derived from RuntimeAnimatorController! {animator.runtimeAnimatorController.GetType().FullName}");
+                throw new System.Exception(
+                    $"Unrecognized class derived from RuntimeAnimatorController! {animator.runtimeAnimatorController.GetType().FullName}"
+                );
             }
             return controller;
         }
-
     }
 #endif
 }

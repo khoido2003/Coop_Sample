@@ -1,6 +1,6 @@
 using System;
-using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
+using Unity.BossRoom.Gameplay.Configuration;
 using UnityEngine;
 using UnityEngine.UI;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
@@ -19,28 +19,42 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         private TextMeshProUGUI m_WelcomeBanner;
+
         [SerializeField]
         private TextMeshProUGUI m_ClassLabel;
+
         [SerializeField]
         private GameObject m_HideWhenNoClassSelected;
+
         [SerializeField]
         private Image m_ClassBanner;
+
         [SerializeField]
         private Image m_Skill1;
+
         [SerializeField]
         private Image m_Skill2;
+
         [SerializeField]
         private Image m_Skill3;
+
         [SerializeField]
         private Image m_ReadyButtonImage;
+
         [SerializeField]
         private GameObject m_Checkmark;
+
         [SerializeField]
-        [Tooltip("Message shown in the char-select screen. {0} will be replaced with the player's seat number")]
+        [Tooltip(
+            "Message shown in the char-select screen. {0} will be replaced with the player's seat number"
+        )]
         [Multiline]
         private string m_WelcomeMsg = "Welcome, P{0}!";
+
         [SerializeField]
-        [Tooltip("Format of tooltips. {0} is skill name, {1} is skill description. Html-esque tags allowed!")]
+        [Tooltip(
+            "Format of tooltips. {0} is skill name, {1} is skill description. Html-esque tags allowed!"
+        )]
         [Multiline]
         private string m_TooltipFormat = "<b>{0}</b>\n\n{1}";
 
@@ -91,7 +105,13 @@ namespace Unity.BossRoom.Gameplay.UI
                 UITooltipDetector tooltipDetector = iconSlot.GetComponent<UITooltipDetector>();
                 if (tooltipDetector)
                 {
-                    tooltipDetector.SetText(string.Format(m_TooltipFormat, action.Config.DisplayedName, action.Config.Description));
+                    tooltipDetector.SetText(
+                        string.Format(
+                            m_TooltipFormat,
+                            action.Config.DisplayedName,
+                            action.Config.Description
+                        )
+                    );
                 }
             }
         }

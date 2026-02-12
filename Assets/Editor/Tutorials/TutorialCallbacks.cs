@@ -1,13 +1,16 @@
-using UnityEngine;
-using UnityEditor;
 using Unity.Tutorials.Core.Editor;
+using UnityEditor;
+using UnityEngine;
 
 namespace Unity.Netcode.Samples.BossRoom
 {
     /// <summary>
     /// Implement your Tutorial callbacks here.
     /// </summary>
-    [CreateAssetMenu(fileName = k_DefaultFileName, menuName = "Tutorials/" + k_DefaultFileName + " Instance")]
+    [CreateAssetMenu(
+        fileName = k_DefaultFileName,
+        menuName = "Tutorials/" + k_DefaultFileName + " Instance"
+    )]
     public class TutorialCallbacks : ScriptableObject
     {
         [SerializeField]
@@ -27,7 +30,9 @@ namespace Unity.Netcode.Samples.BossRoom
         /// <returns>The created asset</returns>
         public static ScriptableObject CreateAndShowAsset(string assetPath = null)
         {
-            assetPath = assetPath ?? $"{TutorialEditorUtils.GetActiveFolderPath()}/{k_DefaultFileName}.asset";
+            assetPath =
+                assetPath
+                ?? $"{TutorialEditorUtils.GetActiveFolderPath()}/{k_DefaultFileName}.asset";
             var asset = CreateInstance<TutorialCallbacks>();
             AssetDatabase.CreateAsset(asset, AssetDatabase.GenerateUniqueAssetPath(assetPath));
             EditorUtility.FocusProjectWindow(); // needed in order to make the selection of newly created asset to really work
@@ -57,7 +62,9 @@ namespace Unity.Netcode.Samples.BossRoom
 
         public void LoadStartupScene()
         {
-            UnityEditor.SceneManagement.EditorSceneManager.OpenScene(AssetDatabase.GetAssetPath(m_StartupScene));
+            UnityEditor.SceneManagement.EditorSceneManager.OpenScene(
+                AssetDatabase.GetAssetPath(m_StartupScene)
+            );
         }
     }
 }

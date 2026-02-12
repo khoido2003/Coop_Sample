@@ -11,14 +11,16 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// or, on listening servers for which scene management is enabled, using the NetworkSceneManager and handles
         /// the starting and stopping of the loading screen.
         /// </summary>
-
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
 
         [SerializeField]
         LoadingProgressManager m_LoadingProgressManager;
 
-        bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
+        bool IsNetworkSceneManagementEnabled =>
+            NetworkManager != null
+            && NetworkManager.SceneManager != null
+            && NetworkManager.NetworkConfig.EnableSceneManagement;
 
         bool m_IsInitialized;
 
@@ -94,11 +96,19 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="sceneName">Name or path of the Scene to load.</param>
         /// <param name="useNetworkSceneManager">If true, uses NetworkSceneManager, else uses SceneManager</param>
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
-        public virtual void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public virtual void LoadScene(
+            string sceneName,
+            bool useNetworkSceneManager,
+            LoadSceneMode loadSceneMode = LoadSceneMode.Single
+        )
         {
             if (useNetworkSceneManager)
             {
-                if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
+                if (
+                    IsSpawned
+                    && IsNetworkSceneManagementEnabled
+                    && !NetworkManager.ShutdownInProgress
+                )
                 {
                     if (NetworkManager.IsServer)
                     {
@@ -160,7 +170,10 @@ namespace Unity.Multiplayer.Samples.Utilities
                     // Only executes on client that is not the host
                     if (NetworkManager.IsClient && !NetworkManager.IsHost)
                     {
-                        if (NetworkManager.SceneManager.ClientSynchronizationMode == LoadSceneMode.Single)
+                        if (
+                            NetworkManager.SceneManager.ClientSynchronizationMode
+                            == LoadSceneMode.Single
+                        )
                         {
                             // If using the Single ClientSynchronizationMode, unload all currently loaded additive
                             // scenes. In this case, we want the client to only keep the same scenes loaded as the
@@ -180,7 +193,9 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (NetworkManager.IsServer)
                     {
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing, for example character spawning done server side should still be hidden by loading screen.
-                        ClientStopLoadingScreenRpc(RpcTarget.Group(new[] { sceneEvent.ClientId }, RpcTargetUse.Temp));
+                        ClientStopLoadingScreenRpc(
+                            RpcTarget.Group(new[] { sceneEvent.ClientId }, RpcTargetUse.Temp)
+                        );
                     }
                     break;
             }

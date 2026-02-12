@@ -21,9 +21,16 @@ namespace Unity.BossRoom.Gameplay.Actions
             serverCharacter.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
-            serverCharacter.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+            serverCharacter.ActionPlayer.CancelRunningActionsByLogic(
+                ActionLogic.Target,
+                true,
+                this
+            );
 
-            if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
+            if (Data.TargetIds == null || Data.TargetIds.Length == 0)
+            {
+                return false;
+            }
 
             serverCharacter.TargetId.Value = TargetId;
 
@@ -44,7 +51,11 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            if (clientCharacter.ActionPlayer.RunningActionCount == 1 && !clientCharacter.Movement.IsMoving() && isValid)
+            if (
+                clientCharacter.ActionPlayer.RunningActionCount == 1
+                && !clientCharacter.Movement.IsMoving()
+                && isValid
+            )
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
                 FaceTarget(clientCharacter, TargetId);
@@ -61,7 +72,10 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        private ulong TargetId { get { return Data.TargetIds[0]; } }
+        private ulong TargetId
+        {
+            get { return Data.TargetIds[0]; }
+        }
 
         /// <summary>
         /// Only call this after validating the target via IsValidTarget.
@@ -69,7 +83,12 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="targetId"></param>
         private void FaceTarget(ServerCharacter parent, ulong targetId)
         {
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetObject))
+            if (
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    targetId,
+                    out var targetObject
+                )
+            )
             {
                 Vector3 targetObjectPosition;
 
@@ -93,4 +112,3 @@ namespace Unity.BossRoom.Gameplay.Actions
         }
     }
 }
-

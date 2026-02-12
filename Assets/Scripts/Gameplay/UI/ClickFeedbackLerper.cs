@@ -21,7 +21,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Update()
         {
-            transform.position = m_PositionLerper.LerpPosition(transform.position, m_TargetPosition);
+            transform.position = m_PositionLerper.LerpPosition(
+                transform.position,
+                m_TargetPosition
+            );
         }
 
         public void SetTarget(Vector3 clientInputPosition)

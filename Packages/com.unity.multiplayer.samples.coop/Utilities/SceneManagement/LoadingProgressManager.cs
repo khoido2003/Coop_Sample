@@ -17,7 +17,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// Dictionary containing references to the NetworkedLoadingProgessTrackers that contain the loading progress of
         /// each client. Keys are ClientIds.
         /// </summary>
-        public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers { get; } = new Dictionary<ulong, NetworkedLoadingProgressTracker>();
+        public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers { get; } =
+            new Dictionary<ulong, NetworkedLoadingProgressTracker>();
 
         /// <summary>
         /// This is the AsyncOperation of the current load operation. This property should be set each time a new
@@ -50,10 +51,17 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         public float LocalProgress
         {
-            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ? ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
+            get =>
+                IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId)
+                    ? ProgressTrackers[NetworkManager.LocalClientId].Progress.Value
+                    : m_LocalProgress;
             private set
             {
-                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned)
+                if (
+                    IsSpawned
+                    && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId)
+                    && ProgressTrackers[NetworkManager.LocalClientId].IsSpawned
+                )
                 {
                     ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
                 }
@@ -105,7 +113,11 @@ namespace Unity.Multiplayer.Samples.Utilities
             if (!IsHost)
             {
                 ProgressTrackers.Clear();
-                foreach (var tracker in FindObjectsByType<NetworkedLoadingProgressTracker>(FindObjectsSortMode.None))
+                foreach (
+                    var tracker in FindObjectsByType<NetworkedLoadingProgressTracker>(
+                        FindObjectsSortMode.None
+                    )
+                )
                 {
                     // If a tracker is despawned but not destroyed yet, don't add it
                     if (tracker.IsSpawned)
@@ -122,7 +134,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             onTrackersUpdated?.Invoke();
         }
 
-        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        void OnConnectionEvent(
+            NetworkManager networkManager,
+            ConnectionEventData connectionEventData
+        )
         {
             if (IsServer)
             {
@@ -149,7 +164,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var tracker = Instantiate(m_ProgressTrackerPrefab);
                 var networkObject = tracker.GetComponent<NetworkObject>();
                 networkObject.SpawnWithOwnership(clientId);
-                ProgressTrackers[clientId] = tracker.GetComponent<NetworkedLoadingProgressTracker>();
+                ProgressTrackers[clientId] =
+                    tracker.GetComponent<NetworkedLoadingProgressTracker>();
                 ClientUpdateTrackersRpc();
             }
         }

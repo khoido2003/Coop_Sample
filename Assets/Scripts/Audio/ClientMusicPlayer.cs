@@ -46,7 +46,10 @@ namespace Unity.BossRoom.Audio
             if (m_source.isPlaying)
             {
                 // if we dont want to restart the clip, do nothing if it is playing
-                if (!restart && m_source.clip == clip) { return; }
+                if (!restart && m_source.clip == clip)
+                {
+                    return;
+                }
                 m_source.Stop();
             }
             m_source.clip = clip;

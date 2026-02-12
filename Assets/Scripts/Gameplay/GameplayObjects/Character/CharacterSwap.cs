@@ -68,12 +68,17 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             private void AddRenderer(ref List<Renderer> rendererList, GameObject bodypartGO)
             {
-                if (!bodypartGO) { return; }
+                if (!bodypartGO)
+                {
+                    return;
+                }
                 var bodyPartRenderer = bodypartGO.GetComponent<Renderer>();
-                if (!bodyPartRenderer) { return; }
+                if (!bodyPartRenderer)
+                {
+                    return;
+                }
                 rendererList.Add(bodyPartRenderer);
             }
-
         }
 
         [SerializeField]
@@ -113,7 +118,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// When we swap all our Materials out for a special material,
         /// we keep the old references here, so we can swap them back.
         /// </summary>
-        private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
+        private Dictionary<Renderer, Material> m_OriginalMaterials =
+            new Dictionary<Renderer, Material>();
 
         ClientCharacter m_ClientCharacter;
 

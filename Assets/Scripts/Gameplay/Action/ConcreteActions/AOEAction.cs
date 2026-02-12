@@ -20,10 +20,12 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         bool m_DidAoE;
 
-
         public override bool OnStart(ServerCharacter serverCharacter)
         {
-            float distanceAway = Vector3.Distance(serverCharacter.physicsWrapper.Transform.position, Data.Position);
+            float distanceAway = Vector3.Distance(
+                serverCharacter.physicsWrapper.Transform.position,
+                Data.Position
+            );
             if (distanceAway > Config.Range + k_MaxDistanceDivergence)
             {
                 // Due to latency, it's possible for the client side click check to be out of date with the server driven position. Doing a final check server side to make sure.
@@ -62,7 +64,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             // Note: could have a non alloc version of this overlap sphere where we statically store our collider array, but since this is a self
             // destroyed object, the complexity added to have a static pool of colliders that could be called by multiplayer players at the same time
             // doesn't seem worth it for now.
-            var colliders = Physics.OverlapSphere(m_Data.Position, Config.Radius, LayerMask.GetMask("NPCs"));
+            var colliders = Physics.OverlapSphere(
+                m_Data.Position,
+                Config.Radius,
+                LayerMask.GetMask("NPCs")
+            );
             for (var i = 0; i < colliders.Length; i++)
             {
                 var enemy = colliders[i].GetComponent<IDamageable>();

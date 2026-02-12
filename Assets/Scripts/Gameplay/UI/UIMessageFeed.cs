@@ -55,7 +55,9 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void OnDoorStateChangedEvent(DoorStateChangedEventMessage eventMessage)
         {
-            DisplayMessage(eventMessage.IsDoorOpen ? "The Door has been opened!" : "The Door is closing.");
+            DisplayMessage(
+                eventMessage.IsDoorOpen ? "The Door has been opened!" : "The Door is closing."
+            );
         }
 
         void OnConnectionEvent(ConnectionEventMessage eventMessage)
@@ -129,6 +131,5 @@ namespace Unity.BossRoom.Gameplay.UI
                 m_Subscriptions.Dispose();
             }
         }
-
     }
 }

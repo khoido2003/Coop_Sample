@@ -36,7 +36,9 @@ namespace Unity.BossRoom.Gameplay.Configuration
         [Tooltip("Set to true if this represents an NPC, as opposed to a player.")]
         public bool IsNpc;
 
-        [Tooltip("For NPCs, this will be used as the aggro radius at which enemies wake up and attack the player")]
+        [Tooltip(
+            "For NPCs, this will be used as the aggro radius at which enemies wake up and attack the player"
+        )]
         public float DetectRange;
 
         [Tooltip("For players, this is the displayed \"class name\". (Not used for monsters)")]

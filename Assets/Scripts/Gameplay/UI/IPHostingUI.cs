@@ -7,8 +7,11 @@ namespace Unity.BossRoom.Gameplay.UI
 {
     public class IPHostingUI : MonoBehaviour
     {
-        [SerializeField] InputField m_IPInputField;
-        [SerializeField] InputField m_PortInputField;
+        [SerializeField]
+        InputField m_IPInputField;
+
+        [SerializeField]
+        InputField m_PortInputField;
 
         [SerializeField]
         CanvasGroup m_CanvasGroup;
@@ -16,7 +19,8 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         Button m_HostButton;
 
-        [Inject] IPUIMediator m_IPUIMediator;
+        [Inject]
+        IPUIMediator m_IPUIMediator;
 
         void Awake()
         {
@@ -47,7 +51,10 @@ namespace Unity.BossRoom.Gameplay.UI
         public void SanitizeIPInputText()
         {
             m_IPInputField.text = IPUIMediator.SanitizeIP(m_IPInputField.text);
-            m_HostButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
+            m_HostButton.interactable = IPUIMediator.AreIpAddressAndPortValid(
+                m_IPInputField.text,
+                m_PortInputField.text
+            );
         }
 
         /// <summary>
@@ -56,7 +63,10 @@ namespace Unity.BossRoom.Gameplay.UI
         public void SanitizePortText()
         {
             m_PortInputField.text = IPUIMediator.SanitizePort(m_PortInputField.text);
-            m_HostButton.interactable = IPUIMediator.AreIpAddressAndPortValid(m_IPInputField.text, m_PortInputField.text);
+            m_HostButton.interactable = IPUIMediator.AreIpAddressAndPortValid(
+                m_IPInputField.text,
+                m_PortInputField.text
+            );
         }
     }
 }

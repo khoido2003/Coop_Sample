@@ -16,14 +16,19 @@ namespace Unity.BossRoom.UnityServices.Sessions
     {
         [Inject]
         LifetimeScope m_ParentScope;
+
         [Inject]
         UpdateRunner m_UpdateRunner;
+
         [Inject]
         LocalSession m_LocalSession;
+
         [Inject]
         LocalSessionUser m_LocalUser;
+
         [Inject]
         IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+
         [Inject]
         IPublisher<SessionListFetchedMessage> m_SessionListFetchedPub;
 
@@ -46,7 +51,8 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 builder.Register<MultiplayerServicesInterface>(Lifetime.Singleton);
             });
 
-            m_MultiplayerServicesInterface = m_ServiceScope.Container.Resolve<MultiplayerServicesInterface>();
+            m_MultiplayerServicesInterface =
+                m_ServiceScope.Container.Resolve<MultiplayerServicesInterface>();
 
             //See https://docs.unity.com/ugs/manual/lobby/manual/rate-limits
             m_RateLimitQuery = new RateLimitCooldown(1f);
@@ -110,7 +116,11 @@ namespace Unity.BossRoom.UnityServices.Sessions
         /// <summary>
         /// Attempt to create a new session and then join it.
         /// </summary>
-        public async Task<(bool Success, ISession Session)> TryCreateSessionAsync(string sessionName, int maxPlayers, bool isPrivate)
+        public async Task<(bool Success, ISession Session)> TryCreateSessionAsync(
+            string sessionName,
+            int maxPlayers,
+            bool isPrivate
+        )
         {
             if (!m_RateLimitHost.CanCall)
             {
@@ -120,11 +130,13 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.CreateSession(sessionName,
+                var session = await m_MultiplayerServicesInterface.CreateSession(
+                    sessionName,
                     maxPlayers,
                     isPrivate,
                     m_LocalUser.GetDataForUnityServices(),
-                    null);
+                    null
+                );
                 return (true, session);
             }
             catch (Exception e)
@@ -138,7 +150,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         /// <summary>
         /// Attempt to join an existing session with a join code.
         /// </summary>
-        public async Task<(bool Success, ISession Session)> TryJoinSessionByCodeAsync(string sessionCode)
+        public async Task<(bool Success, ISession Session)> TryJoinSessionByCodeAsync(
+            string sessionCode
+        )
         {
             if (!m_RateLimitJoin.CanCall)
             {
@@ -156,7 +170,10 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.JoinSessionByCode(sessionCode, m_LocalUser.GetDataForUnityServices());
+                var session = await m_MultiplayerServicesInterface.JoinSessionByCode(
+                    sessionCode,
+                    m_LocalUser.GetDataForUnityServices()
+                );
                 return (true, session);
             }
             catch (Exception e)
@@ -170,7 +187,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         /// <summary>
         /// Attempt to join an existing session by name.
         /// </summary>
-        public async Task<(bool Success, ISession Session)> TryJoinSessionByNameAsync(string sessionName)
+        public async Task<(bool Success, ISession Session)> TryJoinSessionByNameAsync(
+            string sessionName
+        )
         {
             if (!m_RateLimitJoin.CanCall)
             {
@@ -188,7 +207,10 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.JoinSessionById(sessionName, m_LocalUser.GetDataForUnityServices());
+                var session = await m_MultiplayerServicesInterface.JoinSessionById(
+                    sessionName,
+                    m_LocalUser.GetDataForUnityServices()
+                );
                 return (true, session);
             }
             catch (Exception e)
@@ -212,7 +234,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
 
             try
             {
-                var session = await m_MultiplayerServicesInterface.QuickJoinSession(m_LocalUser.GetDataForUnityServices());
+                var session = await m_MultiplayerServicesInterface.QuickJoinSession(
+                    m_LocalUser.GetDataForUnityServices()
+                );
                 return (true, session);
             }
             catch (Exception e)
@@ -271,7 +295,13 @@ namespace Unity.BossRoom.UnityServices.Sessions
                     }
                 }
 
-                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the session", "Disconnecting.", UnityServiceErrorMessage.Service.Session));
+                m_UnityServiceErrorMessagePub.Publish(
+                    new UnityServiceErrorMessage(
+                        "Host left the session",
+                        "Disconnecting.",
+                        UnityServiceErrorMessage.Service.Session
+                    )
+                );
                 EndTracking();
 
                 // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
@@ -339,14 +369,18 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             if (!m_RateLimitQuery.CanCall)
             {
-                Debug.LogWarning("Retrieving the session list hit the rate limit. Will try again soon...");
+                Debug.LogWarning(
+                    "Retrieving the session list hit the rate limit. Will try again soon..."
+                );
                 return;
             }
 
             try
             {
                 var queryResults = await m_MultiplayerServicesInterface.QuerySessions();
-                m_SessionListFetchedPub.Publish(new SessionListFetchedMessage(queryResults.Sessions));
+                m_SessionListFetchedPub.Publish(
+                    new SessionListFetchedMessage(queryResults.Sessions)
+                );
             }
             catch (Exception e)
             {
@@ -358,7 +392,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             try
             {
-                return await m_MultiplayerServicesInterface.ReconnectToSession(m_LocalSession.SessionID);
+                return await m_MultiplayerServicesInterface.ReconnectToSession(
+                    m_LocalSession.SessionID
+                );
             }
             catch (Exception e)
             {
@@ -433,13 +469,27 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             if (e is not AggregateException aggregateException)
             {
-                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
+                m_UnityServiceErrorMessagePub.Publish(
+                    new UnityServiceErrorMessage(
+                        "Session Error",
+                        e.Message,
+                        UnityServiceErrorMessage.Service.Session,
+                        e
+                    )
+                );
                 return;
             }
 
             if (aggregateException.InnerException is not SessionException sessionException)
             {
-                m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", e.Message, UnityServiceErrorMessage.Service.Session, e));
+                m_UnityServiceErrorMessagePub.Publish(
+                    new UnityServiceErrorMessage(
+                        "Session Error",
+                        e.Message,
+                        UnityServiceErrorMessage.Service.Session,
+                        e
+                    )
+                );
                 return;
             }
 
@@ -458,8 +508,16 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 return;
             }
 
-            var reason = e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})"; // Session error type, then HTTP error type.
-            m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Session Error", reason, UnityServiceErrorMessage.Service.Session, e));
+            var reason =
+                e.InnerException == null ? e.Message : $"{e.Message} ({e.InnerException.Message})"; // Session error type, then HTTP error type.
+            m_UnityServiceErrorMessagePub.Publish(
+                new UnityServiceErrorMessage(
+                    "Session Error",
+                    reason,
+                    UnityServiceErrorMessage.Service.Session,
+                    e
+                )
+            );
         }
     }
 }

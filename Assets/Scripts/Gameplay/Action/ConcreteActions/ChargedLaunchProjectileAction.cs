@@ -19,7 +19,6 @@ namespace Unity.BossRoom.Gameplay.Actions
     /// Projectiles array should contain each tier of projectile, sorted from weakest to strongest.
     ///
     /// </remarks>
-
     [CreateAssetMenu(menuName = "BossRoom/Actions/Charged Launch Projectile Action")]
     public partial class ChargedLaunchProjectileAction : LaunchProjectileAction
     {
@@ -42,11 +41,15 @@ namespace Unity.BossRoom.Gameplay.Actions
             // (But if the player just clicked on an attack button, there won't be an explicit target, so we should stay facing however we're facing.)
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[
+                    m_Data.TargetIds[0]
+                ];
                 if (initialTarget)
                 {
                     // face our target
-                    serverCharacter.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    serverCharacter.physicsWrapper.Transform.LookAt(
+                        initialTarget.transform.position
+                    );
                 }
             }
 
@@ -56,12 +59,24 @@ namespace Unity.BossRoom.Gameplay.Actions
             serverCharacter.clientCharacter.ClientPlayActionRpc(Data);
 
             // sanity-check our data a bit
-            Debug.Assert(Config.Projectiles.Length > 1, $"Action {name} has {Config.Projectiles.Length} Projectiles. Expected at least 2!");
+            Debug.Assert(
+                Config.Projectiles.Length > 1,
+                $"Action {name} has {Config.Projectiles.Length} Projectiles. Expected at least 2!"
+            );
             foreach (var projectileInfo in Config.Projectiles)
             {
-                Debug.Assert(projectileInfo.ProjectilePrefab, $"Action {name}: one of the Projectiles is missing its prefab!");
-                Debug.Assert(projectileInfo.Range > 0, $"Action {name}: one of the Projectiles has invalid Range!");
-                Debug.Assert(projectileInfo.Speed_m_s > 0, $"Action {name}: one of the Projectiles has invalid Speed_m_s!");
+                Debug.Assert(
+                    projectileInfo.ProjectilePrefab,
+                    $"Action {name}: one of the Projectiles is missing its prefab!"
+                );
+                Debug.Assert(
+                    projectileInfo.Range > 0,
+                    $"Action {name}: one of the Projectiles has invalid Range!"
+                );
+                Debug.Assert(
+                    projectileInfo.Speed_m_s > 0,
+                    $"Action {name}: one of the Projectiles has invalid Speed_m_s!"
+                );
             }
             return true;
         }
@@ -87,7 +102,10 @@ namespace Unity.BossRoom.Gameplay.Actions
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType)
+        public override void OnGameplayActivity(
+            ServerCharacter serverCharacter,
+            GameplayActivity activityType
+        )
         {
             if (activityType == GameplayActivity.AttackedByEnemy)
             {
@@ -132,7 +150,12 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         private float GetPercentChargedUp()
         {
-            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(
+                m_StoppedChargingUpTime,
+                TimeRunning,
+                TimeStarted,
+                Config.ExecTimeSeconds
+            );
         }
 
         /// <summary>

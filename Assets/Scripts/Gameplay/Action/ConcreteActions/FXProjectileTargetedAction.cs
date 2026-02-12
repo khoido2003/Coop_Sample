@@ -13,7 +13,6 @@ namespace Unity.BossRoom.Gameplay.Actions
     /// (If no target is provided (because the user clicked on an empty spot on the map) or if the caster doesn't have line of
     /// sight to the target (because it's behind a wall), we still perform an action, it just hits nothing.
     /// </summary>
-
     [CreateAssetMenu(menuName = "BossRoom/Actions/FX Projectile Targeted Action")]
     public partial class FXProjectileTargetedAction : Action
     {
@@ -26,10 +25,19 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_DamageableTarget = GetDamageableTarget(serverCharacter);
 
             // figure out where the player wants us to aim at...
-            Vector3 targetPos = m_DamageableTarget != null ? m_DamageableTarget.transform.position : m_Data.Position;
+            Vector3 targetPos =
+                m_DamageableTarget != null
+                    ? m_DamageableTarget.transform.position
+                    : m_Data.Position;
 
             // then make sure we can actually see that point!
-            if (!ActionUtils.HasLineOfSight(serverCharacter.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
+            if (
+                !ActionUtils.HasLineOfSight(
+                    serverCharacter.physicsWrapper.Transform.position,
+                    targetPos,
+                    out Vector3 collidePos
+                )
+            )
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 m_DamageableTarget = null;
@@ -44,8 +52,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             serverCharacter.physicsWrapper.Transform.LookAt(targetPos);
 
             // figure out how long the pretend-projectile will be flying to the target
-            float distanceToTargetPos = Vector3.Distance(targetPos, serverCharacter.physicsWrapper.Transform.position);
-            m_TimeUntilImpact = Config.ExecTimeSeconds + (distanceToTargetPos / Config.Projectiles[0].Speed_m_s);
+            float distanceToTargetPos = Vector3.Distance(
+                targetPos,
+                serverCharacter.physicsWrapper.Transform.position
+            );
+            m_TimeUntilImpact =
+                Config.ExecTimeSeconds + (distanceToTargetPos / Config.Projectiles[0].Speed_m_s);
 
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             // tell clients to visualize this action
@@ -74,7 +86,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                 m_ImpactedTarget = true;
                 if (m_DamageableTarget != null)
                 {
-                    m_DamageableTarget.ReceiveHitPoints(clientCharacter, -Config.Projectiles[0].Damage);
+                    m_DamageableTarget.ReceiveHitPoints(
+                        clientCharacter,
+                        -Config.Projectiles[0].Damage
+                    );
                 }
             }
             return true;
@@ -99,7 +114,13 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             NetworkObject obj;
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    Data.TargetIds[0],
+                    out obj
+                )
+                && obj != null
+            )
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var serverChar = obj.GetComponent<ServerCharacter>();
@@ -121,7 +142,9 @@ namespace Unity.BossRoom.Gameplay.Actions
             else
             {
                 // target could have legitimately disappeared in the time it took to queue this action... but that's pretty unlikely, so we'll log about it to ease debugging
-                Debug.Log($"FXProjectileTargetedAction was targeted at ID {Data.TargetIds[0]}, but that target can't be found in spawned object list! (May have just been deleted?)");
+                Debug.Log(
+                    $"FXProjectileTargetedAction was targeted at ID {Data.TargetIds[0]}, but that target can't be found in spawned object list! (May have just been deleted?)"
+                );
                 return null;
             }
         }

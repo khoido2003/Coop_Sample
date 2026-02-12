@@ -38,7 +38,8 @@ namespace Unity.BossRoom.Gameplay.UI
                 {
                     PopupManager.ShowPopupPanel(
                         "Authentication Error",
-                        $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
+                        $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option."
+                    );
                     break;
                 }
                 default:
@@ -51,18 +52,32 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void HandleSessionError(UnityServiceErrorMessage error)
         {
-            if (error.OriginalException is AggregateException { InnerException: SessionException sessionException })
+            if (
+                error.OriginalException is AggregateException
+                {
+                    InnerException: SessionException sessionException
+                }
+            )
             {
                 switch (sessionException.Error)
                 {
                     case SessionError.SessionNotFound:
-                        PopupManager.ShowPopupPanel("Session Not Found", "Requested Session not found. The join code is incorrect or the Session has ended.");
+                        PopupManager.ShowPopupPanel(
+                            "Session Not Found",
+                            "Requested Session not found. The join code is incorrect or the Session has ended."
+                        );
                         break;
                     case SessionError.NotAuthorized:
-                        PopupManager.ShowPopupPanel("Session error", "Received HTTP error 401 Unauthorized from Session Service.");
+                        PopupManager.ShowPopupPanel(
+                            "Session error",
+                            "Received HTTP error 401 Unauthorized from Session Service."
+                        );
                         break;
                     case SessionError.MatchmakerAssignmentTimeout: // this can happen when using quick join
-                        PopupManager.ShowPopupPanel("Session error", "Received HTTP error 408 Request timed out from Session Service.");
+                        PopupManager.ShowPopupPanel(
+                            "Session error",
+                            "Received HTTP error 408 Request timed out from Session Service."
+                        );
                         break;
                     case SessionError.Unknown:
                     default:

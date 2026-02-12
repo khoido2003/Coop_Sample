@@ -1,7 +1,7 @@
 using System;
-using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.UserInput;
 using Unity.Netcode;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -20,7 +20,8 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             base.OnStartClient(clientCharacter);
             clientCharacter.serverCharacter.TargetId.OnValueChanged += OnTargetChanged;
-            clientCharacter.serverCharacter.GetComponent<ClientInputSender>().ActionInputEvent += OnActionInput;
+            clientCharacter.serverCharacter.GetComponent<ClientInputSender>().ActionInputEvent +=
+                OnActionInput;
 
             return true;
         }
@@ -36,23 +37,36 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 m_CurrentTarget = m_NewTarget;
 
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject))
+                if (
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                        m_CurrentTarget,
+                        out NetworkObject targetObject
+                    )
+                )
                 {
-                    var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
+                    var targetEntity =
+                        targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
                     if (targetEntity != null)
                     {
                         ValidateReticule(clientCharacter, targetObject);
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if (targetObject.TryGetComponent(out ServerCharacter serverCharacter) && serverCharacter.clientCharacter)
+                        if (
+                            targetObject.TryGetComponent(out ServerCharacter serverCharacter)
+                            && serverCharacter.clientCharacter
+                        )
                         {
                             //for characters, attach the reticule to the child graphics object.
                             parentTransform = serverCharacter.clientCharacter.transform;
                         }
 
                         m_TargetReticule.transform.parent = parentTransform;
-                        m_TargetReticule.transform.localPosition = new Vector3(0, k_ReticuleGroundHeight, 0);
+                        m_TargetReticule.transform.localPosition = new Vector3(
+                            0,
+                            k_ReticuleGroundHeight,
+                            0
+                        );
                     }
                 }
                 else
@@ -84,7 +98,9 @@ namespace Unity.BossRoom.Gameplay.Actions
             bool myself_isnpc = parent.serverCharacter.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
-            m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? parent.ReticuleHostileMat : parent.ReticuleFriendlyMat;
+            m_TargetReticule.GetComponent<MeshRenderer>().material = hostile
+                ? parent.ReticuleHostileMat
+                : parent.ReticuleFriendlyMat;
         }
 
         public override void CancelClient(ClientCharacter clientCharacter)

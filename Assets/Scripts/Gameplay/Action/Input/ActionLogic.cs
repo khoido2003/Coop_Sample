@@ -24,6 +24,6 @@ namespace Unity.BossRoom.Gameplay.Actions
         DashAttack,
         ImpToss,
         PickUp,
-        Drop
+        Drop,
     }
 }

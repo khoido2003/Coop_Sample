@@ -11,6 +11,7 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         TextMeshProUGUI m_RoomNameText;
+
         [SerializeField]
         Button m_CopyToClipboardButton;
 

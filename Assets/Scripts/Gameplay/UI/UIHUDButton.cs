@@ -26,7 +26,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public override void OnPointerDown(PointerEventData eventData)
         {
-            if (!IsInteractable()) { return; }
+            if (!IsInteractable())
+            {
+                return;
+            }
             base.OnPointerDown(eventData);
             transform.localScale = k_DownScale;
             OnPointerDownEvent?.Invoke();
@@ -34,11 +37,13 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public override void OnPointerUp(PointerEventData eventData)
         {
-            if (!IsInteractable()) { return; }
+            if (!IsInteractable())
+            {
+                return;
+            }
             base.OnPointerUp(eventData);
             transform.localScale = Vector3.one;
             OnPointerUpEvent?.Invoke();
         }
     }
 }
-

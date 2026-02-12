@@ -20,7 +20,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         IntVariable m_MaxHealth;
 
         [SerializeField]
-        [Tooltip("If this breakable will have hit points, add a NetworkHealthState component to this GameObject")]
+        [Tooltip(
+            "If this breakable will have hit points, add a NetworkHealthState component to this GameObject"
+        )]
         NetworkHealthState m_NetworkHealthState;
 
         [SerializeField]
@@ -35,11 +37,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         GameObject m_BrokenPrefab;
 
         [SerializeField]
-        [Tooltip("If set, will be used instead of BrokenPrefab when new players join, skipping transition effects.")]
+        [Tooltip(
+            "If set, will be used instead of BrokenPrefab when new players join, skipping transition effects."
+        )]
         GameObject m_PrebrokenPrefab;
 
         [SerializeField]
-        [Tooltip("We use this transform's position and rotation when creating the prefab. (Defaults to self)")]
+        [Tooltip(
+            "We use this transform's position and rotation when creating the prefab. (Defaults to self)"
+        )]
         Transform m_BrokenPrefabPos;
 
         [SerializeField]
@@ -96,7 +102,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 if (inflicter && !inflicter.IsNpc)
                 {
-                    bool isNotDamagedByPlayers = (GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.NotDamagedByPlayers) == IDamageable.SpecialDamageFlags.NotDamagedByPlayers;
+                    bool isNotDamagedByPlayers =
+                        (
+                            GetSpecialDamageFlags()
+                            & IDamageable.SpecialDamageFlags.NotDamagedByPlayers
+                        ) == IDamageable.SpecialDamageFlags.NotDamagedByPlayers;
                     if (isNotDamagedByPlayers)
                     {
                         // a player tried to damage us, but we are immune to player damage!
@@ -106,8 +116,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
                 if (m_NetworkHealthState && m_MaxHealth)
                 {
-                    m_NetworkHealthState.HitPoints.Value =
-                        Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + hitPoints, 0, m_MaxHealth.Value);
+                    m_NetworkHealthState.HitPoints.Value = Mathf.Clamp(
+                        m_NetworkHealthState.HitPoints.Value + hitPoints,
+                        0,
+                        m_MaxHealth.Value
+                    );
                 }
             }
         }
@@ -172,10 +185,16 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             if (m_CurrentBrokenVisualization)
                 Destroy(m_CurrentBrokenVisualization); // just a safety check, should be null when we get here
 
-            GameObject brokenPrefab = (onStart && m_PrebrokenPrefab != null) ? m_PrebrokenPrefab : m_BrokenPrefab;
+            GameObject brokenPrefab =
+                (onStart && m_PrebrokenPrefab != null) ? m_PrebrokenPrefab : m_BrokenPrefab;
             if (brokenPrefab)
             {
-                m_CurrentBrokenVisualization = Instantiate(brokenPrefab, m_BrokenPrefabPos.position, m_BrokenPrefabPos.rotation, transform);
+                m_CurrentBrokenVisualization = Instantiate(
+                    brokenPrefab,
+                    m_BrokenPrefabPos.position,
+                    m_BrokenPrefabPos.rotation,
+                    transform
+                );
             }
         }
 

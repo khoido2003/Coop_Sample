@@ -17,9 +17,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
             return m_Brain.GetHatedEnemies().Count == 0;
         }
 
-        public override void Initialize()
-        {
-        }
+        public override void Initialize() { }
 
         public override void Update()
         {
@@ -37,7 +35,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
             // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the players to see if any are nearby
             foreach (var character in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (m_Brain.IsAppropriateFoe(character) && (character.physicsWrapper.Transform.position - position).sqrMagnitude <= detectionRangeSqr)
+                if (
+                    m_Brain.IsAppropriateFoe(character)
+                    && (character.physicsWrapper.Transform.position - position).sqrMagnitude
+                        <= detectionRangeSqr
+                )
                 {
                     m_Brain.Hate(character);
                 }

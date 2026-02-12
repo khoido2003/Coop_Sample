@@ -19,7 +19,10 @@ namespace Unity.BossRoom.CameraUtils
             Assert.IsNotNull(cinemachineCameraGameObject);
 
             var cinemachineCamera = cinemachineCameraGameObject.GetComponent<CinemachineCamera>();
-            Assert.IsNotNull(cinemachineCamera, "CameraController.AttachCamera: Couldn't find gameplay CinemachineCamera");
+            Assert.IsNotNull(
+                cinemachineCamera,
+                "CameraController.AttachCamera: Couldn't find gameplay CinemachineCamera"
+            );
 
             if (cinemachineCamera != null)
             {
@@ -28,8 +31,12 @@ namespace Unity.BossRoom.CameraUtils
                 cinemachineCamera.LookAt = transform;
             }
 
-            var cinemachineOrbitalFollow = cinemachineCameraGameObject.GetComponent<CinemachineOrbitalFollow>();
-            Assert.IsNotNull(cinemachineOrbitalFollow, "CameraController.AttachCamera: Couldn't find gameplay CinemachineOrbitalFollow");
+            var cinemachineOrbitalFollow =
+                cinemachineCameraGameObject.GetComponent<CinemachineOrbitalFollow>();
+            Assert.IsNotNull(
+                cinemachineOrbitalFollow,
+                "CameraController.AttachCamera: Couldn't find gameplay CinemachineOrbitalFollow"
+            );
 
             if (cinemachineOrbitalFollow != null)
             {

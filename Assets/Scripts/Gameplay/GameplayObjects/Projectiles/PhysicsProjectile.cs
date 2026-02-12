@@ -39,8 +39,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         /// </summary>
         float m_DestroyAtSec;
 
-        int m_CollisionMask;  //mask containing everything we test for while moving
-        int m_BlockerMask;    //physics mask for things that block the arrow's flight.
+        int m_CollisionMask; //mask containing everything we test for while moving
+        int m_BlockerMask; //physics mask for things that block the arrow's flight.
         int m_NpcLayer;
 
         /// <summary>
@@ -59,7 +59,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         bool m_IsDead;
 
         [SerializeField]
-        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
+        [Tooltip(
+            "Explosion prefab used when projectile hits enemy. This should have a fixed duration."
+        )]
         SpecialFXGraphic m_OnHitParticlePrefab;
 
         [SerializeField]
@@ -91,7 +93,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 m_HitTargets = new List<GameObject>();
                 m_IsDead = false;
 
-                m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
+                m_DestroyAtSec =
+                    Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
                 m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Environment" });
                 m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Environment" });
@@ -107,7 +110,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 m_PositionLerper = new PositionLerper(transform.position, k_LerpTime);
                 m_Visualization.transform.rotation = transform.rotation;
             }
-
         }
 
         public override void OnNetworkDespawn()
@@ -116,7 +118,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 m_Started = false;
             }
-
 
             if (IsClient)
             {
@@ -140,7 +141,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 return;
             }
 
-            var displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
+            var displacement =
+                transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
             transform.position += displacement;
 
             if (!m_IsDead)
@@ -162,21 +164,27 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
                 if (IsHost)
                 {
-                    m_Visualization.position = m_PositionLerper.LerpPosition(m_Visualization.position,
-                        transform.position);
+                    m_Visualization.position = m_PositionLerper.LerpPosition(
+                        m_Visualization.position,
+                        transform.position
+                    );
                 }
                 else
                 {
                     m_Visualization.position = transform.position;
                 }
             }
-
         }
 
         void DetectCollisions()
         {
             var position = transform.localToWorldMatrix.MultiplyPoint(m_OurCollider.center);
-            var numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache, m_CollisionMask);
+            var numCollisions = Physics.OverlapSphereNonAlloc(
+                position,
+                m_OurCollider.radius,
+                m_CollisionCache,
+                m_CollisionMask
+            );
             for (int i = 0; i < numCollisions; i++)
             {
                 int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
@@ -189,7 +197,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     return;
                 }
 
-                if (m_CollisionCache[i].gameObject.layer == m_NpcLayer && !m_HitTargets.Contains(m_CollisionCache[i].gameObject))
+                if (
+                    m_CollisionCache[i].gameObject.layer == m_NpcLayer
+                    && !m_HitTargets.Contains(m_CollisionCache[i].gameObject)
+                )
                 {
                     m_HitTargets.Add(m_CollisionCache[i].gameObject);
 
@@ -207,8 +218,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                         ClientHitEnemyRpc(targetNetObj.NetworkObjectId);
 
                         //retrieve the person that created us, if he's still around.
-                        NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out var spawnerNet);
-                        var spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
+                        NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                            m_SpawnerId,
+                            out var spawnerNet
+                        );
+                        var spawnerObj =
+                            spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
                         if (m_CollisionCache[i].TryGetComponent(out IDamageable damageable))
                         {
@@ -231,12 +246,21 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
 
             NetworkObject targetNetObject;
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
+            if (
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    enemyId,
+                    out targetNetObject
+                )
+            )
             {
                 if (m_OnHitParticlePrefab)
                 {
                     // show an impact graphic
-                    Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
+                    Instantiate(
+                        m_OnHitParticlePrefab.gameObject,
+                        transform.position,
+                        transform.rotation
+                    );
                 }
             }
         }

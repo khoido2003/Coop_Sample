@@ -21,7 +21,10 @@ namespace Unity.BossRoom.Gameplay.GameState
         NetworkPostGame networkPostGame;
         public NetworkPostGame NetworkPostGame => networkPostGame;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        public override GameState ActiveState
+        {
+            get { return GameState.PostGame; }
+        }
 
         [Inject]
         ConnectionManager m_ConnectionManager;

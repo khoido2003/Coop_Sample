@@ -10,6 +10,7 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         Color[] m_TintColors;
         Image m_Image;
+
         void Awake()
         {
             m_Image = GetComponent<Image>();

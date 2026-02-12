@@ -20,7 +20,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
     public class BossDeathHelmetHandler : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("The transform of the boss's helmet, which will become de-parented when the boss is defeated")]
+        [Tooltip(
+            "The transform of the boss's helmet, which will become de-parented when the boss is defeated"
+        )]
         Transform m_HelmetTransform;
 
         bool m_HasDeparentedHelmet;
@@ -42,6 +44,5 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
                 Destroy(m_HelmetTransform.gameObject);
             }
         }
-
     }
 }

@@ -113,7 +113,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     {
                         if (m_CharacterDataMap.ContainsKey(data.CharacterType))
                         {
-                            throw new System.Exception($"Duplicate character definition detected: {data.CharacterType}");
+                            throw new System.Exception(
+                                $"Duplicate character definition detected: {data.CharacterType}"
+                            );
                         }
                         m_CharacterDataMap[data.CharacterType] = data;
                     }

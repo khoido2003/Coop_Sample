@@ -16,12 +16,16 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         SessionListItemUI m_SessionListItemPrototype;
+
         [SerializeField]
         InputField m_JoinCodeField;
+
         [SerializeField]
         CanvasGroup m_CanvasGroup;
+
         [SerializeField]
         Graphic m_EmptySessionListLabel;
+
         [SerializeField]
         Button m_JoinSessionButton;
 
@@ -58,7 +62,8 @@ namespace Unity.BossRoom.Gameplay.UI
             IObjectResolver container,
             SessionUIMediator sessionUIMediator,
             UpdateRunner updateRunner,
-            ISubscriber<SessionListFetchedMessage> localSessionsRefreshedSub)
+            ISubscriber<SessionListFetchedMessage> localSessionsRefreshedSub
+        )
         {
             m_Container = container;
             m_SessionUIMediator = sessionUIMediator;
@@ -134,7 +139,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         SessionListItemUI CreateSessionListItem()
         {
-            var listItem = Instantiate(m_SessionListItemPrototype.gameObject, m_SessionListItemPrototype.transform.parent)
+            var listItem = Instantiate(
+                    m_SessionListItemPrototype.gameObject,
+                    m_SessionListItemPrototype.transform.parent
+                )
                 .GetComponent<SessionListItemUI>();
             listItem.gameObject.SetActive(true);
 

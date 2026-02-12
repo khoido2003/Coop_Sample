@@ -28,7 +28,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         public List<Breakable> m_BreakableElements;
 
         [SerializeField]
-        [Tooltip("When all breakable elements are broken, wait this long before respawning them (and reactivating)")]
+        [Tooltip(
+            "When all breakable elements are broken, wait this long before respawning them (and reactivating)"
+        )]
         float m_DormantCooldown;
 
         [SerializeField]
@@ -155,6 +157,4 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         }
 #endif
     }
-
-
 }

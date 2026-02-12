@@ -45,9 +45,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         public void PlayAction(ref ActionRequestData action)
         {
-            if (!action.ShouldQueue && m_Queue.Count > 0 &&
-                (m_Queue[0].Config.ActionInterruptible ||
-                    m_Queue[0].Config.CanBeInterruptedBy(action.ActionID)))
+            if (
+                !action.ShouldQueue
+                && m_Queue.Count > 0
+                && (
+                    m_Queue[0].Config.ActionInterruptible
+                    || m_Queue[0].Config.CanBeInterruptedBy(action.ActionID)
+                )
+            )
             {
                 ClearActions(false);
             }
@@ -60,7 +65,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             var newAction = ActionFactory.CreateActionFromData(ref action);
             m_Queue.Add(newAction);
-            if (m_Queue.Count == 1) { StartAction(); }
+            if (m_Queue.Count == 1)
+            {
+                StartAction();
+            }
         }
 
         public void ClearActions(bool cancelNonBlocking)
@@ -91,7 +99,6 @@ namespace Unity.BossRoom.Gameplay.Actions
 
                 ListPool<Action>.Release(removedActions);
             }
-
 
             if (cancelNonBlocking)
             {
@@ -160,10 +167,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         public int RunningActionCount
         {
-            get
-            {
-                return m_NonBlockingActions.Count + (m_Queue.Count > 0 ? 1 : 0);
-            }
+            get { return m_NonBlockingActions.Count + (m_Queue.Count > 0 ? 1 : 0); }
         }
 
         /// <summary>
@@ -174,13 +178,15 @@ namespace Unity.BossRoom.Gameplay.Actions
             if (m_Queue.Count > 0)
             {
                 float reuseTime = m_Queue[0].Config.ReuseTimeSeconds;
-                if (reuseTime > 0
+                if (
+                    reuseTime > 0
                     && m_LastUsedTimestamps.TryGetValue(m_Queue[0].ActionID, out float lastTimeUsed)
-                    && Time.time - lastTimeUsed < reuseTime)
+                    && Time.time - lastTimeUsed < reuseTime
+                )
                 {
                     // we've already started one of these too recently
                     AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
-                    return;              // ... so it's important not to try to do anything more here
+                    return; // ... so it's important not to try to do anything more here
                 }
 
                 int index = SynthesizeTargetIfNecessary(0);
@@ -192,12 +198,15 @@ namespace Unity.BossRoom.Gameplay.Actions
                 {
                     //actions that exited out in the "Start" method will not have their End method called, by design.
                     AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
-                    return;              // ... so it's important not to try to do anything more here
+                    return; // ... so it's important not to try to do anything more here
                 }
 
                 // if this Action is interruptible, that means movement should interrupt it... character needs to be stationary for this!
                 // So stop any movement that's already happening before we begin
-                if (m_Queue[0].Config.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
+                if (
+                    m_Queue[0].Config.ActionInterruptible
+                    && !m_Movement.IsPerformingForcedMovement()
+                )
                 {
                     m_Movement.CancelMove();
                 }
@@ -205,13 +214,16 @@ namespace Unity.BossRoom.Gameplay.Actions
                 // remember the moment when we successfully used this Action!
                 m_LastUsedTimestamps[m_Queue[0].ActionID] = Time.time;
 
-                if (m_Queue[0].Config.ExecTimeSeconds == 0 && m_Queue[0].Config.BlockingMode == BlockingModeType.OnlyDuringExecTime)
+                if (
+                    m_Queue[0].Config.ExecTimeSeconds == 0
+                    && m_Queue[0].Config.BlockingMode == BlockingModeType.OnlyDuringExecTime
+                )
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval.
                     m_NonBlockingActions.Add(m_Queue[0]);
                     AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
-                    return;              // ... so it's important not to try to do anything more here
+                    return; // ... so it's important not to try to do anything more here
                 }
             }
         }
@@ -231,7 +243,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 {
                     ActionID = GameDataSource.Instance.GeneralChaseActionPrototype.ActionID,
                     TargetIds = baseAction.Data.TargetIds,
-                    Amount = baseAction.Config.Range
+                    Amount = baseAction.Config.Range,
                 };
                 baseAction.Data.ShouldClose = false; //you only get to do this once!
                 Action chaseAction = ActionFactory.CreateActionFromData(ref data);
@@ -251,9 +263,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             Action baseAction = m_Queue[baseIndex];
             var targets = baseAction.Data.TargetIds;
 
-            if (targets != null &&
-                targets.Length == 1 &&
-                targets[0] != m_ServerCharacter.TargetId.Value)
+            if (
+                targets != null
+                && targets.Length == 1
+                && targets[0] != m_ServerCharacter.TargetId.Value
+            )
             {
                 //if this is a targeted skill (with a single requested target), and it is different from our
                 //active target, then we synthesize a TargetAction to change  our target over.
@@ -261,7 +275,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 ActionRequestData data = new ActionRequestData
                 {
                     ActionID = GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
-                    TargetIds = baseAction.Data.TargetIds
+                    TargetIds = baseAction.Data.TargetIds,
                 };
 
                 //this shouldn't run redundantly, because the next time the base Action comes up to play, its Target
@@ -377,15 +391,21 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns>The total "time depth" of the queue, or how long it would take to play in seconds, if no more actions were added. </returns>
         private float GetQueueTimeDepth()
         {
-            if (m_Queue.Count == 0) { return 0; }
+            if (m_Queue.Count == 0)
+            {
+                return 0;
+            }
 
             float totalTime = 0;
             foreach (var action in m_Queue)
             {
                 var info = action.Config;
-                float actionTime = info.BlockingMode == BlockingModeType.OnlyDuringExecTime ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingModeType.EntireDuration ? info.DurationSeconds :
-                                    throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
+                float actionTime =
+                    info.BlockingMode == BlockingModeType.OnlyDuringExecTime ? info.ExecTimeSeconds
+                    : info.BlockingMode == BlockingModeType.EntireDuration ? info.DurationSeconds
+                    : throw new System.Exception(
+                        $"Unrecognized blocking mode: {info.BlockingMode}"
+                    );
                 totalTime += actionTime;
             }
 
@@ -440,7 +460,6 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-
         /// <summary>
         /// Cancels the first instance of the given ActionLogic that is currently running, or all instances if cancelAll is set to true.
         /// Searches actively running actions first, then looks at the head action in the queue.
@@ -448,7 +467,11 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="logic">The ActionLogic to cancel</param>
         /// <param name="cancelAll">If true will cancel all instances; if false will just cancel the first running instance.</param>
         /// <param name="exceptThis">If set, will skip this action (useful for actions canceling other instances of themselves).</param>
-        public void CancelRunningActionsByLogic(ActionLogic logic, bool cancelAll, Action exceptThis = null)
+        public void CancelRunningActionsByLogic(
+            ActionLogic logic,
+            bool cancelAll,
+            Action exceptThis = null
+        )
         {
             for (int i = m_NonBlockingActions.Count - 1; i >= 0; --i)
             {
@@ -458,7 +481,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                     action.Cancel(m_ServerCharacter);
                     m_NonBlockingActions.RemoveAt(i);
                     TryReturnAction(action);
-                    if (!cancelAll) { return; }
+                    if (!cancelAll)
+                    {
+                        return;
+                    }
                 }
             }
 
@@ -475,4 +501,3 @@ namespace Unity.BossRoom.Gameplay.Actions
         }
     }
 }
-

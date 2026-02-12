@@ -35,11 +35,15 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[
+                    m_Data.TargetIds[0]
+                ];
                 if (initialTarget)
                 {
                     // face our target, if we had one
-                    serverCharacter.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    serverCharacter.physicsWrapper.Transform.LookAt(
+                        initialTarget.transform.position
+                    );
                 }
             }
 
@@ -81,7 +85,8 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             // we stop once the charge-up has ended and our effect duration has elapsed
-            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Config.EffectDurationSeconds);
+            return m_StoppedChargingUpTime == 0
+                || Time.time < (m_StoppedChargingUpTime + Config.EffectDurationSeconds);
         }
 
         public override bool ShouldBecomeNonBlocking()
@@ -91,7 +96,12 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         private float GetPercentChargedUp()
         {
-            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(
+                m_StoppedChargingUpTime,
+                TimeRunning,
+                TimeStarted,
+                Config.ExecTimeSeconds
+            );
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
@@ -119,10 +129,16 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType)
+        public override void OnGameplayActivity(
+            ServerCharacter serverCharacter,
+            GameplayActivity activityType
+        )
         {
             // for this particular type of Action, being attacked immediately causes you to stop charging up
-            if (activityType == GameplayActivity.AttackedByEnemy || activityType == GameplayActivity.StoppedChargingUp)
+            if (
+                activityType == GameplayActivity.AttackedByEnemy
+                || activityType == GameplayActivity.StoppedChargingUp
+            )
             {
                 StopChargingUp(serverCharacter);
             }
@@ -135,8 +151,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             // if stepped into invincibility, decrement invincibility counter
             if (Mathf.Approximately(GetPercentChargedUp(), 1f))
             {
-                serverCharacter.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
-                    serverCharacter.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) - 1);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(
+                    Config.OtherAnimatorVariable,
+                    serverCharacter.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(
+                        Config.OtherAnimatorVariable
+                    ) - 1
+                );
             }
         }
 
@@ -158,18 +178,29 @@ namespace Unity.BossRoom.Gameplay.Actions
                     // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                     // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                     // knows anything greater than zero means we shouldn't show hit-reacts.
-                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
-                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) + 1);
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(
+                        Config.OtherAnimatorVariable,
+                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(
+                            Config.OtherAnimatorVariable
+                        ) + 1
+                    );
                 }
             }
         }
 
         public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {name}. Should be exactly 2: a charge-up particle and a fully-charged particle");
+            Assert.IsTrue(
+                Config.Spawns.Length == 2,
+                $"Found {Config.Spawns.Length} spawns for action {name}. Should be exactly 2: a charge-up particle and a fully-charged particle"
+            );
 
             base.OnStartClient(clientCharacter);
-            m_ChargeGraphics = InstantiateSpecialFXGraphic(Config.Spawns[0], clientCharacter.transform, true);
+            m_ChargeGraphics = InstantiateSpecialFXGraphic(
+                Config.Spawns[0],
+                clientCharacter.transform,
+                true
+            );
             return true;
         }
     }

@@ -31,7 +31,6 @@ namespace Unity.BossRoom.Tests.Runtime
             m_NbMessagesReceived++;
         }
 
-
         [SetUp]
         public void Setup()
         {

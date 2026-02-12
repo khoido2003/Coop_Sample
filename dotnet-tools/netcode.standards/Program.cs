@@ -1,6 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 
 internal static class Program
 {
@@ -13,20 +13,26 @@ internal static class Program
     /// <param name="pattern">Search pattern string</param>
     /// <param name="verbosity">Logs verbosity level</param>
     private static int Main(
-        bool check = false, bool fix = false,
+        bool check = false,
+        bool fix = false,
         string project = "",
         string pattern = "*.sln",
-        string verbosity = "normal")
+        string verbosity = "normal"
+    )
     {
         if (check && fix)
         {
-            Console.WriteLine($"FAILED: Please use --{nameof(check)} or --{nameof(fix)} individually, not both at the same time");
+            Console.WriteLine(
+                $"FAILED: Please use --{nameof(check)} or --{nameof(fix)} individually, not both at the same time"
+            );
             return 1;
         }
 
         if (!check && !fix)
         {
-            Console.WriteLine($"FAILED: Please use at least one of --{nameof(check)} or --{nameof(fix)} workflows");
+            Console.WriteLine(
+                $"FAILED: Please use at least one of --{nameof(check)} or --{nameof(fix)} workflows"
+            );
             return 2;
         }
 
@@ -55,7 +61,9 @@ internal static class Program
             style.WaitForExit();
             if (style.ExitCode != 0)
             {
-                Console.WriteLine("######## FAILED -> found style/naming issues (see details above)");
+                Console.WriteLine(
+                    "######## FAILED -> found style/naming issues (see details above)"
+                );
                 return style.ExitCode;
             }
             Console.WriteLine("######## SUCCEEDED -> no style/naming issues");

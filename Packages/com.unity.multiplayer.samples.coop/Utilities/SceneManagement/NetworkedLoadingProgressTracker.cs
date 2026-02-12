@@ -11,7 +11,12 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <summary>
         /// The current loading progress associated with the owner of this NetworkBehavior
         /// </summary>
-        public NetworkVariable<float> Progress { get; } = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
+        public NetworkVariable<float> Progress { get; } =
+            new NetworkVariable<float>(
+                0,
+                NetworkVariableReadPermission.Everyone,
+                NetworkVariableWritePermission.Owner
+            );
 
         void Awake()
         {

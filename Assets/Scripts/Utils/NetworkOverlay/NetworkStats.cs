@@ -29,7 +29,8 @@ namespace Unity.BossRoom.Utils
                 m_Average = average;
             }
 
-            public float NextValue(float value) => m_Average = (value - m_Average) * m_Alpha + m_Average;
+            public float NextValue(float value) =>
+                m_Average = (value - m_Average) * m_Alpha + m_Average;
         }
 
         // RTT
@@ -46,7 +47,9 @@ namespace Unity.BossRoom.Utils
         const float k_StrugglingNetworkConditionsRTTThreshold = 130;
         const float k_BadNetworkConditionsRTTThreshold = 200;
 
-        ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(0);
+        ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(
+            0
+        );
         ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(0);
 
         float m_LastPingTime;
@@ -83,13 +86,26 @@ namespace Unity.BossRoom.Utils
         // Creating a UI text object and add it to NetworkOverlay canvas
         void CreateNetworkStatsText()
         {
-            Assert.IsNotNull(Editor.NetworkOverlay.Instance,
-                "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
+            Assert.IsNotNull(
+                Editor.NetworkOverlay.Instance,
+                "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!"
+            );
 
-            string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
-            Editor.NetworkOverlay.Instance.AddTextToUI("UI Host Type Text", $"Type: {hostType}", out m_TextHostType);
+            string hostType =
+                IsHost ? "Host"
+                : IsClient ? "Client"
+                : "Unknown";
+            Editor.NetworkOverlay.Instance.AddTextToUI(
+                "UI Host Type Text",
+                $"Type: {hostType}",
+                out m_TextHostType
+            );
             Editor.NetworkOverlay.Instance.AddTextToUI("UI Stat Text", "No Stat", out m_TextStat);
-            Editor.NetworkOverlay.Instance.AddTextToUI("UI Bad Conditions Text", "", out m_TextBadNetworkConditions);
+            Editor.NetworkOverlay.Instance.AddTextToUI(
+                "UI Bad Conditions Text",
+                "",
+                out m_TextBadNetworkConditions
+            );
         }
 
         void FixedUpdate()
@@ -105,12 +121,17 @@ namespace Unity.BossRoom.Utils
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
 
-                    m_UtpRTT.NextValue(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
+                    m_UtpRTT.NextValue(
+                        NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(
+                            NetworkManager.ServerClientId
+                        )
+                    );
                 }
 
                 if (m_TextStat != null)
                 {
-                    m_TextToDisplay = $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
+                    m_TextToDisplay =
+                        $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
                     if (m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold)
                     {
                         m_TextStat.color = Color.red;
@@ -129,7 +150,10 @@ namespace Unity.BossRoom.Utils
                 {
                     // Right now, we only base this warning on UTP's RTT metric, but in the future we could watch for packet loss as well, or other metrics.
                     // This could be a simple icon instead of doing heavy string manipulations.
-                    m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions Detected!" : "";
+                    m_TextBadNetworkConditions.text =
+                        m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold
+                            ? "Bad Network Conditions Detected!"
+                            : "";
                     var color = Color.red;
                     color.a = Mathf.PingPong(Time.time, 1f);
                     m_TextBadNetworkConditions.color = color;
@@ -137,7 +161,8 @@ namespace Unity.BossRoom.Utils
             }
             else
             {
-                m_TextToDisplay = $"Connected players: {NetworkManager.Singleton.ConnectedClients.Count.ToString()}";
+                m_TextToDisplay =
+                    $"Connected players: {NetworkManager.Singleton.ConnectedClients.Count.ToString()}";
             }
 
             if (m_TextStat)

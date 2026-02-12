@@ -15,7 +15,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// </remarks>
     public class PhysicsWrapper : NetworkBehaviour
     {
-        static Dictionary<ulong, PhysicsWrapper> m_PhysicsWrappers = new Dictionary<ulong, PhysicsWrapper>();
+        static Dictionary<ulong, PhysicsWrapper> m_PhysicsWrappers =
+            new Dictionary<ulong, PhysicsWrapper>();
 
         [SerializeField]
         Transform m_Transform;
@@ -52,7 +53,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             m_PhysicsWrappers.Remove(m_NetworkObjectID);
         }
 
-        public static bool TryGetPhysicsWrapper(ulong networkObjectID, out PhysicsWrapper physicsWrapper)
+        public static bool TryGetPhysicsWrapper(
+            ulong networkObjectID,
+            out PhysicsWrapper physicsWrapper
+        )
         {
             return m_PhysicsWrappers.TryGetValue(networkObjectID, out physicsWrapper);
         }

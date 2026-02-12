@@ -11,7 +11,8 @@ namespace Unity.BossRoom.Infrastructure
     /// being published locally. Clients and the server both can subscribe to it.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged, INetworkSerializeByMemcpy
+    public class NetworkedMessageChannel<T> : MessageChannel<T>
+        where T : unmanaged, INetworkSerializeByMemcpy
     {
         NetworkManager m_NetworkManager;
 
@@ -46,7 +47,10 @@ namespace Unity.BossRoom.Infrastructure
             base.Dispose();
         }
 
-        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        void OnConnectionEvent(
+            NetworkManager networkManager,
+            ConnectionEventData connectionEventData
+        )
         {
             if (connectionEventData.EventType == ConnectionEvent.ClientConnected)
             {
@@ -59,7 +63,10 @@ namespace Unity.BossRoom.Infrastructure
             // Only register message handler on clients
             if (!m_NetworkManager.IsServer)
             {
-                m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
+                m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(
+                    m_Name,
+                    ReceiveMessageThroughNetwork
+                );
             }
         }
 

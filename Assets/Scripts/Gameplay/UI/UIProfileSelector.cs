@@ -12,21 +12,28 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         ProfileListItemUI m_ProfileListItemPrototype;
+
         [SerializeField]
         InputField m_NewProfileField;
+
         [SerializeField]
         Button m_CreateProfileButton;
+
         [SerializeField]
         CanvasGroup m_CanvasGroup;
+
         [SerializeField]
         Graphic m_EmptyProfileListLabel;
 
         List<ProfileListItemUI> m_ProfileListItems = new List<ProfileListItemUI>();
 
-        [Inject] IObjectResolver m_Resolver;
-        [Inject] ProfileManager m_ProfileManager;
+        [Inject]
+        IObjectResolver m_Resolver;
 
-        // Authentication service only accepts profile names of 30 characters or under 
+        [Inject]
+        ProfileManager m_ProfileManager;
+
+        // Authentication service only accepts profile names of 30 characters or under
         const int k_AuthenticationMaxProfileLength = 30;
 
         void Awake()
@@ -42,7 +49,9 @@ namespace Unity.BossRoom.Gameplay.UI
         public void SanitizeProfileNameInputText()
         {
             m_NewProfileField.text = SanitizeProfileName(m_NewProfileField.text);
-            m_CreateProfileButton.interactable = m_NewProfileField.text.Length > 0 && !m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text);
+            m_CreateProfileButton.interactable =
+                m_NewProfileField.text.Length > 0
+                && !m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text);
         }
 
         string SanitizeProfileName(string dirtyString)
@@ -61,7 +70,10 @@ namespace Unity.BossRoom.Gameplay.UI
             }
             else
             {
-                PopupManager.ShowPopupPanel("Could not create new Profile", "A profile already exists with this same name. Select one of the already existing profiles or create a new one.");
+                PopupManager.ShowPopupPanel(
+                    "Could not create new Profile",
+                    "A profile already exists with this same name. Select one of the already existing profiles or create a new one."
+                );
             }
         }
 
@@ -94,7 +106,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void CreateProfileListItem()
         {
-            var listItem = Instantiate(m_ProfileListItemPrototype.gameObject, m_ProfileListItemPrototype.transform.parent)
+            var listItem = Instantiate(
+                    m_ProfileListItemPrototype.gameObject,
+                    m_ProfileListItemPrototype.transform.parent
+                )
                 .GetComponent<ProfileListItemUI>();
             m_ProfileListItems.Add(listItem);
             listItem.gameObject.SetActive(true);

@@ -36,7 +36,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnStart(ServerCharacter serverCharacter)
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : serverCharacter.TargetId.Value;
+            ulong target =
+                (Data.TargetIds != null && Data.TargetIds.Length > 0)
+                    ? Data.TargetIds[0]
+                    : serverCharacter.TargetId.Value;
             IDamageable foe = DetectFoe(serverCharacter, target);
             if (foe != null)
             {
@@ -85,7 +88,13 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns></returns>
         private IDamageable DetectFoe(ServerCharacter parent, ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Config.Range, Config.Radius, foeHint);
+            return GetIdealMeleeFoe(
+                Config.IsFriendly ^ parent.IsNpc,
+                parent.physicsWrapper.DamageCollider,
+                Config.Range,
+                Config.Radius,
+                foeHint
+            );
         }
 
         /// <summary>
@@ -103,12 +112,32 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// If a Radius value is set (greater than 0), collision checking will be done with a Sphere the size of the Radius, not the size of the Box.
         /// Also, if multiple targets collide as a result, the target with the highest total damage is prioritized.
         /// </remarks>
-        public static IDamageable GetIdealMeleeFoe(bool isNPC, Collider ourCollider, float meleeRange, float meleeRadius, ulong preferredTargetNetworkId)
+        public static IDamageable GetIdealMeleeFoe(
+            bool isNPC,
+            Collider ourCollider,
+            float meleeRange,
+            float meleeRadius,
+            ulong preferredTargetNetworkId
+        )
         {
             RaycastHit[] results;
-            int numResults = 0.0f < meleeRadius
-                ? ActionUtils.DetectNearbyEntitiesUseSphere(isNPC, !isNPC, ourCollider, meleeRange, meleeRadius, out results)
-                : ActionUtils.DetectNearbyEntities(isNPC, !isNPC, ourCollider, meleeRange, out results);
+            int numResults =
+                0.0f < meleeRadius
+                    ? ActionUtils.DetectNearbyEntitiesUseSphere(
+                        isNPC,
+                        !isNPC,
+                        ourCollider,
+                        meleeRange,
+                        meleeRadius,
+                        out results
+                    )
+                    : ActionUtils.DetectNearbyEntities(
+                        isNPC,
+                        !isNPC,
+                        ourCollider,
+                        meleeRange,
+                        out results
+                    );
 
             IDamageable foundFoe = null;
 

@@ -48,6 +48,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             // you just added. So we have the Unused flag, which should NOT do anything, and shouldn't be selected on prefabs.
             // It's just there so that we can select all the "real" flags and not get it turned into "Everything" in the editor.
         }
+
         SpecialDamageFlags GetSpecialDamageFlags();
 
         /// <summary>
@@ -56,4 +57,3 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         bool IsDamageable();
     }
 }
-

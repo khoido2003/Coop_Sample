@@ -19,7 +19,11 @@ namespace Unity.BossRoom.Utils.Editor
             DontDestroyOnLoad(this);
         }
 
-        public void AddTextToUI(string gameObjectName, string defaultText, out TextMeshProUGUI textComponent)
+        public void AddTextToUI(
+            string gameObjectName,
+            string defaultText,
+            out TextMeshProUGUI textComponent
+        )
         {
             var rootGO = new GameObject(gameObjectName);
             textComponent = rootGO.AddComponent<TextMeshProUGUI>();
@@ -50,7 +54,9 @@ namespace Unity.BossRoom.Utils.Editor
         void CreateDebugCanvas()
         {
             var canvas = Instantiate(m_DebugCanvasPrefab, transform);
-            m_VerticalLayoutTransform = canvas.GetComponentInChildren<VerticalLayoutGroup>().transform;
+            m_VerticalLayoutTransform = canvas
+                .GetComponentInChildren<VerticalLayoutGroup>()
+                .transform;
         }
     }
 }

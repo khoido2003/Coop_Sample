@@ -40,7 +40,11 @@ namespace Unity.BossRoom.ConnectionManagement
         /// </returns>
         public abstract Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync();
 
-        public ConnectionMethodBase(ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
+        public ConnectionMethodBase(
+            ConnectionManager connectionManager,
+            ProfileManager profileManager,
+            string playerName
+        )
         {
             m_ConnectionManager = connectionManager;
             m_ProfileManager = profileManager;
@@ -49,12 +53,14 @@ namespace Unity.BossRoom.ConnectionManagement
 
         protected void SetConnectionPayload(string playerId, string playerName)
         {
-            var payload = JsonUtility.ToJson(new ConnectionPayload
-            {
-                playerId = playerId,
-                playerName = playerName,
-                isDebug = Debug.isDebugBuild
-            });
+            var payload = JsonUtility.ToJson(
+                new ConnectionPayload
+                {
+                    playerId = playerId,
+                    playerName = playerName,
+                    isDebug = Debug.isDebugBuild,
+                }
+            );
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
@@ -75,7 +81,9 @@ namespace Unity.BossRoom.ConnectionManagement
                 return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
             }
 
-            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
+            return AuthenticationService.Instance.IsSignedIn
+                ? AuthenticationService.Instance.PlayerId
+                : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
         }
     }
 
@@ -87,7 +95,13 @@ namespace Unity.BossRoom.ConnectionManagement
         string m_Ipaddress;
         ushort m_Port;
 
-        public ConnectionMethodIP(string ip, ushort port, ConnectionManager connectionManager, ProfileManager profileManager, string playerName)
+        public ConnectionMethodIP(
+            string ip,
+            ushort port,
+            ConnectionManager connectionManager,
+            ProfileManager profileManager,
+            string playerName
+        )
             : base(connectionManager, profileManager, playerName)
         {
             m_Ipaddress = ip;
@@ -98,7 +112,8 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void SetupClientConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)
+                m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
 
@@ -111,7 +126,8 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void SetupHostConnection()
         {
             SetConnectionPayload(GetPlayerId(), m_PlayerName); // Need to set connection payload for host as well, as host is a client too
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)
+                m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(m_Ipaddress, m_Port);
         }
     }
@@ -123,10 +139,12 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         MultiplayerServicesFacade m_MultiplayerServicesFacade;
 
-        public ConnectionMethodRelay(MultiplayerServicesFacade multiplayerServicesFacade,
+        public ConnectionMethodRelay(
+            MultiplayerServicesFacade multiplayerServicesFacade,
             ConnectionManager connectionManager,
             ProfileManager profileManager,
-            string playerName)
+            string playerName
+        )
             : base(connectionManager, profileManager, playerName)
         {
             m_MultiplayerServicesFacade = multiplayerServicesFacade;
@@ -138,7 +156,10 @@ namespace Unity.BossRoom.ConnectionManagement
             SetConnectionPayload(GetPlayerId(), m_PlayerName);
         }
 
-        public override async Task<(bool success, bool shouldTryAgain)> SetupClientReconnectionAsync()
+        public override async Task<(
+            bool success,
+            bool shouldTryAgain
+        )> SetupClientReconnectionAsync()
         {
             if (m_MultiplayerServicesFacade.CurrentUnitySession == null)
             {
@@ -153,7 +174,9 @@ namespace Unity.BossRoom.ConnectionManagement
             // See https://docs.unity.com/ugs/en-us/manual/mps-sdk/manual/join-session#Reconnect_to_a_session
             var session = await m_MultiplayerServicesFacade.ReconnectToSessionAsync();
             var success = session != null;
-            Debug.Log(success ? "Successfully reconnected to Session." : "Failed to reconnect to Session.");
+            Debug.Log(
+                success ? "Successfully reconnected to Session." : "Failed to reconnect to Session."
+            );
             return (success, true); // return a success if reconnecting to session returns a session
         }
 

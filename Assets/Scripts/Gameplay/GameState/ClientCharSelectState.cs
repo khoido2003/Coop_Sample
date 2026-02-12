@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.BossRoom.Gameplay.UI;
 using TMPro;
 using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.UI;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -66,19 +66,27 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         [Header("UI Elements for different session modes")]
         [SerializeField]
-        [Tooltip("UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!")]
+        [Tooltip(
+            "UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!"
+        )]
         List<GameObject> m_UIElementsForNoSeatChosen;
 
         [SerializeField]
-        [Tooltip("UI elements to turn on when the player has locked in their seat choice (and is now waiting for other players to do the same). Turned off otherwise!")]
+        [Tooltip(
+            "UI elements to turn on when the player has locked in their seat choice (and is now waiting for other players to do the same). Turned off otherwise!"
+        )]
         List<GameObject> m_UIElementsForSeatChosen;
 
         [SerializeField]
-        [Tooltip("UI elements to turn on when the session is closed (and game is about to start). Turned off otherwise!")]
+        [Tooltip(
+            "UI elements to turn on when the session is closed (and game is about to start). Turned off otherwise!"
+        )]
         List<GameObject> m_UIElementsForSessionEnding;
 
         [SerializeField]
-        [Tooltip("UI elements to turn on when there's been a fatal error (and the client cannot proceed). Turned off otherwise!")]
+        [Tooltip(
+            "UI elements to turn on when there's been a fatal error (and the client cannot proceed). Turned off otherwise!"
+        )]
         List<GameObject> m_UIElementsForFatalError;
 
         [Header("Misc")]
@@ -96,7 +104,8 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         Animator m_CurrentCharacterGraphicsAnimator;
 
-        Dictionary<Guid, GameObject> m_SpawnedCharacterGraphics = new Dictionary<Guid, GameObject>();
+        Dictionary<Guid, GameObject> m_SpawnedCharacterGraphics =
+            new Dictionary<Guid, GameObject>();
 
         /// <summary>
         /// Conceptual modes or stages that the session can be in. We don't actually
@@ -197,7 +206,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         /// <summary>
         /// Called by the server when any of the seats in the session have changed. (Including ours!)
         /// </summary>
-        void OnSessionPlayerStateChanged(NetworkListEvent<NetworkCharSelection.SessionPlayerState> changeEvent)
+        void OnSessionPlayerStateChanged(
+            NetworkListEvent<NetworkCharSelection.SessionPlayerState> changeEvent
+        )
         {
             UpdateSeats();
             UpdatePlayerCount();
@@ -206,7 +217,10 @@ namespace Unity.BossRoom.Gameplay.GameState
             int localPlayerIdx = -1;
             for (int i = 0; i < m_NetworkCharSelection.sessionPlayers.Count; ++i)
             {
-                if (m_NetworkCharSelection.sessionPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
+                if (
+                    m_NetworkCharSelection.sessionPlayers[i].ClientId
+                    == NetworkManager.Singleton.LocalClientId
+                )
                 {
                     localPlayerIdx = i;
                     break;
@@ -219,18 +233,26 @@ namespace Unity.BossRoom.Gameplay.GameState
                 // this can happen for various reasons, such as the session being full and us not getting a seat.
                 UpdateCharacterSelection(NetworkCharSelection.SeatState.Inactive);
             }
-            else if (m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState == NetworkCharSelection.SeatState.Inactive)
+            else if (
+                m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState
+                == NetworkCharSelection.SeatState.Inactive
+            )
             {
                 // we haven't chosen a seat yet (or were kicked out of our seat by someone else)
                 UpdateCharacterSelection(NetworkCharSelection.SeatState.Inactive);
 
                 // make sure our player num is properly set in Session UI
-                OnAssignedPlayerNumber(m_NetworkCharSelection.sessionPlayers[localPlayerIdx].PlayerNumber);
+                OnAssignedPlayerNumber(
+                    m_NetworkCharSelection.sessionPlayers[localPlayerIdx].PlayerNumber
+                );
             }
             else
             {
                 // we have a seat! Note that if our seat is LockedIn, this function will also switch the session mode
-                UpdateCharacterSelection(m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState, m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatIdx);
+                UpdateCharacterSelection(
+                    m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatState,
+                    m_NetworkCharSelection.sessionPlayers[localPlayerIdx].SeatIdx
+                );
             }
         }
 
@@ -262,7 +284,9 @@ namespace Unity.BossRoom.Gameplay.GameState
                     // change character preview when selecting a new seat
                     if (isNewSeat)
                     {
-                        var selectedCharacterGraphics = GetCharacterGraphics(m_NetworkCharSelection.AvatarConfiguration[seatIdx]);
+                        var selectedCharacterGraphics = GetCharacterGraphics(
+                            m_NetworkCharSelection.AvatarConfiguration[seatIdx]
+                        );
 
                         if (m_CurrentCharacterGraphics)
                         {
@@ -271,9 +295,12 @@ namespace Unity.BossRoom.Gameplay.GameState
 
                         selectedCharacterGraphics.SetActive(true);
                         m_CurrentCharacterGraphics = selectedCharacterGraphics;
-                        m_CurrentCharacterGraphicsAnimator = m_CurrentCharacterGraphics.GetComponent<Animator>();
+                        m_CurrentCharacterGraphicsAnimator =
+                            m_CurrentCharacterGraphics.GetComponent<Animator>();
 
-                        m_ClassInfoBox.ConfigureForClass(m_NetworkCharSelection.AvatarConfiguration[seatIdx].CharacterClass);
+                        m_ClassInfoBox.ConfigureForClass(
+                            m_NetworkCharSelection.AvatarConfiguration[seatIdx].CharacterClass
+                        );
                     }
                 }
 
@@ -282,7 +309,11 @@ namespace Unity.BossRoom.Gameplay.GameState
                     // the local player has locked in their seat choice! Rearrange the UI appropriately
                     // the character should act excited
                     m_CurrentCharacterGraphicsAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
-                    ConfigureUIForSessionMode(m_NetworkCharSelection.IsSessionClosed.Value ? SessionMode.SessionEnding : SessionMode.SeatChosen);
+                    ConfigureUIForSessionMode(
+                        m_NetworkCharSelection.IsSessionClosed.Value
+                            ? SessionMode.SessionEnding
+                            : SessionMode.SeatChosen
+                    );
                     m_HasLocalPlayerLockedIn = true;
                 }
                 else if (m_HasLocalPlayerLockedIn && state == NetworkCharSelection.SeatState.Active)
@@ -311,13 +342,26 @@ namespace Unity.BossRoom.Gameplay.GameState
             // Once they have chosen their class (by "locking in" their seat), other players in that seat are kicked out.
             // But until a seat is locked in, we need to display each seat as being used by the latest player to choose it.
             // So we go through all players and figure out who should visually be shown as sitting in that seat.
-            NetworkCharSelection.SessionPlayerState[] curSeats = new NetworkCharSelection.SessionPlayerState[m_PlayerSeats.Count];
-            foreach (NetworkCharSelection.SessionPlayerState playerState in m_NetworkCharSelection.sessionPlayers)
+            NetworkCharSelection.SessionPlayerState[] curSeats =
+                new NetworkCharSelection.SessionPlayerState[m_PlayerSeats.Count];
+            foreach (
+                NetworkCharSelection.SessionPlayerState playerState in m_NetworkCharSelection.sessionPlayers
+            )
             {
-                if (playerState.SeatIdx == -1 || playerState.SeatState == NetworkCharSelection.SeatState.Inactive)
+                if (
+                    playerState.SeatIdx == -1
+                    || playerState.SeatState == NetworkCharSelection.SeatState.Inactive
+                )
                     continue; // this player isn't seated at all!
-                if (curSeats[playerState.SeatIdx].SeatState == NetworkCharSelection.SeatState.Inactive
-                    || (curSeats[playerState.SeatIdx].SeatState == NetworkCharSelection.SeatState.Active && curSeats[playerState.SeatIdx].LastChangeTime < playerState.LastChangeTime))
+                if (
+                    curSeats[playerState.SeatIdx].SeatState
+                        == NetworkCharSelection.SeatState.Inactive
+                    || (
+                        curSeats[playerState.SeatIdx].SeatState
+                            == NetworkCharSelection.SeatState.Active
+                        && curSeats[playerState.SeatIdx].LastChangeTime < playerState.LastChangeTime
+                    )
+                )
                 {
                     // this is the best candidate to be displayed in this seat (so far)
                     curSeats[playerState.SeatIdx] = playerState;
@@ -327,7 +371,12 @@ namespace Unity.BossRoom.Gameplay.GameState
             // now actually update the seats in the UI
             for (int i = 0; i < m_PlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNumber, curSeats[i].PlayerName);
+                m_PlayerSeats[i]
+                    .SetState(
+                        curSeats[i].SeatState,
+                        curSeats[i].PlayerNumber,
+                        curSeats[i].PlayerName
+                    );
             }
         }
 
@@ -349,7 +398,11 @@ namespace Unity.BossRoom.Gameplay.GameState
                 else
                 {
                     ConfigureUIForSessionMode(SessionMode.SeatChosen);
-                    m_ClassInfoBox.ConfigureForClass(m_NetworkCharSelection.AvatarConfiguration[m_LastSeatSelected].CharacterClass);
+                    m_ClassInfoBox.ConfigureForClass(
+                        m_NetworkCharSelection
+                            .AvatarConfiguration[m_LastSeatSelected]
+                            .CharacterClass
+                    );
                 }
             }
         }
@@ -423,7 +476,11 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             if (m_NetworkCharSelection.IsSpawned)
             {
-                m_NetworkCharSelection.ServerChangeSeatRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+                m_NetworkCharSelection.ServerChangeSeatRpc(
+                    NetworkManager.Singleton.LocalClientId,
+                    seatIdx,
+                    false
+                );
             }
         }
 
@@ -435,15 +492,27 @@ namespace Unity.BossRoom.Gameplay.GameState
             if (m_NetworkCharSelection.IsSpawned)
             {
                 // request to lock in or unlock if already locked in
-                m_NetworkCharSelection.ServerChangeSeatRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+                m_NetworkCharSelection.ServerChangeSeatRpc(
+                    NetworkManager.Singleton.LocalClientId,
+                    m_LastSeatSelected,
+                    !m_HasLocalPlayerLockedIn
+                );
             }
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
         {
-            if (!m_SpawnedCharacterGraphics.TryGetValue(avatar.Guid, out GameObject characterGraphics))
+            if (
+                !m_SpawnedCharacterGraphics.TryGetValue(
+                    avatar.Guid,
+                    out GameObject characterGraphics
+                )
+            )
             {
-                characterGraphics = Instantiate(avatar.GraphicsCharacterSelect, m_CharacterGraphicsParent);
+                characterGraphics = Instantiate(
+                    avatar.GraphicsCharacterSelect,
+                    m_CharacterGraphicsParent
+                );
                 m_SpawnedCharacterGraphics.Add(avatar.Guid, characterGraphics);
             }
 

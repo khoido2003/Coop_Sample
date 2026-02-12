@@ -33,5 +33,3 @@ namespace Unity.BossRoom.Gameplay.UI
         }
     }
 }
-
-

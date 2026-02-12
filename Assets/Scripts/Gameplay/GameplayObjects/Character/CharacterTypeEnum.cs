@@ -17,6 +17,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         //monsters
         Imp,
         ImpBoss,
-        VandalImp
+        VandalImp,
     }
 }

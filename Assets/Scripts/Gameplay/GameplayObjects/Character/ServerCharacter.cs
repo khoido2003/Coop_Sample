@@ -16,9 +16,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     /// Contains all NetworkVariables, RPCs and server-side logic of a character.
     /// This class was separated in two to keep client and server context self contained. This way you don't have to continuously ask yourself if code is running client or server side.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState),
+    [RequireComponent(
+        typeof(NetworkHealthState),
         typeof(NetworkLifeState),
-        typeof(NetworkAvatarGuidState))]
+        typeof(NetworkAvatarGuidState)
+    )]
     public class ServerCharacter : NetworkBehaviour, ITargetable
     {
         [FormerlySerializedAs("m_ClientVisualization")]
@@ -41,12 +43,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
                 return m_CharacterClass;
             }
-
             set => m_CharacterClass = value;
         }
 
         /// Indicates how the character's movement should be depicted.
-        public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
+        public NetworkVariable<MovementStatus> MovementStatus { get; } =
+            new NetworkVariable<MovementStatus>();
 
         public NetworkVariable<ulong> HeldNetworkObject { get; } = new NetworkVariable<ulong>();
 
@@ -108,7 +110,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         public ServerActionPlayer ActionPlayer => m_ServerActionPlayer;
 
         [SerializeField]
-        [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
+        [Tooltip(
+            "If set to false, an NPC character will be denied its brain (won't attack or chase players)"
+        )]
         private bool m_BrainEnabled = true;
 
         [SerializeField]
@@ -116,9 +120,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         private float m_KilledDestroyDelaySeconds = 3.0f;
 
         [SerializeField]
-        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        [Tooltip(
+            "If set, the ServerCharacter will automatically play the StartingAction when it is created. "
+        )]
         private Action m_StartingAction;
-
 
         [SerializeField]
         DamageReceiver m_DamageReceiver;
@@ -151,7 +156,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer) { enabled = false; }
+            if (!IsServer)
+            {
+                enabled = false;
+            }
             else
             {
                 NetLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
@@ -166,7 +174,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
                 if (m_StartingAction != null)
                 {
-                    var startingAction = new ActionRequestData() { ActionID = m_StartingAction.ActionID };
+                    var startingAction = new ActionRequestData()
+                    {
+                        ActionID = m_StartingAction.ActionID,
+                    };
                     PlayAction(ref startingAction);
                 }
                 InitializeHitPoints();
@@ -185,7 +196,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
         }
 
-
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>
@@ -198,7 +208,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
                 {
-                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.ActionInterruptible)
+                    if (
+                        GameDataSource
+                            .Instance.GetActionPrototypeByID(data.ActionID)
+                            .Config.ActionInterruptible
+                    )
                     {
                         m_ServerActionPlayer.ClearActions(false);
                     }
@@ -245,7 +259,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             if (!IsNpc)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                SessionPlayerData? sessionPlayerData =
+                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
                     HitPoints = sessionPlayerData.Value.CurrentHitPoints;
@@ -304,7 +319,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             if (HP > 0)
             {
                 m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
-                float healingMod = m_ServerActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
+                float healingMod = m_ServerActionPlayer.GetBuffedValue(
+                    Action.BuffableValue.PercentHealingReceived
+                );
                 HP = (int)(HP * healingMod);
             }
             else
@@ -318,7 +335,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 #endif
 
                 m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
-                float damageMod = m_ServerActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
+                float damageMod = m_ServerActionPlayer.GetBuffedValue(
+                    Action.BuffableValue.PercentDamageReceived
+                );
                 HP = (int)(HP * damageMod);
 
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
@@ -404,7 +423,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// <summary>
         /// This character's AIBrain. Will be null if this is not an NPC.
         /// </summary>
-        public AIBrain AIBrain { get { return m_AIBrain; } }
-
+        public AIBrain AIBrain
+        {
+            get { return m_AIBrain; }
+        }
     }
 }

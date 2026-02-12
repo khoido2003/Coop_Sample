@@ -10,12 +10,20 @@ namespace Unity.BossRoom.ConnectionManagement
         public int PlayerNumber;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
+
         /// Instead of using a NetworkGuid (two ulongs) we could just use an int or even a byte-sized index into an array of possible avatars defined in our game data source
         public NetworkGuid AvatarNetworkGuid;
         public int CurrentHitPoints;
         public bool HasCharacterSpawned;
 
-        public SessionPlayerData(ulong clientID, string name, NetworkGuid avatarNetworkGuid, int currentHitPoints = 0, bool isConnected = false, bool hasCharacterSpawned = false)
+        public SessionPlayerData(
+            ulong clientID,
+            string name,
+            NetworkGuid avatarNetworkGuid,
+            int currentHitPoints = 0,
+            bool isConnected = false,
+            bool hasCharacterSpawned = false
+        )
         {
             ClientID = clientID;
             PlayerName = name;

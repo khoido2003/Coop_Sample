@@ -1,6 +1,6 @@
 using System;
-using Unity.BossRoom.Gameplay.GameState;
 using TMPro;
+using Unity.BossRoom.Gameplay.GameState;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -104,4 +104,3 @@ namespace Unity.BossRoom.Gameplay.UI
         }
     }
 }
-

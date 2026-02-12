@@ -17,6 +17,7 @@ namespace Unity.BossRoom.ConnectionManagement
     {
         [Inject]
         MultiplayerServicesFacade m_MultiplayerServicesFacade;
+
         [Inject]
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
@@ -45,7 +46,13 @@ namespace Unity.BossRoom.ConnectionManagement
             var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
             if (playerData != null)
             {
-                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Success, PlayerName = playerData.Value.PlayerName });
+                m_ConnectionEventPublisher.Publish(
+                    new ConnectionEventMessage()
+                    {
+                        ConnectStatus = ConnectStatus.Success,
+                        PlayerName = playerData.Value.PlayerName,
+                    }
+                );
             }
             else
             {
@@ -54,7 +61,6 @@ namespace Unity.BossRoom.ConnectionManagement
                 var reason = JsonUtility.ToJson(ConnectStatus.GenericDisconnect);
                 m_ConnectionManager.NetworkManager.DisconnectClient(clientId, reason);
             }
-
         }
 
         public override void OnClientDisconnect(ulong clientId)
@@ -64,10 +70,18 @@ namespace Unity.BossRoom.ConnectionManagement
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
-                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(
+                        playerId
+                    );
                     if (sessionData.HasValue)
                     {
-                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName });
+                        m_ConnectionEventPublisher.Publish(
+                            new ConnectionEventMessage()
+                            {
+                                ConnectStatus = ConnectStatus.GenericDisconnect,
+                                PlayerName = sessionData.Value.PlayerName,
+                            }
+                        );
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -77,7 +91,11 @@ namespace Unity.BossRoom.ConnectionManagement
         public override void OnUserRequestedShutdown()
         {
             var reason = JsonUtility.ToJson(ConnectStatus.HostEndedSession);
-            for (var i = m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
+            for (
+                var i = m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count - 1;
+                i >= 0;
+                i--
+            )
             {
                 var id = m_ConnectionManager.NetworkManager.ConnectedClientsIds[i];
                 if (id != m_ConnectionManager.NetworkManager.LocalClientId)
@@ -108,7 +126,10 @@ namespace Unity.BossRoom.ConnectionManagement
         /// <param name="request"> The initial request contains, among other things, binary data passed into StartClient. In our case, this is the client's GUID,
         /// which is a unique identifier for their install of the game that persists across app restarts.
         ///  <param name="response"> Our response to the approval process. In case of connection refusal with custom return message, we delay using the Pending field.
-        public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+        public override void ApprovalCheck(
+            NetworkManager.ConnectionApprovalRequest request,
+            NetworkManager.ConnectionApprovalResponse response
+        )
         {
             var connectionData = request.Payload;
             var clientId = request.ClientNetworkId;
@@ -126,8 +147,17 @@ namespace Unity.BossRoom.ConnectionManagement
 
             if (gameReturnStatus == ConnectStatus.Success)
             {
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(
+                    clientId,
+                    connectionPayload.playerId,
+                    new SessionPlayerData(
+                        clientId,
+                        connectionPayload.playerName,
+                        new NetworkGuid(),
+                        0,
+                        true
+                    )
+                );
 
                 // connection approval will create a player object for you
                 response.Approved = true;
@@ -141,13 +171,18 @@ namespace Unity.BossRoom.ConnectionManagement
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
             if (m_MultiplayerServicesFacade.CurrentUnitySession != null)
             {
-                m_MultiplayerServicesFacade.RemovePlayerFromSessionAsync(connectionPayload.playerId);
+                m_MultiplayerServicesFacade.RemovePlayerFromSessionAsync(
+                    connectionPayload.playerId
+                );
             }
         }
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= m_ConnectionManager.MaxConnectedPlayers)
+            if (
+                m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count
+                >= m_ConnectionManager.MaxConnectedPlayers
+            )
             {
                 return ConnectStatus.ServerFull;
             }
@@ -157,8 +192,11 @@ namespace Unity.BossRoom.ConnectionManagement
                 return ConnectStatus.IncompatibleBuildType;
             }
 
-            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
-                ConnectStatus.LoggedInAgain : ConnectStatus.Success;
+            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(
+                connectionPayload.playerId
+            )
+                ? ConnectStatus.LoggedInAgain
+                : ConnectStatus.Success;
         }
     }
 }

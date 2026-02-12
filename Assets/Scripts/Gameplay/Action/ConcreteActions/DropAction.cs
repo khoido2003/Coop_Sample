@@ -20,8 +20,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_ActionStartTime = Time.time;
 
             // play animation of dropping a heavy object, if one is already held
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
+            if (
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    serverCharacter.HeldNetworkObject.Value,
+                    out var heldObject
+                )
+            )
             {
                 m_HeldNetworkObject = heldObject;
 

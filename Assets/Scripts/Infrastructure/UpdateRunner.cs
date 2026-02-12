@@ -19,7 +19,8 @@ namespace Unity.BossRoom.Infrastructure
 
         readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
         readonly HashSet<Action<float>> m_Subscribers = new HashSet<Action<float>>();
-        readonly Dictionary<Action<float>, SubscriberData> m_SubscriberData = new Dictionary<Action<float>, SubscriberData>();
+        readonly Dictionary<Action<float>, SubscriberData> m_SubscriberData =
+            new Dictionary<Action<float>, SubscriberData>();
 
         public void OnDestroy()
         {
@@ -41,13 +42,17 @@ namespace Unity.BossRoom.Infrastructure
 
             if (onUpdate.Target == null) // Detect a local function that cannot be Unsubscribed since it could go out of scope.
             {
-                Debug.LogError("Can't subscribe to a local function that can go out of scope and can't be unsubscribed from");
+                Debug.LogError(
+                    "Can't subscribe to a local function that can go out of scope and can't be unsubscribed from"
+                );
                 return;
             }
 
             if (onUpdate.Method.ToString().Contains("<")) // Detect
             {
-                Debug.LogError("Can't subscribe with an anonymous function that cannot be Unsubscribed, by checking for a character that can't exist in a declared method name.");
+                Debug.LogError(
+                    "Can't subscribe with an anonymous function that cannot be Unsubscribed, by checking for a character that can't exist in a declared method name."
+                );
                 return;
             }
 
@@ -57,7 +62,15 @@ namespace Unity.BossRoom.Infrastructure
                 {
                     if (m_Subscribers.Add(onUpdate))
                     {
-                        m_SubscriberData.Add(onUpdate, new SubscriberData() { Period = updatePeriod, NextCallTime = 0, LastCallTime = Time.time });
+                        m_SubscriberData.Add(
+                            onUpdate,
+                            new SubscriberData()
+                            {
+                                Period = updatePeriod,
+                                NextCallTime = 0,
+                                LastCallTime = Time.time,
+                            }
+                        );
                     }
                 });
             }

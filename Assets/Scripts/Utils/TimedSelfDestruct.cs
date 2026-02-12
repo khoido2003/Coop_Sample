@@ -27,5 +27,4 @@ namespace Unity.BossRoom.Utils
             Destroy(gameObject, m_LifespanSeconds);
         }
     }
-
 }

@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
@@ -11,12 +11,16 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         TextMeshProUGUI m_TitleText;
+
         [SerializeField]
         TextMeshProUGUI m_MainText;
+
         [SerializeField]
         GameObject m_ConfirmButton;
+
         [SerializeField]
         GameObject m_LoadingSpinner;
+
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 

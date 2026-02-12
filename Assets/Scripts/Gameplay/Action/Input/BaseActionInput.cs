@@ -12,7 +12,13 @@ namespace Unity.BossRoom.Gameplay.Actions
         protected Action<ActionRequestData> m_SendInput;
         System.Action m_OnFinished;
 
-        public void Initiate(ServerCharacter playerOwner, Vector3 origin, ActionID actionPrototypeID, Action<ActionRequestData> onSendInput, System.Action onFinished)
+        public void Initiate(
+            ServerCharacter playerOwner,
+            Vector3 origin,
+            ActionID actionPrototypeID,
+            Action<ActionRequestData> onSendInput,
+            System.Action onFinished
+        )
         {
             m_PlayerOwner = playerOwner;
             m_Origin = origin;

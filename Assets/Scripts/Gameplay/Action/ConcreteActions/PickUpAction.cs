@@ -29,8 +29,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_ActionStartTime = Time.time;
 
             // play pickup animation based if a heavy object is not already held
-            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
+            if (
+                !NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    serverCharacter.HeldNetworkObject.Value,
+                    out var heldObject
+                )
+            )
             {
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
@@ -50,21 +54,30 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         bool TryPickUp(ServerCharacter parent)
         {
-            var numResults = Physics.RaycastNonAlloc(parent.physicsWrapper.Transform.position,
+            var numResults = Physics.RaycastNonAlloc(
+                parent.physicsWrapper.Transform.position,
                 parent.physicsWrapper.Transform.forward,
                 m_RaycastHits,
                 Config.Range,
-                1 << LayerMask.NameToLayer(k_NpcLayer));
+                1 << LayerMask.NameToLayer(k_NpcLayer)
+            );
 
             Array.Sort(m_RaycastHits, 0, numResults, s_RaycastHitComparer);
 
             // collider must contain "Heavy" tag, the heavy object must not be parented to another NetworkObject, and
             // parenting attempt must be successful
-            if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject) ||
-                !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag) ||
-                (heavyNetworkObject.transform.parent != null &&
-                    heavyNetworkObject.transform.parent.TryGetComponent(out NetworkObject parentNetworkObject)) ||
-                !heavyNetworkObject.TrySetParent(parent.transform))
+            if (
+                numResults == 0
+                || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject)
+                || !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag)
+                || (
+                    heavyNetworkObject.transform.parent != null
+                    && heavyNetworkObject.transform.parent.TryGetComponent(
+                        out NetworkObject parentNetworkObject
+                    )
+                )
+                || !heavyNetworkObject.TrySetParent(parent.transform)
+            )
             {
                 parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
                 return false;
@@ -91,8 +104,13 @@ namespace Unity.BossRoom.Gameplay.Actions
                 {
                     var constraintSource = new ConstraintSource()
                     {
-                        sourceTransform = serverCharacter.clientCharacter.CharacterSwap.CharacterModel.handSocket.transform,
-                        weight = 1
+                        sourceTransform = serverCharacter
+                            .clientCharacter
+                            .CharacterSwap
+                            .CharacterModel
+                            .handSocket
+                            .transform,
+                        weight = 1,
                     };
                     positionConstraint.AddSource(constraintSource);
                     positionConstraint.constraintActive = true;
@@ -121,7 +139,12 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             if (serverCharacter.LifeState == LifeState.Fainted)
             {
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(serverCharacter.HeldNetworkObject.Value, out var heavyNetworkObject))
+                if (
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                        serverCharacter.HeldNetworkObject.Value,
+                        out var heavyNetworkObject
+                    )
+                )
                 {
                     heavyNetworkObject.transform.SetParent(null);
                 }

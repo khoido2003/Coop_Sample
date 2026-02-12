@@ -106,7 +106,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
                 ActionID = m_CurAttackAction.ActionID,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true,
-                Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward
+                Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward,
             };
             m_ServerActionPlayer.PlayAction(ref attackData);
         }
@@ -124,7 +124,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
             ServerCharacter closestFoe = null;
             foreach (var foe in m_Brain.GetHatedEnemies())
             {
-                float distanceSqr = (myPosition - foe.physicsWrapper.Transform.position).sqrMagnitude;
+                float distanceSqr = (
+                    myPosition - foe.physicsWrapper.Transform.position
+                ).sqrMagnitude;
                 if (distanceSqr < closestDistanceSqr)
                 {
                     closestDistanceSqr = distanceSqr;

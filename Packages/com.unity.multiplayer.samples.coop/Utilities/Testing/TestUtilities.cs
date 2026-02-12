@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using NUnit.Framework;
 using Unity.Netcode;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
@@ -19,7 +19,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="sceneName"> Name of scene </param>
         /// <param name="networkSceneManager"> NetworkSceneManager instance </param>
         /// <returns> IEnumerator to track scene load process </returns>
-        public static IEnumerator AssertIsNetworkSceneLoaded(string sceneName, NetworkSceneManager networkSceneManager)
+        public static IEnumerator AssertIsNetworkSceneLoaded(
+            string sceneName,
+            NetworkSceneManager networkSceneManager
+        )
         {
             Assert.That(networkSceneManager != null, "NetworkSceneManager instance is null!");
 
@@ -55,7 +58,10 @@ namespace Unity.Multiplayer.Samples.Utilities
                 }
             }
 
-            public WaitForSceneLoad(string sceneName, float maxLoadDuration = k_MaxSceneLoadDuration)
+            public WaitForSceneLoad(
+                string sceneName,
+                float maxLoadDuration = k_MaxSceneLoadDuration
+            )
             {
                 m_LoadSceneStart = Time.time;
                 m_SceneName = sceneName;
@@ -87,14 +93,20 @@ namespace Unity.Multiplayer.Samples.Utilities
                     {
                         m_NetworkSceneManager.OnLoadEventCompleted -= ConfirmSceneLoad;
 
-                        throw new Exception($"Timeout for network scene load for scene name {m_SceneName}");
+                        throw new Exception(
+                            $"Timeout for network scene load for scene name {m_SceneName}"
+                        );
                     }
 
                     return !m_IsNetworkSceneLoaded;
                 }
             }
 
-            public WaitForNetworkSceneLoad(string sceneName, NetworkSceneManager networkSceneManager, float maxLoadDuration = k_MaxSceneLoadDuration)
+            public WaitForNetworkSceneLoad(
+                string sceneName,
+                NetworkSceneManager networkSceneManager,
+                float maxLoadDuration = k_MaxSceneLoadDuration
+            )
             {
                 m_LoadSceneStart = Time.time;
                 m_SceneName = sceneName;
@@ -105,7 +117,12 @@ namespace Unity.Multiplayer.Samples.Utilities
                 m_NetworkSceneManager.OnLoadEventCompleted += ConfirmSceneLoad;
             }
 
-            void ConfirmSceneLoad(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+            void ConfirmSceneLoad(
+                string sceneName,
+                LoadSceneMode loadSceneMode,
+                List<ulong> clientsCompleted,
+                List<ulong> clientsTimedOut
+            )
             {
                 if (sceneName == m_SceneName)
                 {

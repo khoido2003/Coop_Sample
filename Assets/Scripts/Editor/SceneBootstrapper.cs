@@ -31,7 +31,8 @@ namespace Unity.BossRoom.Editor
         const string k_ShouldLoadBootstrapSceneKey = "LoadBootstrapScene";
 
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
-        const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
+        const string k_DoNotLoadBootstrapSceneOnPlay =
+            "Boss Room/Don't Load Bootstrap Scene On Play";
 
         const string k_TestRunnerSceneName = "InitTestScene";
 
@@ -122,12 +123,19 @@ namespace Unity.BossRoom.Editor
                 {
                     // user either hit "Save" or "Don't Save"; open bootstrap scene
 
-                    if (!string.IsNullOrEmpty(BootstrapScene) &&
-                        System.Array.Exists(EditorBuildSettings.scenes, scene => scene.path == BootstrapScene))
+                    if (
+                        !string.IsNullOrEmpty(BootstrapScene)
+                        && System.Array.Exists(
+                            EditorBuildSettings.scenes,
+                            scene => scene.path == BootstrapScene
+                        )
+                    )
                     {
                         var activeScene = EditorSceneManager.GetActiveScene();
 
-                        s_RestartingToSwitchScene = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
+                        s_RestartingToSwitchScene =
+                            activeScene.path == string.Empty
+                            || !BootstrapScene.Contains(activeScene.path);
 
                         // we only manually inject Bootstrap scene if we are in a blank empty scene,
                         // or if the active scene is not already BootstrapScene

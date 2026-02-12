@@ -19,7 +19,8 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
-            return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Config.EffectDurationSeconds;
+            return IsChargingUp()
+                || (Time.time - m_StoppedChargingUpTime) < Config.EffectDurationSeconds;
         }
 
         public override void CancelClient(ClientCharacter clientCharacter)
@@ -39,9 +40,15 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(
+            ClientCharacter clientCharacter,
+            float finalChargeUpPercentage
+        )
         {
-            if (!IsChargingUp()) { return; }
+            if (!IsChargingUp())
+            {
+                return;
+            }
 
             m_StoppedChargingUpTime = Time.time;
             if (m_ChargeGraphics)
@@ -53,7 +60,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             // if fully charged, we show a special graphic
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
-                m_ShieldGraphics = InstantiateSpecialFXGraphic(Config.Spawns[1], clientCharacter.transform, true);
+                m_ShieldGraphics = InstantiateSpecialFXGraphic(
+                    Config.Spawns[1],
+                    clientCharacter.transform,
+                    true
+                );
             }
         }
 

@@ -13,6 +13,7 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         TextMeshProUGUI m_SessionNameText;
+
         [SerializeField]
         TextMeshProUGUI m_SessionCountText;
 
@@ -25,7 +26,9 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_Data = data;
             m_SessionNameText.SetText(data.Name);
-            m_SessionCountText.SetText($"{data.MaxPlayers - data.AvailableSlots}/{data.MaxPlayers}");
+            m_SessionCountText.SetText(
+                $"{data.MaxPlayers - data.AvailableSlots}/{data.MaxPlayers}"
+            );
         }
 
         public void OnClick()

@@ -21,7 +21,11 @@ namespace Unity.BossRoom.Utils
 
         public void Spawn()
         {
-            Instantiate(m_Prefab, m_UseLocalPosition ? transform.position : m_CustomPosition, m_UseLocalRotation ? transform.rotation : m_CustomRotation);
+            Instantiate(
+                m_Prefab,
+                m_UseLocalPosition ? transform.position : m_CustomPosition,
+                m_UseLocalRotation ? transform.rotation : m_CustomRotation
+            );
         }
     }
 }

@@ -20,7 +20,6 @@ namespace Unity.BossRoom.Gameplay.UI
 
         ClickFeedbackLerper m_ClickFeedbackLerper;
 
-
         void Start()
         {
             if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
@@ -49,7 +48,6 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_ClientSender.ClientMoveEvent -= OnClientMove;
             }
-
         }
     }
 }

@@ -17,6 +17,4 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         /// </summary>
         bool IsValidTarget { get; }
     }
-
 }
-

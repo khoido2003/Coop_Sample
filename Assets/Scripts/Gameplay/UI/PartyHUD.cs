@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Unity.BossRoom.Gameplay.UserInput;
+using TMPro;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using TMPro;
+using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -46,7 +46,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
         ClientPlayerAvatar m_OwnedPlayerAvatar;
 
-        Dictionary<ulong, ServerCharacter> m_TrackedAllies = new Dictionary<ulong, ServerCharacter>();
+        Dictionary<ulong, ServerCharacter> m_TrackedAllies =
+            new Dictionary<ulong, ServerCharacter>();
 
         ClientInputSender m_ClientSender;
 
@@ -88,7 +89,10 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_OwnedServerCharacter = clientPlayerAvatar.GetComponent<ServerCharacter>();
 
-            Assert.IsTrue(m_OwnedServerCharacter, "ServerCharacter component not found on ClientPlayerAvatar");
+            Assert.IsTrue(
+                m_OwnedServerCharacter,
+                "ServerCharacter component not found on ClientPlayerAvatar"
+            );
 
             m_OwnedPlayerAvatar = clientPlayerAvatar;
 
@@ -139,11 +143,14 @@ namespace Unity.BossRoom.Gameplay.UI
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
         void SetAllyData(ClientPlayerAvatar clientPlayerAvatar)
         {
-            var networkCharacterStateExists =
-                clientPlayerAvatar.TryGetComponent(out ServerCharacter serverCharacter);
+            var networkCharacterStateExists = clientPlayerAvatar.TryGetComponent(
+                out ServerCharacter serverCharacter
+            );
 
-            Assert.IsTrue(networkCharacterStateExists,
-                "NetworkCharacterState component not found on ClientPlayerAvatar");
+            Assert.IsTrue(
+                networkCharacterStateExists,
+                "NetworkCharacterState component not found on ClientPlayerAvatar"
+            );
 
             ulong id = serverCharacter.NetworkObjectId;
             int slot = FindOrAddAlly(id);
@@ -156,7 +163,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
             SetUIFromSlotData(slot, serverCharacter);
 
-            serverCharacter.NetHealthState.HitPoints.OnValueChanged += (int previousValue, int newValue) =>
+            serverCharacter.NetHealthState.HitPoints.OnValueChanged += (
+                int previousValue,
+                int newValue
+            ) =>
             {
                 SetAllyHealth(id, newValue);
             };
@@ -178,7 +188,8 @@ namespace Unity.BossRoom.Gameplay.UI
             m_PartyNames[slot].text = GetPlayerName(serverCharacter);
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            m_PartyHealthGodModeImages[slot].gameObject.SetActive(serverCharacter.NetLifeState.IsGodMode.Value);
+            m_PartyHealthGodModeImages[slot]
+                .gameObject.SetActive(serverCharacter.NetLifeState.IsGodMode.Value);
 #endif
 
             m_PartyClassSymbols[slot].sprite = serverCharacter.CharacterClass.ClassBannerLit;
@@ -231,8 +242,11 @@ namespace Unity.BossRoom.Gameplay.UI
 
         public void SelectPartyMember(int slot)
         {
-            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
-                ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
+            m_ClientSender.RequestAction(
+                GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
+                ClientInputSender.SkillTriggerStyle.UI,
+                m_PartyIds[slot]
+            );
         }
 
         // helper to initialize the Allies array - safe to call multiple times
@@ -282,7 +296,10 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // if we don't add, we are done nw and didnt fint the ID
-            if (dontAdd) { return -1; }
+            if (dontAdd)
+            {
+                return -1;
+            }
 
             // Party slot was not found for this ID - add one in the open slot
             if (openslot > 0)
@@ -305,7 +322,8 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_OwnedServerCharacter.NetHealthState.HitPoints.OnValueChanged -= SetHeroHealth;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                m_OwnedServerCharacter.NetLifeState.IsGodMode.OnValueChanged -= SetHeroGodModeStatus;
+                m_OwnedServerCharacter.NetLifeState.IsGodMode.OnValueChanged -=
+                    SetHeroGodModeStatus;
 #endif
             }
 
@@ -335,7 +353,10 @@ namespace Unity.BossRoom.Gameplay.UI
 
             if (m_TrackedAllies.TryGetValue(id, out ServerCharacter serverCharacter))
             {
-                serverCharacter.NetHealthState.HitPoints.OnValueChanged -= (int previousValue, int newValue) =>
+                serverCharacter.NetHealthState.HitPoints.OnValueChanged -= (
+                    int previousValue,
+                    int newValue
+                ) =>
                 {
                     SetAllyHealth(id, newValue);
                 };

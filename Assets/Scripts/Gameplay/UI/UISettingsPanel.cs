@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 namespace Unity.BossRoom.Gameplay.UI
 {
-
     public class UISettingsPanel : MonoBehaviour
     {
         [SerializeField]
@@ -44,5 +43,4 @@ namespace Unity.BossRoom.Gameplay.UI
             AudioMixerConfigurator.Instance.Configure();
         }
     }
-
 }

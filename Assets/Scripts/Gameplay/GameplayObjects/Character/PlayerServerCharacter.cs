@@ -35,7 +35,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 enabled = false;
             }
-
         }
 
         void OnDisable()
@@ -48,7 +47,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             if (IsServer)
             {
                 var movementTransform = m_CachedServerCharacter.Movement.transform;
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                SessionPlayerData? sessionPlayerData =
+                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;
@@ -56,7 +56,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                     playerData.PlayerRotation = movementTransform.rotation;
                     playerData.CurrentHitPoints = m_CachedServerCharacter.HitPoints;
                     playerData.HasCharacterSpawned = true;
-                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(
+                        OwnerClientId,
+                        playerData
+                    );
                 }
             }
         }

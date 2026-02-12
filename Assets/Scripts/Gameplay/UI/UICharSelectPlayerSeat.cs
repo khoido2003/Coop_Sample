@@ -1,7 +1,7 @@
 using System;
+using TMPro;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Gameplay.GameState;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,22 +14,31 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         private GameObject m_InactiveStateVisuals;
+
         [SerializeField]
         private GameObject m_ActiveStateVisuals;
+
         [SerializeField]
         private Image m_PlayerNumberHolder;
+
         [SerializeField]
         private TextMeshProUGUI m_PlayerNameHolder;
+
         [SerializeField]
         private Image m_Glow;
+
         [SerializeField]
         private Image m_Checkbox;
+
         [SerializeField]
         private Button m_Button;
+
         [SerializeField]
         private Animator m_Animator;
+
         [SerializeField]
         private string m_AnimatorTriggerWhenLockedIn = "LockedIn";
+
         [SerializeField]
         private string m_AnimatorTriggerWhenUnlocked = "Unlocked";
 
@@ -56,7 +65,11 @@ namespace Unity.BossRoom.Gameplay.UI
             ConfigureStateGraphics();
         }
 
-        public void SetState(NetworkCharSelection.SeatState state, int playerIndex, string playerName)
+        public void SetState(
+            NetworkCharSelection.SeatState state,
+            int playerIndex,
+            string playerName
+        )
         {
             if (state == m_State && playerIndex == m_PlayerNumber)
                 return; // no actual changes
@@ -119,16 +132,25 @@ namespace Unity.BossRoom.Gameplay.UI
             else // either active or locked-in... these states are visually very similar
             {
                 m_InactiveStateVisuals.SetActive(false);
-                m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
+                m_PlayerNumberHolder.sprite = ClientCharSelectState
+                    .Instance
+                    .m_IdentifiersForEachPlayerNumber[m_PlayerNumber]
+                    .Indicator;
                 m_ActiveStateVisuals.SetActive(true);
 
                 m_PlayerNameHolder.gameObject.SetActive(true);
-                m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
+                m_PlayerNameHolder.color = ClientCharSelectState
+                    .Instance
+                    .m_IdentifiersForEachPlayerNumber[m_PlayerNumber]
+                    .Color;
                 m_Button.interactable = m_IsDisabled ? false : true;
 
                 if (m_State == NetworkCharSelection.SeatState.LockedIn)
                 {
-                    m_Glow.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
+                    m_Glow.color = ClientCharSelectState
+                        .Instance
+                        .m_IdentifiersForEachPlayerNumber[m_PlayerNumber]
+                        .Color;
                     m_Glow.gameObject.SetActive(true);
                     m_Checkbox.gameObject.SetActive(true);
                     m_Button.interactable = false;
@@ -148,6 +170,5 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             ClientCharSelectState.Instance.OnPlayerClickedSeat(m_SeatIndex);
         }
-
     }
 }

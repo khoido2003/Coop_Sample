@@ -67,10 +67,16 @@ namespace Unity.BossRoom.Gameplay.Actions
             EndStealth(serverCharacter);
         }
 
-        public override void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType)
+        public override void OnGameplayActivity(
+            ServerCharacter serverCharacter,
+            GameplayActivity activityType
+        )
         {
             // we break stealth after using an attack. (Or after being hit, which could happen during exec time before we're stealthed, or even afterwards, such as from an AoE attack)
-            if (activityType == GameplayActivity.UsingAttackAction || activityType == GameplayActivity.AttackedByEnemy)
+            if (
+                activityType == GameplayActivity.UsingAttackAction
+                || activityType == GameplayActivity.AttackedByEnemy
+            )
             {
                 EndStealth(serverCharacter);
             }
@@ -96,7 +102,11 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
-            if (TimeRunning >= Config.ExecTimeSeconds && m_SpawnedGraphics == null && clientCharacter.IsOwner)
+            if (
+                TimeRunning >= Config.ExecTimeSeconds
+                && m_SpawnedGraphics == null
+                && clientCharacter.IsOwner
+            )
             {
                 m_SpawnedGraphics = InstantiateSpecialFXGraphics(clientCharacter.transform, true);
             }
@@ -118,6 +128,5 @@ namespace Unity.BossRoom.Gameplay.Actions
                 }
             }
         }
-
     }
 }

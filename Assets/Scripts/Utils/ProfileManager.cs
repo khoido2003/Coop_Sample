@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-
+using UnityEngine;
 #if UNITY_EDITOR
 using System.Security.Cryptography;
 using System.Text;
 #endif
 
-using UnityEngine;
+
 
 namespace Unity.BossRoom.Utils
 {
@@ -82,8 +82,9 @@ namespace Unity.BossRoom.Utils
             // This will work for cloning projects manually, or with Virtual Projects.
             // Since only a single instance of the Editor can be open for a specific
             // dataPath, uniqueness is ensured.
-            var hashedBytes = new MD5CryptoServiceProvider()
-                .ComputeHash(Encoding.UTF8.GetBytes(Application.dataPath));
+            var hashedBytes = new MD5CryptoServiceProvider().ComputeHash(
+                Encoding.UTF8.GetBytes(Application.dataPath)
+            );
             Array.Resize(ref hashedBytes, 16);
             // Authentication service only allows profile names of maximum 30 characters. We're generating a GUID based
             // on the project's path. Truncating the first 30 characters of said GUID string suffices for uniqueness.
@@ -115,6 +116,5 @@ namespace Unity.BossRoom.Utils
             }
             ClientPrefs.SetAvailableProfiles(profilesToSave);
         }
-
     }
 }

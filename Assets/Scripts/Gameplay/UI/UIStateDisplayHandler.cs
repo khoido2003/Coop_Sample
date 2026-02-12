@@ -101,16 +101,25 @@ namespace Unity.BossRoom.Gameplay.UI
             }
             Assert.IsNotNull(m_CanvasTransform);
 
-            Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
+            Assert.IsTrue(
+                m_DisplayHealth || m_DisplayName,
+                "Neither display fields are toggled on!"
+            );
             if (m_DisplayHealth)
             {
-                Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
+                Assert.IsNotNull(
+                    m_NetworkHealthState,
+                    "A NetworkHealthState component needs to be attached!"
+                );
             }
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out m_ClientPlayerAvatarNetworkAnimator) && TryGetComponent(out m_NetworkAvatarGuidState))
+            if (
+                TryGetComponent(out m_ClientPlayerAvatarNetworkAnimator)
+                && TryGetComponent(out m_NetworkAvatarGuidState)
+            )
             {
                 m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
 
@@ -208,11 +217,14 @@ namespace Unity.BossRoom.Gameplay.UI
             if (m_UIStateActive && m_TransformToTrack)
             {
                 // set world position with world offset added
-                m_WorldPos.Set(m_TransformToTrack.position.x,
+                m_WorldPos.Set(
+                    m_TransformToTrack.position.x,
                     m_TransformToTrack.position.y + m_VerticalWorldOffset,
-                    m_TransformToTrack.position.z);
+                    m_TransformToTrack.position.z
+                );
 
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) + m_VerticalOffset;
+                m_UIStateRectTransform.position =
+                    m_Camera.WorldToScreenPoint(m_WorldPos) + m_VerticalOffset;
             }
         }
 

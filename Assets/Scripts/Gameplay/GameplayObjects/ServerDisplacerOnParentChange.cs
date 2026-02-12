@@ -86,7 +86,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 progress = Mathf.Clamp(duration / length, 0f, 1f);
                 var progressY = Mathf.Lerp(start, targetHeight, progress);
 
-                transform.position = new Vector3(transform.position.x, progressY, transform.position.z);
+                transform.position = new Vector3(
+                    transform.position.x,
+                    progressY,
+                    transform.position.z
+                );
 
                 yield return null;
             }

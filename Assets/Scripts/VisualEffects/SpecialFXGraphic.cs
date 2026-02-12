@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -41,11 +40,15 @@ namespace Unity.BossRoom.VisualEffects
         public List<ParticleSystem> m_ParticleSystemsToTurnOffOnShutdown;
 
         [SerializeField]
-        [Tooltip("If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown.")]
+        [Tooltip(
+            "If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown."
+        )]
         private float m_AutoShutdownTime = -1;
 
         [SerializeField]
-        [Tooltip("After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
+        [Tooltip(
+            "After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared"
+        )]
         private float m_PostShutdownSelfDestructTime = -1;
 
         [SerializeField]
@@ -142,7 +145,6 @@ namespace Unity.BossRoom.VisualEffects
         }
     }
 
-
 #if UNITY_EDITOR
     /// <summary>
     /// A custom editor that provides a button in the Inspector to auto-add all the
@@ -168,14 +170,13 @@ namespace Unity.BossRoom.VisualEffects
             }
 
             specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Clear();
-            foreach (var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>())
+            foreach (
+                var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>()
+            )
             {
                 specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Add(particleSystem);
             }
         }
     }
 #endif
-
 }
-
-

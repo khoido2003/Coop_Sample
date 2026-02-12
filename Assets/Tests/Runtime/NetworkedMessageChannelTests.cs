@@ -3,8 +3,8 @@ using System.Collections;
 using NUnit.Framework;
 using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
-using UnityEngine;
 using Unity.Netcode.TestHelpers.Runtime;
+using UnityEngine;
 using UnityEngine.TestTools;
 using VContainer;
 using Assert = UnityEngine.Assertions.Assert;
@@ -65,7 +65,14 @@ namespace Unity.BossRoom.Tests.Runtime
             return base.OnTearDown();
         }
 
-        void InitializeNetworkedMessageChannels<T>(int nbClients, int nbSubscribers, T expectedValue, out NetworkedMessageChannel<T>[] emptyMessageChannelClients, out NetworkedMessageChannel<T> emptyMessageChannelServer) where T : unmanaged, INetworkSerializeByMemcpy
+        void InitializeNetworkedMessageChannels<T>(
+            int nbClients,
+            int nbSubscribers,
+            T expectedValue,
+            out NetworkedMessageChannel<T>[] emptyMessageChannelClients,
+            out NetworkedMessageChannel<T> emptyMessageChannelServer
+        )
+            where T : unmanaged, INetworkSerializeByMemcpy
         {
             emptyMessageChannelClients = new NetworkedMessageChannel<T>[nbClients];
             for (int i = 0; i < nbClients; i++)
@@ -84,31 +91,55 @@ namespace Unity.BossRoom.Tests.Runtime
                 {
                     var numClient = i;
                     var numSub = j;
-                    m_Subscriptions.Add(emptyMessageChannelClients[i].Subscribe(message =>
-                    {
-                        Debug.Log($"Received message on client {numClient} in subscription {numSub}.");
-                        m_NbMessagesReceived++;
-                        Assert.AreEqual(expectedValue, message, "Message received with unexpected value.");
-                    }));
+                    m_Subscriptions.Add(
+                        emptyMessageChannelClients[i]
+                            .Subscribe(message =>
+                            {
+                                Debug.Log(
+                                    $"Received message on client {numClient} in subscription {numSub}."
+                                );
+                                m_NbMessagesReceived++;
+                                Assert.AreEqual(
+                                    expectedValue,
+                                    message,
+                                    "Message received with unexpected value."
+                                );
+                            })
+                    );
                 }
             }
 
             for (int j = 0; j < nbSubscribers; j++)
             {
                 var numSub = j;
-                m_Subscriptions.Add(emptyMessageChannelServer.Subscribe(message =>
-                {
-                    Debug.Log($"Received message on server in subscription {numSub}.");
-                    m_NbMessagesReceived++;
-                    Assert.AreEqual(expectedValue, message, "Message received with unexpected value.");
-                }));
+                m_Subscriptions.Add(
+                    emptyMessageChannelServer.Subscribe(message =>
+                    {
+                        Debug.Log($"Received message on server in subscription {numSub}.");
+                        m_NbMessagesReceived++;
+                        Assert.AreEqual(
+                            expectedValue,
+                            message,
+                            "Message received with unexpected value."
+                        );
+                    })
+                );
             }
         }
 
         [UnityTest]
-        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClientsAndServer([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClientsAndServer(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
@@ -117,13 +148,21 @@ namespace Unity.BossRoom.Tests.Runtime
             yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
-
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessageContentIsProperlyReceivedOnAllClientsAndServer([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator NetworkedMessageContentIsProperlyReceivedOnAllClientsAndServer(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new GenericMessage() { value = true }, out var genericMessageChannelClients, out var genericMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new GenericMessage() { value = true },
+                out var genericMessageChannelClients,
+                out var genericMessageChannelServer
+            );
 
             genericMessageChannelServer.Publish(new GenericMessage() { value = true });
 
@@ -135,9 +174,18 @@ namespace Unity.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
@@ -179,7 +227,10 @@ namespace Unity.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
             // Shutdown the clients
             NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[0], false);
@@ -188,7 +239,13 @@ namespace Unity.BossRoom.Tests.Runtime
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
 
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
             // Restart the clients
             NetcodeIntegrationTestHelpers.StartOneClient(m_ClientNetworkManagers[0]);
@@ -206,9 +263,18 @@ namespace Unity.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
             // Shutdown the clients
             NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[0], false);
@@ -227,16 +293,28 @@ namespace Unity.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreNotReceivedWhenServerIsShutDown([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenServerIsShutDown(
+            [Values(0, 1, 2)] int nbClients,
+            [Values(0, 1, 2)] int nbSubscribers
+        )
         {
-            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                nbClients,
+                nbSubscribers,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
             // Shutdown the server
             NetcodeIntegrationTestHelpers.StopOneClient(m_ServerNetworkManager, false);
 
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
 
-            LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
+            LogAssert.Expect(
+                LogType.Error,
+                "Only a server can publish in a NetworkedMessageChannel"
+            );
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
@@ -249,9 +327,18 @@ namespace Unity.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator NetworkedMessagesCannotBePublishedFromClient()
         {
-            InitializeNetworkedMessageChannels(2, 1, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+            InitializeNetworkedMessageChannels(
+                2,
+                1,
+                new EmptyMessage(),
+                out var emptyMessageChannelClients,
+                out var emptyMessageChannelServer
+            );
 
-            LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
+            LogAssert.Expect(
+                LogType.Error,
+                "Only a server can publish in a NetworkedMessageChannel"
+            );
             emptyMessageChannelClients[0].Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients

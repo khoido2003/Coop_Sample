@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.UserInput;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
@@ -17,7 +17,9 @@ namespace Unity.BossRoom.Gameplay.UI
     public class HeroActionBar : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("The button that activates the basic action (comparable to right-clicking the mouse)")]
+        [Tooltip(
+            "The button that activates the basic action (comparable to right-clicking the mouse)"
+        )]
         UIHUDButton m_BasicActionButton;
 
         [SerializeField]
@@ -33,7 +35,9 @@ namespace Unity.BossRoom.Gameplay.UI
         UIHUDButton m_EmoteBarButton;
 
         [SerializeField]
-        [Tooltip("The Emote bar that will be enabled or disabled when clicking the Emote bar button")]
+        [Tooltip(
+            "The Emote bar that will be enabled or disabled when clicking the Emote bar button"
+        )]
         GameObject m_EmotePanel;
 
         /// <summary>
@@ -117,12 +121,17 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             if (!clientPlayerAvatar.TryGetComponent(out ClientInputSender inputSender))
             {
-                Debug.LogError("ClientInputSender not found on ClientPlayerAvatar!", clientPlayerAvatar);
+                Debug.LogError(
+                    "ClientInputSender not found on ClientPlayerAvatar!",
+                    clientPlayerAvatar
+                );
             }
 
             if (m_InputSender != null)
             {
-                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
+                Debug.LogWarning(
+                    $"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} "
+                );
             }
 
             m_InputSender = inputSender;
@@ -131,7 +140,10 @@ namespace Unity.BossRoom.Gameplay.UI
             Action action1 = null;
             if (m_InputSender.actionState1 != null)
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState1.actionID, out action1);
+                GameDataSource.Instance.TryGetActionPrototypeByID(
+                    m_InputSender.actionState1.actionID,
+                    out action1
+                );
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], action1);
@@ -139,7 +151,10 @@ namespace Unity.BossRoom.Gameplay.UI
             Action action2 = null;
             if (m_InputSender.actionState2 != null)
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState2.actionID, out action2);
+                GameDataSource.Instance.TryGetActionPrototypeByID(
+                    m_InputSender.actionState2.actionID,
+                    out action2
+                );
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], action2);
@@ -147,7 +162,10 @@ namespace Unity.BossRoom.Gameplay.UI
             Action action3 = null;
             if (m_InputSender.actionState3 != null)
             {
-                GameDataSource.Instance.TryGetActionPrototypeByID(m_InputSender.actionState3.actionID, out action3);
+                GameDataSource.Instance.TryGetActionPrototypeByID(
+                    m_InputSender.actionState3.actionID,
+                    out action3
+                );
             }
 
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], action3);
@@ -155,11 +173,15 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Action1ModifiedCallback()
         {
-            var action = GameDataSource.Instance.GetActionPrototypeByID(m_InputSender.actionState1.actionID);
+            var action = GameDataSource.Instance.GetActionPrototypeByID(
+                m_InputSender.actionState1.actionID
+            );
 
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction],
+            UpdateActionButton(
+                m_ButtonInfo[ActionButtonType.BasicAction],
                 action,
-                m_InputSender.actionState1.selectable);
+                m_InputSender.actionState1.selectable
+            );
         }
 
         void DeregisterInputSender()
@@ -176,10 +198,26 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_ButtonInfo = new Dictionary<ActionButtonType, ActionButtonInfo>()
             {
-                [ActionButtonType.BasicAction] = new ActionButtonInfo(ActionButtonType.BasicAction, m_BasicActionButton, this),
-                [ActionButtonType.Special1] = new ActionButtonInfo(ActionButtonType.Special1, m_SpecialAction1Button, this),
-                [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
-                [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
+                [ActionButtonType.BasicAction] = new ActionButtonInfo(
+                    ActionButtonType.BasicAction,
+                    m_BasicActionButton,
+                    this
+                ),
+                [ActionButtonType.Special1] = new ActionButtonInfo(
+                    ActionButtonType.Special1,
+                    m_SpecialAction1Button,
+                    this
+                ),
+                [ActionButtonType.Special2] = new ActionButtonInfo(
+                    ActionButtonType.Special2,
+                    m_SpecialAction2Button,
+                    this
+                ),
+                [ActionButtonType.EmoteBar] = new ActionButtonInfo(
+                    ActionButtonType.EmoteBar,
+                    m_EmoteBarButton,
+                    this
+                ),
             };
 
             m_ToggleEmoteBarAction.action.performed += OnToggleEmoteBarPerformed;
@@ -236,7 +274,10 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.ActionID, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(
+                m_ButtonInfo[buttonType].CurAction.ActionID,
+                SkillTriggerStyle.UI
+            );
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -254,7 +295,10 @@ namespace Unity.BossRoom.Gameplay.UI
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.ActionID, SkillTriggerStyle.UIRelease);
+            m_InputSender.RequestAction(
+                m_ButtonInfo[buttonType].CurAction.ActionID,
+                SkillTriggerStyle.UIRelease
+            );
         }
 
         void UpdateActionButton(ActionButtonInfo buttonInfo, Action action, bool isClickable = true)

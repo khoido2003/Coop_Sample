@@ -42,8 +42,14 @@ namespace Unity.BossRoom.Audio
 
         public void Configure()
         {
-            m_Mixer.SetFloat(m_MixerVarMainVolume, GetVolumeInDecibels(ClientPrefs.GetMasterVolume()));
-            m_Mixer.SetFloat(m_MixerVarMusicVolume, GetVolumeInDecibels(ClientPrefs.GetMusicVolume()));
+            m_Mixer.SetFloat(
+                m_MixerVarMainVolume,
+                GetVolumeInDecibels(ClientPrefs.GetMasterVolume())
+            );
+            m_Mixer.SetFloat(
+                m_MixerVarMusicVolume,
+                GetVolumeInDecibels(ClientPrefs.GetMusicVolume())
+            );
         }
 
         private float GetVolumeInDecibels(float volume)

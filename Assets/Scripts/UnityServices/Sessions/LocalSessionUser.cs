@@ -98,9 +98,9 @@ namespace Unity.BossRoom.UnityServices.Sessions
         {
             var data = session.m_UserData;
             var lastChanged = // Set flags just for the members that will be changed.
-                (m_UserData.IsHost == data.IsHost ? 0 : (int)UserMembers.IsHost) |
-                (m_UserData.DisplayName == data.DisplayName ? 0 : (int)UserMembers.DisplayName) |
-                (m_UserData.ID == data.ID ? 0 : (int)UserMembers.ID);
+                (m_UserData.IsHost == data.IsHost ? 0 : (int)UserMembers.IsHost)
+                | (m_UserData.DisplayName == data.DisplayName ? 0 : (int)UserMembers.DisplayName)
+                | (m_UserData.ID == data.ID ? 0 : (int)UserMembers.ID);
 
             if (lastChanged == 0) // Ensure something actually changed.
             {
@@ -121,7 +121,10 @@ namespace Unity.BossRoom.UnityServices.Sessions
         public Dictionary<string, PlayerProperty> GetDataForUnityServices() =>
             new()
             {
-                { "DisplayName", new PlayerProperty(DisplayName, VisibilityPropertyOptions.Member) },
+                {
+                    "DisplayName",
+                    new PlayerProperty(DisplayName, VisibilityPropertyOptions.Member)
+                },
             };
     }
 }

@@ -18,7 +18,8 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         TextMeshProUGUI m_TitleText;
 
-        [Inject] IPUIMediator m_IPUIMediator;
+        [Inject]
+        IPUIMediator m_IPUIMediator;
 
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
@@ -71,7 +72,9 @@ namespace Unity.BossRoom.Gameplay.UI
             var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             var maxConnectAttempts = utp.MaxConnectAttempts;
             var connectTimeoutMS = utp.ConnectTimeoutMS;
-            StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
+            StartCoroutine(
+                DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed)
+            );
 
             Show();
         }
@@ -82,7 +85,11 @@ namespace Unity.BossRoom.Gameplay.UI
             StopAllCoroutines();
         }
 
-        IEnumerator DisplayUTPConnectionDuration(int maxReconnectAttempts, int connectTimeoutMS, Action endAction)
+        IEnumerator DisplayUTPConnectionDuration(
+            int maxReconnectAttempts,
+            int connectTimeoutMS,
+            Action endAction
+        )
         {
             var connectionDuration = maxReconnectAttempts * connectTimeoutMS / 1000f;
 

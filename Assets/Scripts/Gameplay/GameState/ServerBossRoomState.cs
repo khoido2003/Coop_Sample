@@ -42,7 +42,10 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         private List<Transform> m_PlayerSpawnPointsList = null;
 
-        public override GameState ActiveState { get { return GameState.BossRoom; } }
+        public override GameState ActiveState
+        {
+            get { return GameState.BossRoom; }
+        }
 
         // Wait time constants for switching to post game after the game is won or lost
         private const float k_WinDelay = 7.0f;
@@ -57,10 +60,14 @@ namespace Unity.BossRoom.Gameplay.GameState
         /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
         /// when despawning and spawning again.
         /// </summary>
-        [Inject] ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
+        [Inject]
+        ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
-        [Inject] ConnectionManager m_ConnectionManager;
-        [Inject] PersistentGameState m_PersistentGameState;
+        [Inject]
+        ConnectionManager m_ConnectionManager;
+
+        [Inject]
+        PersistentGameState m_PersistentGameState;
 
         protected override void Awake()
         {
@@ -90,7 +97,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             if (m_LifeStateChangedEventMessageSubscriber != null)
             {
-                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
+                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(
+                    OnLifeStateChangedEventMessage
+                );
             }
 
             NetworkManager.Singleton.OnConnectionEvent -= OnConnectionEvent;
@@ -102,7 +111,9 @@ namespace Unity.BossRoom.Gameplay.GameState
         {
             if (m_LifeStateChangedEventMessageSubscriber != null)
             {
-                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
+                m_LifeStateChangedEventMessageSubscriber.Unsubscribe(
+                    OnLifeStateChangedEventMessage
+                );
             }
 
             if (m_NetcodeHooks)
@@ -126,7 +137,12 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        void OnLoadEventCompleted(
+            string sceneName,
+            LoadSceneMode loadSceneMode,
+            List<ulong> clientsCompleted,
+            List<ulong> clientsTimedOut
+        )
         {
             if (!InitialSpawnDone && loadSceneMode == LoadSceneMode.Single)
             {
@@ -138,7 +154,10 @@ namespace Unity.BossRoom.Gameplay.GameState
             }
         }
 
-        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        void OnConnectionEvent(
+            NetworkManager networkManager,
+            ConnectionEventData connectionEventData
+        )
         {
             if (connectionEventData.EventType == ConnectionEvent.ClientDisconnected)
             {
@@ -166,14 +185,18 @@ namespace Unity.BossRoom.Gameplay.GameState
                 m_PlayerSpawnPointsList = new List<Transform>(m_PlayerSpawnPoints);
             }
 
-            Debug.Assert(m_PlayerSpawnPointsList.Count > 0,
-                $"PlayerSpawnPoints array should have at least 1 spawn points.");
+            Debug.Assert(
+                m_PlayerSpawnPointsList.Count > 0,
+                $"PlayerSpawnPoints array should have at least 1 spawn points."
+            );
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
             spawnPoint = m_PlayerSpawnPointsList[index];
             m_PlayerSpawnPointsList.RemoveAt(index);
 
-            var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
+            var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(
+                clientId
+            );
 
             var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
 
@@ -186,34 +209,49 @@ namespace Unity.BossRoom.Gameplay.GameState
                 physicsTransform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             }
 
-            var persistentPlayerExists = playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer);
-            Assert.IsTrue(persistentPlayerExists,
-                $"Matching persistent PersistentPlayer for client {clientId} not found!");
+            var persistentPlayerExists = playerNetworkObject.TryGetComponent(
+                out PersistentPlayer persistentPlayer
+            );
+            Assert.IsTrue(
+                persistentPlayerExists,
+                $"Matching persistent PersistentPlayer for client {clientId} not found!"
+            );
 
             // pass character type from persistent player to avatar
-            var networkAvatarGuidStateExists =
-                newPlayer.TryGetComponent(out NetworkAvatarGuidState networkAvatarGuidState);
+            var networkAvatarGuidStateExists = newPlayer.TryGetComponent(
+                out NetworkAvatarGuidState networkAvatarGuidState
+            );
 
-            Assert.IsTrue(networkAvatarGuidStateExists,
-                $"NetworkCharacterGuidState not found on player avatar!");
+            Assert.IsTrue(
+                networkAvatarGuidStateExists,
+                $"NetworkCharacterGuidState not found on player avatar!"
+            );
 
             // if reconnecting, set the player's position and rotation to its previous state
             if (lateJoin)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                SessionPlayerData? sessionPlayerData =
+                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
-                    physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
+                    physicsTransform.SetPositionAndRotation(
+                        sessionPlayerData.Value.PlayerPosition,
+                        sessionPlayerData.Value.PlayerRotation
+                    );
                 }
             }
 
             // instantiate new NetworkVariables with a default value to ensure they're ready for use on OnNetworkSpawn
-            networkAvatarGuidState.AvatarGuid = new NetworkVariable<NetworkGuid>(persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value);
+            networkAvatarGuidState.AvatarGuid = new NetworkVariable<NetworkGuid>(
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value
+            );
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))
             {
-                networkNameState.Name = new NetworkVariable<FixedPlayerName>(persistentPlayer.NetworkNameState.Name.Value);
+                networkNameState.Name = new NetworkVariable<FixedPlayerName>(
+                    persistentPlayer.NetworkNameState.Name.Value
+                );
             }
 
             // spawn players characters with destroyWithScene = true

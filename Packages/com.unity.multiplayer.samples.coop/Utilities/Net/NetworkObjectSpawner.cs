@@ -12,10 +12,14 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public void Awake()
         {
-            if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer &&
-                NetworkManager.Singleton.SceneManager != null)
+            if (
+                NetworkManager.Singleton
+                && NetworkManager.Singleton.IsServer
+                && NetworkManager.Singleton.SceneManager != null
+            )
             {
-                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted +=
+                    SceneManagerOnOnLoadEventCompleted;
             }
             else
             {
@@ -25,14 +29,23 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnDestroy()
         {
-            if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer &&
-                NetworkManager.Singleton.SceneManager != null)
+            if (
+                NetworkManager.Singleton
+                && NetworkManager.Singleton.IsServer
+                && NetworkManager.Singleton.SceneManager != null
+            )
             {
-                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= SceneManagerOnOnLoadEventCompleted;
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -=
+                    SceneManagerOnOnLoadEventCompleted;
             }
         }
 
-        void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        void SceneManagerOnOnLoadEventCompleted(
+            string sceneName,
+            LoadSceneMode loadSceneMode,
+            List<ulong> clientsCompleted,
+            List<ulong> clientsTimedOut
+        )
         {
             SpawnNetworkObject();
             Destroy(gameObject);
@@ -40,9 +53,16 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void SpawnNetworkObject()
         {
-            var instantiatedNetworkObject = Instantiate(prefabReference, transform.position, transform.rotation, null);
-            SceneManager.MoveGameObjectToScene(instantiatedNetworkObject.gameObject,
-                SceneManager.GetSceneByName(gameObject.scene.name));
+            var instantiatedNetworkObject = Instantiate(
+                prefabReference,
+                transform.position,
+                transform.rotation,
+                null
+            );
+            SceneManager.MoveGameObjectToScene(
+                instantiatedNetworkObject.gameObject,
+                SceneManager.GetSceneByName(gameObject.scene.name)
+            );
             instantiatedNetworkObject.transform.localScale = transform.lossyScale;
             instantiatedNetworkObject.Spawn(destroyWithScene: true);
         }

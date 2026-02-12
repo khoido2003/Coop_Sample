@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using NUnit.Framework;
 using Unity.BossRoom.Gameplay.GameState;
 using Unity.BossRoom.Gameplay.UI;
-using NUnit.Framework;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -58,8 +58,10 @@ namespace Unity.BossRoom.Tests.Runtime
             Assert.That(playerSeat != null, $"{seatObjectName} not found!");
 
             var uiCharSelectPlayerSeat = playerSeat.GetComponent<UICharSelectPlayerSeat>();
-            Assert.That(uiCharSelectPlayerSeat != null,
-                $"{nameof(UICharSelectPlayerSeat)} component not found on {playerSeat}!");
+            Assert.That(
+                uiCharSelectPlayerSeat != null,
+                $"{nameof(UICharSelectPlayerSeat)} component not found on {playerSeat}!"
+            );
             uiCharSelectPlayerSeat.OnClicked();
 
             // selecting a class will enable the "Ready" button, next frame it is selectable
@@ -76,14 +78,20 @@ namespace Unity.BossRoom.Tests.Runtime
         /// <returns></returns>
         IEnumerator WaitUntilBossRoomSceneIsLoaded()
         {
-            yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
+            yield return TestUtilities.AssertIsNetworkSceneLoaded(
+                k_BossRoomSceneName,
+                m_NetworkManager.SceneManager
+            );
         }
 
         IEnumerator WaitUntilDisconnectedAndMainMenuSceneIsLoaded()
         {
             // once loaded into BossRoom scene, disconnect
             var uiSettingsCanvas = Object.FindAnyObjectByType<UISettingsCanvas>();
-            Assert.That(uiSettingsCanvas != null, $"{nameof(UISettingsCanvas)} component not found!");
+            Assert.That(
+                uiSettingsCanvas != null,
+                $"{nameof(UISettingsCanvas)} component not found!"
+            );
             uiSettingsCanvas.OnClickQuitButton();
 
             yield return new WaitForFixedUpdate();
@@ -99,7 +107,10 @@ namespace Unity.BossRoom.Tests.Runtime
             // wait until shutdown is complete
             yield return new WaitUntil(() => !m_NetworkManager.ShutdownInProgress);
 
-            Assert.That(!NetworkManager.Singleton.IsListening, "NetworkManager not fully shut down!");
+            Assert.That(
+                !NetworkManager.Singleton.IsListening,
+                "NetworkManager not fully shut down!"
+            );
 
             // MainMenu is loaded as soon as a shutdown is encountered; validate it is loaded
             yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
@@ -111,13 +122,18 @@ namespace Unity.BossRoom.Tests.Runtime
         /// the BossRoom scene, where the test will disconnect the host.
         /// </summary>
         [UnityTest]
-        public IEnumerator IP_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
+        public IEnumerator IP_HostAndDisconnect_Valid(
+            [ValueSource(nameof(s_PlayerIndices))] int playerIndex
+        )
         {
             yield return WaitUntilMainMenuSceneIsLoaded();
 
             var clientMainMenuState = Object.FindAnyObjectByType<ClientMainMenuState>();
 
-            Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
+            Assert.That(
+                clientMainMenuState != null,
+                $"{nameof(clientMainMenuState)} component not found!"
+            );
 
             var container = clientMainMenuState.Container;
             var ipUIMediator = container.Resolve<IPUIMediator>();
@@ -157,7 +173,11 @@ namespace Unity.BossRoom.Tests.Runtime
         [UnityTearDown]
         public IEnumerator DestroySceneGameObjects()
         {
-            foreach (var sceneGameObject in Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None))
+            foreach (
+                var sceneGameObject in Object.FindObjectsByType<GameObject>(
+                    FindObjectsSortMode.None
+                )
+            )
             {
                 Object.DestroyImmediate(sceneGameObject);
             }

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
@@ -15,11 +15,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         private enum AIStateType
         {
             ATTACK,
+
             //WANDER,
             IDLE,
         }
 
-        static readonly AIStateType[] k_AIStates = (AIStateType[])Enum.GetValues(typeof(AIStateType));
+        static readonly AIStateType[] k_AIStates = (AIStateType[])
+            Enum.GetValues(typeof(AIStateType));
 
         private ServerCharacter m_ServerCharacter;
         private ServerActionPlayer m_ServerActionPlayer;
@@ -96,10 +98,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null ||
-                potentialFoe.IsNpc ||
-                potentialFoe.LifeState != LifeState.Alive ||
-                potentialFoe.IsStealthy.Value)
+            if (
+                potentialFoe == null
+                || potentialFoe.IsNpc
+                || potentialFoe.LifeState != LifeState.Alive
+                || potentialFoe.IsStealthy.Value
+            )
             {
                 return false;
             }
@@ -165,14 +169,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         {
             get
             {
-                return (m_DetectRangeOverride == -1) ? CharacterData.DetectRange : m_DetectRangeOverride;
+                return (m_DetectRangeOverride == -1)
+                    ? CharacterData.DetectRange
+                    : m_DetectRangeOverride;
             }
-
-            set
-            {
-                m_DetectRangeOverride = value;
-            }
+            set { m_DetectRangeOverride = value; }
         }
-
     }
 }

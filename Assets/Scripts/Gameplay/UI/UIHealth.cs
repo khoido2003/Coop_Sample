@@ -30,7 +30,9 @@ namespace Unity.BossRoom.Gameplay.UI
         {
             m_HitPointsSlider.value = newValue;
             // disable slider when we're at full health!
-            m_HitPointsSlider.gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
+            m_HitPointsSlider.gameObject.SetActive(
+                m_HitPointsSlider.value != m_HitPointsSlider.maxValue
+            );
         }
 
         void OnDestroy()

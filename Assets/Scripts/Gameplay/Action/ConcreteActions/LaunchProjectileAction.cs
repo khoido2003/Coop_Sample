@@ -50,7 +50,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             foreach (var projectileInfo in Config.Projectiles)
             {
-                if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<PhysicsProjectile>())
+                if (
+                    projectileInfo.ProjectilePrefab
+                    && projectileInfo.ProjectilePrefab.GetComponent<PhysicsProjectile>()
+                )
                     return projectileInfo;
             }
             throw new System.Exception($"Action {name} has no usable Projectiles!");
@@ -70,15 +73,23 @@ namespace Unity.BossRoom.Gameplay.Actions
 
                 var projectileInfo = GetProjectileInfo();
 
-                NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
+                NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(
+                    projectileInfo.ProjectilePrefab,
+                    projectileInfo.ProjectilePrefab.transform.position,
+                    projectileInfo.ProjectilePrefab.transform.rotation
+                );
                 // point the projectile the same way we're facing
                 no.transform.forward = parent.physicsWrapper.Transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                no.transform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
+                no.transform.position =
+                    parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(
+                        no.transform.position
+                    );
 
-                no.GetComponent<PhysicsProjectile>().Initialize(parent.NetworkObjectId, projectileInfo);
+                no.GetComponent<PhysicsProjectile>()
+                    .Initialize(parent.NetworkObjectId, projectileInfo);
 
                 no.Spawn(true);
             }
@@ -102,6 +113,5 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             return ActionConclusion.Continue;
         }
-
     }
 }

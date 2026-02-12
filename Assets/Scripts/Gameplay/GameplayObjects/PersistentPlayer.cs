@@ -43,7 +43,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             m_PersistentPlayerRuntimeCollection.Add(this);
             if (IsServer)
             {
-                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(
+                    OwnerClientId
+                );
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;
@@ -56,7 +58,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                     {
                         m_NetworkAvatarGuidState.SetRandomAvatar();
                         playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
-                        SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                        SessionManager<SessionPlayerData>.Instance.SetPlayerData(
+                            OwnerClientId,
+                            playerData
+                        );
                     }
                 }
             }
@@ -78,13 +83,18 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             m_PersistentPlayerRuntimeCollection.Remove(this);
             if (IsServer)
             {
-                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(
+                    OwnerClientId
+                );
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;
                     playerData.PlayerName = m_NetworkNameState.Name.Value;
                     playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
-                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(
+                        OwnerClientId,
+                        playerData
+                    );
                 }
             }
         }

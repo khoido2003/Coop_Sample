@@ -57,7 +57,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         protected LoadingProgressManager m_LoadingProgressManager;
 
-        protected Dictionary<ulong, LoadingProgressBar> m_LoadingProgressBars = new Dictionary<ulong, LoadingProgressBar>();
+        protected Dictionary<ulong, LoadingProgressBar> m_LoadingProgressBars =
+            new Dictionary<ulong, LoadingProgressBar>();
 
         bool m_LoadingScreenRunning;
 
@@ -66,7 +67,11 @@ namespace Unity.Multiplayer.Samples.Utilities
         void Awake()
         {
             DontDestroyOnLoad(this);
-            Assert.AreEqual(m_OtherPlayersProgressBars.Count, m_OtherPlayerNamesTexts.Count, "There should be the same number of progress bars and name labels");
+            Assert.AreEqual(
+                m_OtherPlayersProgressBars.Count,
+                m_OtherPlayerNamesTexts.Count,
+                "There should be the same number of progress bars and name labels"
+            );
         }
 
         void Start()
@@ -112,7 +117,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
             {
                 var clientId = progressTracker.Key;
-                if (clientId != NetworkManager.Singleton.LocalClientId && !m_LoadingProgressBars.ContainsKey(clientId))
+                if (
+                    clientId != NetworkManager.Singleton.LocalClientId
+                    && !m_LoadingProgressBars.ContainsKey(clientId)
+                )
                 {
                     AddOtherPlayerProgressBar(clientId, progressTracker.Value);
                 }
@@ -176,19 +184,32 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         protected virtual void UpdateOtherPlayerProgressBar(ulong clientId, int progressBarIndex)
         {
-            m_LoadingProgressBars[clientId].ProgressBar = m_OtherPlayersProgressBars[progressBarIndex];
+            m_LoadingProgressBars[clientId].ProgressBar = m_OtherPlayersProgressBars[
+                progressBarIndex
+            ];
             m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(true);
             m_LoadingProgressBars[clientId].NameText = m_OtherPlayerNamesTexts[progressBarIndex];
             m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(true);
         }
 
-        protected virtual void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
+        protected virtual void AddOtherPlayerProgressBar(
+            ulong clientId,
+            NetworkedLoadingProgressTracker progressTracker
+        )
         {
-            if (m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count && m_LoadingProgressBars.Count < m_OtherPlayerNamesTexts.Count)
+            if (
+                m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count
+                && m_LoadingProgressBars.Count < m_OtherPlayerNamesTexts.Count
+            )
             {
                 var index = m_LoadingProgressBars.Count;
-                m_LoadingProgressBars[clientId] = new LoadingProgressBar(m_OtherPlayersProgressBars[index], m_OtherPlayerNamesTexts[index]);
-                progressTracker.Progress.OnValueChanged += m_LoadingProgressBars[clientId].UpdateProgress;
+                m_LoadingProgressBars[clientId] = new LoadingProgressBar(
+                    m_OtherPlayersProgressBars[index],
+                    m_OtherPlayerNamesTexts[index]
+                );
+                progressTracker.Progress.OnValueChanged += m_LoadingProgressBars[
+                    clientId
+                ].UpdateProgress;
                 m_LoadingProgressBars[clientId].ProgressBar.value = progressTracker.Progress.Value;
                 m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(true);
                 m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(true);
@@ -196,15 +217,22 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
             else
             {
-                throw new Exception("There are not enough progress bars to track the progress of all the players.");
+                throw new Exception(
+                    "There are not enough progress bars to track the progress of all the players."
+                );
             }
         }
 
-        void RemoveOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker = null)
+        void RemoveOtherPlayerProgressBar(
+            ulong clientId,
+            NetworkedLoadingProgressTracker progressTracker = null
+        )
         {
             if (progressTracker != null)
             {
-                progressTracker.Progress.OnValueChanged -= m_LoadingProgressBars[clientId].UpdateProgress;
+                progressTracker.Progress.OnValueChanged -= m_LoadingProgressBars[
+                    clientId
+                ].UpdateProgress;
             }
             m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(false);
             m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(false);

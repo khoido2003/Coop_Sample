@@ -25,7 +25,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void Awake()
         {
-            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
+            if (s_Instance != null)
+                throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
             DontDestroyOnLoad(m_Canvas);
         }
@@ -41,14 +42,20 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
         /// <param name="closeableByUser"></param>
-        public static PopupPanel ShowPopupPanel(string titleText, string mainText, bool closeableByUser = true)
+        public static PopupPanel ShowPopupPanel(
+            string titleText,
+            string mainText,
+            bool closeableByUser = true
+        )
         {
             if (s_Instance != null)
             {
                 return s_Instance.DisplayPopupPanel(titleText, mainText, closeableByUser);
             }
 
-            Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
+            Debug.LogError(
+                $"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}"
+            );
             return null;
         }
 
@@ -82,7 +89,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
             // None of the current PopupPanels are available, so instantiate a new one
             var popupGameObject = Instantiate(m_PopupPanelPrefab, gameObject.transform);
-            popupGameObject.transform.position += new Vector3(1, -1) * (k_Offset * m_PopupPanels.Count % k_MaxOffset);
+            popupGameObject.transform.position +=
+                new Vector3(1, -1) * (k_Offset * m_PopupPanels.Count % k_MaxOffset);
             var popupPanel = popupGameObject.GetComponent<PopupPanel>();
             if (popupPanel != null)
             {

@@ -28,10 +28,15 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
-            if (Data.TargetIds != null
+            if (
+                Data.TargetIds != null
                 && Data.TargetIds.Length > 0
-                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
-                && targetNetworkObj != null)
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    Data.TargetIds[0],
+                    out var targetNetworkObj
+                )
+                && targetNetworkObj != null
+            )
             {
                 float padRange = Config.Range + k_RangePadding;
 
@@ -45,10 +50,16 @@ namespace Unity.BossRoom.Gameplay.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((clientCharacter.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if (
+                    (clientCharacter.transform.position - targetPosition).sqrMagnitude
+                    < (padRange * padRange)
+                )
                 {
                     // target is in range! Play the graphics
-                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(
+                        physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform,
+                        true
+                    );
                 }
             }
 
@@ -93,7 +104,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         void PlayHitReact(ClientCharacter parent)
         {
-            if (m_ImpactPlayed) { return; }
+            if (m_ImpactPlayed)
+            {
+                return;
+            }
 
             m_ImpactPlayed = true;
 
@@ -103,15 +117,25 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null &&
-                Data.TargetIds.Length > 0 &&
-                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
-                && targetNetworkObj != null)
+            if (
+                Data.TargetIds != null
+                && Data.TargetIds.Length > 0
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    Data.TargetIds[0],
+                    out var targetNetworkObj
+                )
+                && targetNetworkObj != null
+            )
             {
                 float padRange = Config.Range + k_RangePadding;
 
                 Vector3 targetPosition;
-                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var movementContainer))
+                if (
+                    PhysicsWrapper.TryGetPhysicsWrapper(
+                        Data.TargetIds[0],
+                        out var movementContainer
+                    )
+                )
                 {
                     targetPosition = movementContainer.Transform.position;
                 }
@@ -120,16 +144,26 @@ namespace Unity.BossRoom.Gameplay.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if (
+                    (parent.transform.position - targetPosition).sqrMagnitude
+                    < (padRange * padRange)
+                )
                 {
                     if (targetNetworkObj.NetworkObjectId != parent.NetworkObjectId)
                     {
                         string hitAnim = Config.ReactAnim;
-                        if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
+                        if (string.IsNullOrEmpty(hitAnim))
+                        {
+                            hitAnim = k_DefaultHitReact;
+                        }
 
-                        if (targetNetworkObj.TryGetComponent<ServerCharacter>(out var serverCharacter)
+                        if (
+                            targetNetworkObj.TryGetComponent<ServerCharacter>(
+                                out var serverCharacter
+                            )
                             && serverCharacter.clientCharacter != null
-                            && serverCharacter.clientCharacter.OurAnimator)
+                            && serverCharacter.clientCharacter.OurAnimator
+                        )
                         {
                             serverCharacter.clientCharacter.OurAnimator.SetTrigger(hitAnim);
                         }

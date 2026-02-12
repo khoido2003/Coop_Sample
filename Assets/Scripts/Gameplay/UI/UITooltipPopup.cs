@@ -13,11 +13,14 @@ namespace Unity.BossRoom.Gameplay.UI
     {
         [SerializeField]
         Canvas m_Canvas;
+
         [SerializeField]
         [Tooltip("This transform is shown/hidden to show/hide the popup box")]
         GameObject m_WindowRoot;
+
         [SerializeField]
         TextMeshProUGUI m_TextField;
+
         [SerializeField]
         Vector3 m_CursorOffset;
 
@@ -55,7 +58,8 @@ namespace Unity.BossRoom.Gameplay.UI
                 m_Canvas.transform as RectTransform,
                 screenCoords,
                 m_Canvas.worldCamera,
-                out canvasCoords);
+                out canvasCoords
+            );
             return m_Canvas.transform.TransformPoint(canvasCoords);
         }
 
@@ -72,6 +76,5 @@ namespace Unity.BossRoom.Gameplay.UI
             }
         }
 #endif
-
     }
 }

@@ -43,7 +43,11 @@ namespace Unity.BossRoom.Navigation
 
         private void OnValidate()
         {
-            Assert.AreEqual(NavigationSystemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSystemTag} tag!");
+            Assert.AreEqual(
+                NavigationSystemTag,
+                tag,
+                $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSystemTag} tag!"
+            );
         }
     }
 }

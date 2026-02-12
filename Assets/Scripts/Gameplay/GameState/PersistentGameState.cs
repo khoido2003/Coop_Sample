@@ -7,7 +7,7 @@ namespace Unity.BossRoom.Gameplay.GameState
     {
         Invalid,
         Win,
-        Loss
+        Loss,
     }
 
     /// <summary>

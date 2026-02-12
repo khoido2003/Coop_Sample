@@ -23,11 +23,15 @@ namespace Unity.BossRoom.DebugCheats
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
-        [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
+        [Tooltip(
+            "Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!"
+        )]
         NetworkObject m_EnemyPrefab;
 
         [SerializeField]
-        [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
+        [Tooltip(
+            "Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!"
+        )]
         NetworkObject m_BossPrefab;
 
         [SerializeField]
@@ -148,17 +152,27 @@ namespace Unity.BossRoom.DebugCheats
             if (playerServerCharacter != null)
             {
                 var targetId = playerServerCharacter.TargetId.Value;
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject obj))
+                if (
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                        targetId,
+                        out NetworkObject obj
+                    )
+                )
                 {
                     var damageable = obj.GetComponent<IDamageable>();
                     if (damageable != null && damageable.IsDamageable())
                     {
                         damageable.ReceiveHitPoints(playerServerCharacter, int.MinValue);
-                        PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillTarget");
+                        PublishCheatUsedMessage(
+                            serverRpcParams.Receive.SenderClientId,
+                            "KillTarget"
+                        );
                     }
                     else
                     {
-                        UnityEngine.Debug.Log($"Target {targetId} has no IDamageable component or cannot be damaged.");
+                        UnityEngine.Debug.Log(
+                            $"Target {targetId} has no IDamageable component or cannot be damaged."
+                        );
                     }
                 }
             }
@@ -167,7 +181,9 @@ namespace Unity.BossRoom.DebugCheats
         [Rpc(SendTo.Server, RequireOwnership = false)]
         void ServerKillAllEnemiesRpc(RpcParams serverRpcParams = default)
         {
-            foreach (var serverCharacter in FindObjectsByType<ServerCharacter>(FindObjectsSortMode.None))
+            foreach (
+                var serverCharacter in FindObjectsByType<ServerCharacter>(FindObjectsSortMode.None)
+            )
             {
                 if (serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Alive)
                 {
@@ -188,7 +204,10 @@ namespace Unity.BossRoom.DebugCheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                playerServerCharacter.NetLifeState.IsGodMode.Value = !playerServerCharacter.NetLifeState.IsGodMode.Value;
+                playerServerCharacter.NetLifeState.IsGodMode.Value = !playerServerCharacter
+                    .NetLifeState
+                    .IsGodMode
+                    .Value;
                 PublishCheatUsedMessage(clientId, "ToggleGodMode");
             }
         }
@@ -207,7 +226,9 @@ namespace Unity.BossRoom.DebugCheats
                 }
                 else
                 {
-                    if (playerServerCharacter.gameObject.TryGetComponent(out IDamageable damageable))
+                    if (
+                        playerServerCharacter.gameObject.TryGetComponent(out IDamageable damageable)
+                    )
                     {
                         damageable.ReceiveHitPoints(null, baseHp);
                     }
@@ -225,7 +246,9 @@ namespace Unity.BossRoom.DebugCheats
             {
                 if (playerServerCharacter.OwnerClientId == clientId)
                 {
-                    playerServerCharacter.Movement.SpeedCheatActivated = !playerServerCharacter.Movement.SpeedCheatActivated;
+                    playerServerCharacter.Movement.SpeedCheatActivated = !playerServerCharacter
+                        .Movement
+                        .SpeedCheatActivated;
                     break;
                 }
             }
@@ -241,7 +264,9 @@ namespace Unity.BossRoom.DebugCheats
             {
                 if (playerServerCharacter.OwnerClientId == clientId)
                 {
-                    playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter.Movement.TeleportModeActivated;
+                    playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter
+                        .Movement
+                        .TeleportModeActivated;
                     break;
                 }
             }
@@ -297,7 +322,9 @@ namespace Unity.BossRoom.DebugCheats
             var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
             if (playerData.HasValue)
             {
-                m_CheatUsedMessagePublisher.Publish(new CheatUsedMessage(cheatUsed, playerData.Value.PlayerName));
+                m_CheatUsedMessagePublisher.Publish(
+                    new CheatUsedMessage(cheatUsed, playerData.Value.PlayerName)
+                );
             }
         }
 

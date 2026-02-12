@@ -2,7 +2,6 @@ using System;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
-
     /// <summary>
     /// Base class for all AIStates
     /// </summary>
@@ -25,6 +24,5 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         /// already been called prior to Update() being called
         /// </summary>
         public abstract void Update();
-
     }
 }

@@ -69,7 +69,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
                 // On the server enable navMeshAgent and initialize
                 m_NavMeshAgent.enabled = true;
-                m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+                m_NavigationSystem = GameObject
+                    .FindGameObjectWithTag(NavigationSystem.NavigationSystemTag)
+                    .GetComponent<NavigationSystem>();
                 m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
             }
         }
@@ -124,7 +126,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// <returns></returns>
         public bool IsPerformingForcedMovement()
         {
-            return m_MovementState == MovementState.Knockback || m_MovementState == MovementState.Charging;
+            return m_MovementState == MovementState.Knockback
+                || m_MovementState == MovementState.Charging;
         }
 
         /// <summary>
@@ -260,8 +263,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 return k_CheatSpeed;
             }
 #endif
-            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.CharacterType];
-            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.CharacterType}");
+            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[
+                m_CharLogic.CharacterType
+            ];
+            Assert.IsNotNull(
+                characterClass,
+                $"No CharacterClass data for character type {m_CharLogic.CharacterType}"
+            );
             return characterClass.Speed;
         }
 

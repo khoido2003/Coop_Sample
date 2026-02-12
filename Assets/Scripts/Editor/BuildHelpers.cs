@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
+using UnityEngine;
 
 /// <summary>
 /// Utility menus to easily create our builds for our playtests. If you're just exploring this project, you shouldn't need those. They are mostly to make
@@ -34,9 +34,14 @@ internal static class BuildHelpers
     static BuildTargetGroup s_CurrentEditorBuildTargetGroup;
     static int s_NbBuildsDone;
 
-    static string BuildPathRootDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath), "Builds", "Playtest");
-    static string BuildPathDirectory(string platformName) => Path.Combine(BuildPathRootDirectory, platformName);
-    public static string BuildPath(string platformName) => Path.Combine(BuildPathDirectory(platformName), "BossRoomPlaytest");
+    static string BuildPathRootDirectory =>
+        Path.Combine(Path.GetDirectoryName(Application.dataPath), "Builds", "Playtest");
+
+    static string BuildPathDirectory(string platformName) =>
+        Path.Combine(BuildPathRootDirectory, platformName);
+
+    public static string BuildPath(string platformName) =>
+        Path.Combine(BuildPathDirectory(platformName), "BossRoomPlaytest");
 
     [MenuItem(k_Build, false, k_MenuGroupingBuild)]
     static async void Build()
@@ -49,10 +54,16 @@ internal static class BuildHelpers
 
         bool skipAutoDelete = Menu.GetChecked(k_SkipAutoDeleteToggleName);
 
-        Debug.Log($"Starting build: buildiOS?:{buildiOS} buildAndroid?:{buildAndroid} buildMacOS?:{buildMacOS} buildWindows?:{buildWindows}");
-        if (string.IsNullOrEmpty(CloudProjectSettings.projectId) && !Menu.GetChecked(k_DisableProjectIDToggleName))
+        Debug.Log(
+            $"Starting build: buildiOS?:{buildiOS} buildAndroid?:{buildAndroid} buildMacOS?:{buildMacOS} buildWindows?:{buildWindows}"
+        );
+        if (
+            string.IsNullOrEmpty(CloudProjectSettings.projectId)
+            && !Menu.GetChecked(k_DisableProjectIDToggleName)
+        )
         {
-            string errorMessage = $"Project ID was supposed to be setup and wasn't, make sure to set it up or disable project ID check with the [{k_DisableProjectIDToggleName}] menu";
+            string errorMessage =
+                $"Project ID was supposed to be setup and wasn't, make sure to set it up or disable project ID check with the [{k_DisableProjectIDToggleName}] menu";
             EditorUtility.DisplayDialog("Error Custom Build", errorMessage, "ok");
             throw new Exception(errorMessage);
         }
@@ -62,18 +73,27 @@ internal static class BuildHelpers
         try
         {
             // deleting so we don't end up testing on outdated builds if there's a build failure
-            if (!skipAutoDelete) DeleteBuilds();
+            if (!skipAutoDelete)
+                DeleteBuilds();
 
-            if (buildiOS) await BuildPlayerUtilityAsync(BuildTarget.iOS, "", true);
-            if (buildAndroid) await BuildPlayerUtilityAsync(BuildTarget.Android, ".apk", true); // there's the possibility of an error where it
+            if (buildiOS)
+                await BuildPlayerUtilityAsync(BuildTarget.iOS, "", true);
+            if (buildAndroid)
+                await BuildPlayerUtilityAsync(BuildTarget.Android, ".apk", true); // there's the possibility of an error where it
 
             // complains about NDK missing. Building manually on android then trying again seems to work? Can't find anything on this.
-            if (buildMacOS) await BuildPlayerUtilityAsync(BuildTarget.StandaloneOSX, ".app", true);
-            if (buildWindows) await BuildPlayerUtilityAsync(BuildTarget.StandaloneWindows64, ".exe", true);
+            if (buildMacOS)
+                await BuildPlayerUtilityAsync(BuildTarget.StandaloneOSX, ".app", true);
+            if (buildWindows)
+                await BuildPlayerUtilityAsync(BuildTarget.StandaloneWindows64, ".exe", true);
         }
         catch
         {
-            EditorUtility.DisplayDialog("Exception while building", "See console for details", "ok");
+            EditorUtility.DisplayDialog(
+                "Exception while building",
+                "See console for details",
+                "ok"
+            );
             throw;
         }
         finally
@@ -86,16 +106,19 @@ internal static class BuildHelpers
     [MenuItem(k_Build, true)]
     static bool CanBuild()
     {
-        return Menu.GetChecked(k_IOSToggleName) ||
-            Menu.GetChecked(k_AndroidToggleName) ||
-            Menu.GetChecked(k_MacOSToggleName) ||
-            Menu.GetChecked(k_WindowsToggleName);
+        return Menu.GetChecked(k_IOSToggleName)
+            || Menu.GetChecked(k_AndroidToggleName)
+            || Menu.GetChecked(k_MacOSToggleName)
+            || Menu.GetChecked(k_WindowsToggleName);
     }
 
     static void RestoreBuildTarget()
     {
         Debug.Log($"restoring editor to initial build target {s_CurrentEditorBuildTarget}");
-        EditorUserBuildSettings.SwitchActiveBuildTarget(s_CurrentEditorBuildTargetGroup, s_CurrentEditorBuildTarget);
+        EditorUserBuildSettings.SwitchActiveBuildTarget(
+            s_CurrentEditorBuildTargetGroup,
+            s_CurrentEditorBuildTarget
+        );
     }
 
     static void SaveCurrentBuildTarget()
@@ -180,7 +203,11 @@ internal static class BuildHelpers
         return toSet;
     }
 
-    static async Task BuildPlayerUtilityAsync(BuildTarget buildTarget = BuildTarget.NoTarget, string buildPathExtension = null, bool buildDebug = false)
+    static async Task BuildPlayerUtilityAsync(
+        BuildTarget buildTarget = BuildTarget.NoTarget,
+        string buildPathExtension = null,
+        bool buildDebug = false
+    )
     {
         s_NbBuildsDone++;
         Debug.Log($"Starting build for {buildTarget.ToString()}");
@@ -223,7 +250,9 @@ internal static class BuildHelpers
         else
         {
             string debugString = buildDebug ? "debug" : "release";
-            throw new Exception($"Build failed for {debugString}:{buildTarget}! {report.summary.totalErrors} errors");
+            throw new Exception(
+                $"Build failed for {debugString}:{buildTarget}! {report.summary.totalErrors} errors"
+            );
         }
     }
 
@@ -237,7 +266,9 @@ internal static class BuildHelpers
         }
         else
         {
-            Debug.Log($"Build directory does not exist ({BuildPathRootDirectory}). No cleanup to do");
+            Debug.Log(
+                $"Build directory does not exist ({BuildPathRootDirectory}). No cleanup to do"
+            );
         }
     }
 }

@@ -1,12 +1,13 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using Object = UnityEngine.Object;
+
 
 /// <summary>
 /// Allows setting a scene as a root scene and setting its child scenes. To use this, drag this component on any object in a scene to make that scene a root scene. In the background, ChildSceneLoader will automatically manage this.
@@ -45,7 +46,14 @@ public class EditorChildSceneLoader : MonoBehaviour
         List<SceneSetup> sceneSetupToLoad = new List<SceneSetup>();
         foreach (var sceneAsset in sceneAssetsToLoad)
         {
-            sceneSetupToLoad.Add(new SceneSetup() { path = AssetDatabase.GetAssetPath(sceneAsset), isActive = false, isLoaded = true });
+            sceneSetupToLoad.Add(
+                new SceneSetup()
+                {
+                    path = AssetDatabase.GetAssetPath(sceneAsset),
+                    isActive = false,
+                    isLoaded = true,
+                }
+            );
         }
 
         sceneSetupToLoad[0].isActive = true;
@@ -87,9 +95,12 @@ public class ChildSceneLoader
 
     static void OnSceneLoaded(Scene _, OpenSceneMode mode)
     {
-        if (mode != OpenSceneMode.Single || BuildPipeline.isBuildingPlayer) return; // try to load child scenes only for root scenes or if not building
+        if (mode != OpenSceneMode.Single || BuildPipeline.isBuildingPlayer)
+            return; // try to load child scenes only for root scenes or if not building
 
-        var scenesToLoadObjects = Object.FindObjectsByType<EditorChildSceneLoader>(FindObjectsSortMode.None);
+        var scenesToLoadObjects = Object.FindObjectsByType<EditorChildSceneLoader>(
+            FindObjectsSortMode.None
+        );
         if (scenesToLoadObjects.Length > 1)
         {
             throw new Exception("Should only have one root scene at once loaded");

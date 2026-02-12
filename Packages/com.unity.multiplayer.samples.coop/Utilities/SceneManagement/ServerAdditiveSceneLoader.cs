@@ -72,11 +72,17 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted && sceneEvent.SceneName == m_SceneName)
+            if (
+                sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted
+                && sceneEvent.SceneName == m_SceneName
+            )
             {
                 m_SceneState = SceneState.Loaded;
             }
-            else if (sceneEvent.SceneEventType == SceneEventType.UnloadEventCompleted && sceneEvent.SceneName == m_SceneName)
+            else if (
+                sceneEvent.SceneEventType == SceneEventType.UnloadEventCompleted
+                && sceneEvent.SceneName == m_SceneName
+            )
             {
                 m_SceneState = SceneState.Unloaded;
             }
@@ -86,7 +92,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsActive) // make sure that OnNetworkSpawn has been called before this
             {
-                if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
+                if (
+                    other.CompareTag(m_PlayerTag)
+                    && other.TryGetComponent(out NetworkObject networkObject)
+                )
                 {
                     m_PlayersInTrigger.Add(networkObject.OwnerClientId);
 
@@ -107,7 +116,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsActive) // make sure that OnNetworkSpawn has been called before this
             {
-                if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
+                if (
+                    other.CompareTag(m_PlayerTag)
+                    && other.TryGetComponent(out NetworkObject networkObject)
+                )
                 {
                     m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
                 }
@@ -120,7 +132,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
-                    var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Additive);
+                    var status = NetworkManager.SceneManager.LoadScene(
+                        m_SceneName,
+                        LoadSceneMode.Additive
+                    );
                     // if successfully started a LoadScene event, set state to Loading
                     if (status == SceneEventProgressStatus.Started)
                     {
@@ -136,7 +151,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        void OnConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEventData)
+        void OnConnectionEvent(
+            NetworkManager networkManager,
+            ConnectionEventData connectionEventData
+        )
         {
             if (connectionEventData.EventType == ConnectionEvent.ClientDisconnected)
             {
@@ -152,9 +170,14 @@ namespace Unity.Multiplayer.Samples.Utilities
             Scene scene = SceneManager.GetSceneByName(m_SceneName);
             if (scene.isLoaded)
             {
-                var status = NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(m_SceneName));
+                var status = NetworkManager.SceneManager.UnloadScene(
+                    SceneManager.GetSceneByName(m_SceneName)
+                );
                 // if successfully started an UnloadScene event, set state to Unloading, if not, reset state to Loaded so a new Coroutine will start
-                m_SceneState = status == SceneEventProgressStatus.Started ? SceneState.Unloading : SceneState.Loaded;
+                m_SceneState =
+                    status == SceneEventProgressStatus.Started
+                        ? SceneState.Unloading
+                        : SceneState.Loaded;
             }
         }
     }

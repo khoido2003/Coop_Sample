@@ -44,6 +44,5 @@ namespace Unity.BossRoom.Gameplay.UI
             m_QuitPanelRoot.SetActive(!m_QuitPanelRoot.activeSelf);
             m_SettingsPanelRoot.SetActive(false);
         }
-
     }
 }

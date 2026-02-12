@@ -25,9 +25,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private enum ActionStage
         {
-            Windup,     // performing animations prior to actually moving
-            Charging,   // running across the screen and hitting characters
-            Complete,   // ending action
+            Windup, // performing animations prior to actually moving
+            Charging, // running across the screen and hitting characters
+            Complete, // ending action
         }
 
         /// <summary>
@@ -56,11 +56,18 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[
+                    m_Data.TargetIds[0]
+                ];
                 if (initialTarget)
                 {
                     Vector3 lookAtPosition;
-                    if (PhysicsWrapper.TryGetPhysicsWrapper(initialTarget.NetworkObjectId, out var physicsWrapper))
+                    if (
+                        PhysicsWrapper.TryGetPhysicsWrapper(
+                            initialTarget.NetworkObjectId,
+                            out var physicsWrapper
+                        )
+                    )
                     {
                         lookAtPosition = physicsWrapper.Transform.position;
                     }
@@ -119,7 +126,10 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 // we've just started to charge across the screen! Anyone currently touching us gets hit
                 SimulateCollisionWithNearbyFoes(clientCharacter);
-                clientCharacter.Movement.StartForwardCharge(Config.MoveSpeed, Config.DurationSeconds - Config.ExecTimeSeconds);
+                clientCharacter.Movement.StartForwardCharge(
+                    Config.MoveSpeed,
+                    Config.DurationSeconds - Config.ExecTimeSeconds
+                );
             }
 
             m_PreviousStage = newState;
@@ -161,7 +171,11 @@ namespace Unity.BossRoom.Gameplay.Actions
 
                 // We deal a certain amount of damage to our "initial" target and a different amount to all other victims.
                 int damage;
-                if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkObjectId)
+                if (
+                    m_Data.TargetIds != null
+                    && m_Data.TargetIds.Length > 0
+                    && m_Data.TargetIds[0] == victim.NetworkObjectId
+                )
                 {
                     damage = Config.Amount;
                 }
@@ -177,7 +191,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             var victimMovement = victim.Movement;
-            victimMovement.StartKnockback(parent.physicsWrapper.Transform.position, Config.KnockbackSpeed, Config.KnockbackDuration);
+            victimMovement.StartKnockback(
+                parent.physicsWrapper.Transform.position,
+                Config.KnockbackSpeed,
+                Config.KnockbackDuration
+            );
         }
 
         // called by owning class when parent's Collider collides with stuff
@@ -212,7 +230,12 @@ namespace Unity.BossRoom.Gameplay.Actions
                     damageable.ReceiveHitPoints(parent, -Config.SplashDamage);
 
                     // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
-                    if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
+                    if (
+                        (
+                            damageable.GetSpecialDamageFlags()
+                            & IDamageable.SpecialDamageFlags.StunOnTrample
+                        ) == IDamageable.SpecialDamageFlags.StunOnTrample
+                    )
                     {
                         StunSelf(parent);
                     }
@@ -226,7 +249,13 @@ namespace Unity.BossRoom.Gameplay.Actions
             // So when we start charging across the screen, we check to see what's already touching us
             // (or close enough) and treat that like a collision.
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyEntities(true, true, parent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
+            int numResults = ActionUtils.DetectNearbyEntities(
+                true,
+                true,
+                parent.physicsWrapper.DamageCollider,
+                k_PhysicalTouchDistance,
+                out results
+            );
             for (int i = 0; i < numResults; i++)
             {
                 Collide(parent, results[i].collider);

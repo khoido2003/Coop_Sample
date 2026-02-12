@@ -21,11 +21,18 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                var initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                var initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[
+                    m_Data.TargetIds[0]
+                ];
                 if (initialTarget)
                 {
                     Vector3 lookAtPosition;
-                    if (PhysicsWrapper.TryGetPhysicsWrapper(initialTarget.NetworkObjectId, out var physicsWrapper))
+                    if (
+                        PhysicsWrapper.TryGetPhysicsWrapper(
+                            initialTarget.NetworkObjectId,
+                            out var physicsWrapper
+                        )
+                    )
                     {
                         lookAtPosition = physicsWrapper.Transform.position;
                     }
@@ -91,15 +98,23 @@ namespace Unity.BossRoom.Gameplay.Actions
 
                 var projectileInfo = GetProjectileInfo();
 
-                var no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
+                var no = NetworkObjectPool.Singleton.GetNetworkObject(
+                    projectileInfo.ProjectilePrefab,
+                    projectileInfo.ProjectilePrefab.transform.position,
+                    projectileInfo.ProjectilePrefab.transform.rotation
+                );
 
                 var networkObjectTransform = no.transform;
 
                 // point the thrown object the same way we're facing
                 networkObjectTransform.forward = parent.physicsWrapper.Transform.forward;
 
-                networkObjectTransform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
-                    networkObjectTransform.forward + (Vector3.up * 2f);
+                networkObjectTransform.position =
+                    parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(
+                        networkObjectTransform.position
+                    )
+                    + networkObjectTransform.forward
+                    + (Vector3.up * 2f);
 
                 no.Spawn(true);
 
@@ -107,8 +122,15 @@ namespace Unity.BossRoom.Gameplay.Actions
                 // Rigidbody component after it is spawned
                 var tossedItemRigidbody = no.GetComponent<Rigidbody>();
 
-                tossedItemRigidbody.AddForce((networkObjectTransform.forward * 80f) + (networkObjectTransform.up * 150f), ForceMode.Impulse);
-                tossedItemRigidbody.AddTorque((networkObjectTransform.forward * Random.Range(-15f, 15f)) + (networkObjectTransform.up * Random.Range(-15f, 15f)), ForceMode.Impulse);
+                tossedItemRigidbody.AddForce(
+                    (networkObjectTransform.forward * 80f) + (networkObjectTransform.up * 150f),
+                    ForceMode.Impulse
+                );
+                tossedItemRigidbody.AddTorque(
+                    (networkObjectTransform.forward * Random.Range(-15f, 15f))
+                        + (networkObjectTransform.up * Random.Range(-15f, 15f)),
+                    ForceMode.Impulse
+                );
             }
         }
     }

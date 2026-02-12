@@ -19,7 +19,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 Position = transform.position,
                 ActionID = m_ActionPrototypeID,
                 ShouldQueue = false,
-                TargetIds = null
+                TargetIds = null,
             };
             m_SendInput(data);
         }
@@ -29,6 +29,5 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_PlayerOwner.ServerStopChargingUpRpc();
             Destroy(gameObject);
         }
-
     }
 }

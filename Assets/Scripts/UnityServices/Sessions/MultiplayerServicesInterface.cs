@@ -22,17 +22,23 @@ namespace Unity.BossRoom.UnityServices.Sessions
             // Filter for open sessions only
             m_FilterOptions = new List<FilterOption>
             {
-                new(FilterField.AvailableSlots, "0", FilterOperation.Greater)
+                new(FilterField.AvailableSlots, "0", FilterOperation.Greater),
             };
 
             // Order by newest sessions first
             m_SortOptions = new List<SortOption>
             {
-                new(SortOrder.Descending, SortField.CreationTime)
+                new(SortOrder.Descending, SortField.CreationTime),
             };
         }
 
-        public async Task<ISession> CreateSession(string sessionName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerProperty> playerProperties, Dictionary<string, SessionProperty> sessionProperties)
+        public async Task<ISession> CreateSession(
+            string sessionName,
+            int maxPlayers,
+            bool isPrivate,
+            Dictionary<string, PlayerProperty> playerProperties,
+            Dictionary<string, SessionProperty> sessionProperties
+        )
         {
             var sessionOptions = new SessionOptions
             {
@@ -41,45 +47,56 @@ namespace Unity.BossRoom.UnityServices.Sessions
                 IsPrivate = isPrivate,
                 IsLocked = false,
                 PlayerProperties = playerProperties,
-                SessionProperties = sessionProperties
+                SessionProperties = sessionProperties,
             }.WithRelayNetwork();
 
             return await MultiplayerService.Instance.CreateSessionAsync(sessionOptions);
         }
 
-        public async Task<ISession> JoinSessionByCode(string sessionCode, Dictionary<string, PlayerProperty> localUserData)
+        public async Task<ISession> JoinSessionByCode(
+            string sessionCode,
+            Dictionary<string, PlayerProperty> localUserData
+        )
         {
-            var joinSessionOptions = new JoinSessionOptions
-            {
-                PlayerProperties = localUserData
-            };
-            return await MultiplayerService.Instance.JoinSessionByCodeAsync(sessionCode, joinSessionOptions);
+            var joinSessionOptions = new JoinSessionOptions { PlayerProperties = localUserData };
+            return await MultiplayerService.Instance.JoinSessionByCodeAsync(
+                sessionCode,
+                joinSessionOptions
+            );
         }
 
-        public async Task<ISession> JoinSessionById(string sessionId, Dictionary<string, PlayerProperty> localUserData)
+        public async Task<ISession> JoinSessionById(
+            string sessionId,
+            Dictionary<string, PlayerProperty> localUserData
+        )
         {
-            var joinSessionOptions = new JoinSessionOptions
-            {
-                PlayerProperties = localUserData
-            };
-            return await MultiplayerService.Instance.JoinSessionByIdAsync(sessionId, joinSessionOptions);
+            var joinSessionOptions = new JoinSessionOptions { PlayerProperties = localUserData };
+            return await MultiplayerService.Instance.JoinSessionByIdAsync(
+                sessionId,
+                joinSessionOptions
+            );
         }
 
-        public async Task<ISession> QuickJoinSession(Dictionary<string, PlayerProperty> localUserData)
+        public async Task<ISession> QuickJoinSession(
+            Dictionary<string, PlayerProperty> localUserData
+        )
         {
             var quickJoinOptions = new QuickJoinOptions
             {
                 Filters = m_FilterOptions,
-                CreateSession = true // create a Session if no matching Session was found
+                CreateSession = true, // create a Session if no matching Session was found
             };
 
             var sessionOptions = new SessionOptions
             {
                 MaxPlayers = k_MaxPlayers,
-                PlayerProperties = localUserData
+                PlayerProperties = localUserData,
             }.WithRelayNetwork();
 
-            return await MultiplayerService.Instance.MatchmakeSessionAsync(quickJoinOptions, sessionOptions);
+            return await MultiplayerService.Instance.MatchmakeSessionAsync(
+                quickJoinOptions,
+                sessionOptions
+            );
         }
 
         public async Task<QuerySessionsResults> QuerySessions()
@@ -98,7 +115,7 @@ namespace Unity.BossRoom.UnityServices.Sessions
             {
                 Count = k_MaxSessionsToShow,
                 FilterOptions = m_FilterOptions,
-                SortOptions = m_SortOptions
+                SortOptions = m_SortOptions,
             };
             return await MultiplayerService.Instance.QuerySessionsAsync(querySessionOptions);
         }

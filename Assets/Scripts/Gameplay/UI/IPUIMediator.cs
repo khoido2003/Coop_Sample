@@ -1,8 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
-using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
 using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Infrastructure;
 using Unity.Networking.Transport;
 using UnityEngine;
@@ -18,27 +18,38 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
-        [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField]
+        TextMeshProUGUI m_PlayerNameLabel;
 
-        [SerializeField] IPJoiningUI m_IPJoiningUI;
+        [SerializeField]
+        IPJoiningUI m_IPJoiningUI;
 
-        [SerializeField] IPHostingUI m_IPHostingUI;
+        [SerializeField]
+        IPHostingUI m_IPHostingUI;
 
-        [SerializeField] UITinter m_JoinTabButtonHighlightTinter;
+        [SerializeField]
+        UITinter m_JoinTabButtonHighlightTinter;
 
-        [SerializeField] UITinter m_JoinTabButtonTabBlockerTinter;
+        [SerializeField]
+        UITinter m_JoinTabButtonTabBlockerTinter;
 
-        [SerializeField] UITinter m_HostTabButtonHighlightTinter;
+        [SerializeField]
+        UITinter m_HostTabButtonHighlightTinter;
 
-        [SerializeField] UITinter m_HostTabButtonTabBlockerTinter;
+        [SerializeField]
+        UITinter m_HostTabButtonTabBlockerTinter;
 
-        [SerializeField] GameObject m_SignInSpinner;
+        [SerializeField]
+        GameObject m_SignInSpinner;
 
         [SerializeField]
         IPConnectionWindow m_IPConnectionWindow;
 
-        [Inject] NameGenerationData m_NameGenerationData;
-        [Inject] ConnectionManager m_ConnectionManager;
+        [Inject]
+        NameGenerationData m_NameGenerationData;
+
+        [Inject]
+        ConnectionManager m_ConnectionManager;
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
@@ -193,14 +204,14 @@ namespace Unity.BossRoom.Gameplay.UI
         /// <returns> Sanitized text string. </returns>
         public static string SanitizePort(string dirtyString)
         {
-
             return Regex.Replace(dirtyString, "[^0-9]", "");
         }
 
         public static bool AreIpAddressAndPortValid(string ipAddress, string port)
         {
             var portValid = ushort.TryParse(port, out var portNum);
-            return portValid && NetworkEndpoint.TryParse(ipAddress, portNum, out var networkEndPoint);
+            return portValid
+                && NetworkEndpoint.TryParse(ipAddress, portNum, out var networkEndPoint);
         }
     }
 }

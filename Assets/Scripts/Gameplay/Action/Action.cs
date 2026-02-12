@@ -46,7 +46,6 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         public const string k_DefaultHitReact = "HitReact1";
 
-
         protected ActionRequestData m_Data;
 
         /// <summary>
@@ -57,7 +56,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <summary>
         /// How long the Action has been running (since its Start was called)--in seconds, measured via Time.time.
         /// </summary>
-        public float TimeRunning { get { return (Time.time - TimeStarted); } }
+        public float TimeRunning
+        {
+            get { return (Time.time - TimeStarted); }
+        }
 
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly.
@@ -69,9 +71,12 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         public ActionConfig Config;
 
-        public bool IsChaseAction => ActionID == GameDataSource.Instance.GeneralChaseActionPrototype.ActionID;
-        public bool IsStunAction => ActionID == GameDataSource.Instance.StunnedActionPrototype.ActionID;
-        public bool IsGeneralTargetAction => ActionID == GameDataSource.Instance.GeneralTargetActionPrototype.ActionID;
+        public bool IsChaseAction =>
+            ActionID == GameDataSource.Instance.GeneralChaseActionPrototype.ActionID;
+        public bool IsStunAction =>
+            ActionID == GameDataSource.Instance.StunnedActionPrototype.ActionID;
+        public bool IsGeneralTargetAction =>
+            ActionID == GameDataSource.Instance.GeneralTargetActionPrototype.ActionID;
 
         /// <summary>
         /// Constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
@@ -99,7 +104,6 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
         public abstract bool OnStart(ServerCharacter serverCharacter);
 
-
         /// <summary>
         /// Called each frame while the action is running.
         /// </summary>
@@ -112,7 +116,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Config.BlockingMode == BlockingModeType.OnlyDuringExecTime ? TimeRunning >= Config.ExecTimeSeconds : false;
+            return Config.BlockingMode == BlockingModeType.OnlyDuringExecTime
+                ? TimeRunning >= Config.ExecTimeSeconds
+                : false;
         }
 
         /// <summary>
@@ -138,20 +144,26 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         /// <param name="newAction">the new Action to immediately transition to</param>
         /// <returns>true if there's a new action, false otherwise</returns>
-        public virtual bool ChainIntoNewAction(ref ActionRequestData newAction) { return false; }
+        public virtual bool ChainIntoNewAction(ref ActionRequestData newAction)
+        {
+            return false;
+        }
 
         /// <summary>
         /// Called on the active ("blocking") Action when this character collides with another.
         /// </summary>
         /// <param name="serverCharacter"></param>
         /// <param name="collision"></param>
-        public virtual void CollisionEntered(ServerCharacter serverCharacter, Collision collision) { }
+        public virtual void CollisionEntered(
+            ServerCharacter serverCharacter,
+            Collision collision
+        ) { }
 
         public enum BuffableValue
         {
             PercentHealingReceived, // unbuffed value is 1.0. Reducing to 0 would mean "no healing". 2 would mean "double healing"
-            PercentDamageReceived,  // unbuffed value is 1.0. Reducing to 0 would mean "no damage". 2 would mean "double damage"
-            ChanceToStunTramplers,  // unbuffed value is 0. If > 0, is the chance that someone trampling this character becomes stunned
+            PercentDamageReceived, // unbuffed value is 1.0. Reducing to 0 would mean "no damage". 2 would mean "double damage"
+            ChanceToStunTramplers, // unbuffed value is 0. If > 0, is the chance that someone trampling this character becomes stunned
         }
 
         /// <summary>
@@ -177,10 +189,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             switch (buffType)
             {
-                case BuffableValue.PercentDamageReceived: return 1;
-                case BuffableValue.PercentHealingReceived: return 1;
-                case BuffableValue.ChanceToStunTramplers: return 0;
-                default: throw new System.Exception($"Unknown buff type {buffType}");
+                case BuffableValue.PercentDamageReceived:
+                    return 1;
+                case BuffableValue.PercentHealingReceived:
+                    return 1;
+                case BuffableValue.ChanceToStunTramplers:
+                    return 0;
+                default:
+                    throw new System.Exception($"Unknown buff type {buffType}");
             }
         }
 
@@ -200,9 +216,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </remarks>
         /// <param name="serverCharacter"></param>
         /// <param name="activityType"></param>
-        public virtual void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType) { }
-
-
+        public virtual void OnGameplayActivity(
+            ServerCharacter serverCharacter,
+            GameplayActivity activityType
+        ) { }
 
         /// <summary>
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server.
@@ -227,6 +244,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             return ActionConclusion.Continue;
         }
+
         /// <summary>
         /// End is always called when the ActionFX finishes playing. This is a good place for derived classes to put
         /// wrap-up logic (perhaps playing the "puff of smoke" that rises when a persistent fire AOE goes away). Derived
@@ -252,22 +270,39 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="clientCharacter">The ActionVisualization that would be playing this ActionFX.</param>
         /// <param name="data">The request being sent to the server</param>
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
-        public static bool ShouldClientAnticipate(ClientCharacter clientCharacter, ref ActionRequestData data)
+        public static bool ShouldClientAnticipate(
+            ClientCharacter clientCharacter,
+            ref ActionRequestData data
+        )
         {
-            if (!clientCharacter.CanPerformActions) { return false; }
+            if (!clientCharacter.CanPerformActions)
+            {
+                return false;
+            }
 
-            var actionDescription = GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config;
+            var actionDescription = GameDataSource
+                .Instance.GetActionPrototypeByID(data.ActionID)
+                .Config;
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
             //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill.
             bool isTargetEligible = true;
             if (data.ShouldClose == true)
             {
-                ulong targetId = (data.TargetIds != null && data.TargetIds.Length > 0) ? data.TargetIds[0] : 0;
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject networkObject))
+                ulong targetId =
+                    (data.TargetIds != null && data.TargetIds.Length > 0) ? data.TargetIds[0] : 0;
+                if (
+                    NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                        targetId,
+                        out NetworkObject networkObject
+                    )
+                )
                 {
                     float rangeSquared = actionDescription.Range * actionDescription.Range;
-                    isTargetEligible = (networkObject.transform.position - clientCharacter.transform.position).sqrMagnitude < rangeSquared;
+                    isTargetEligible =
+                        (
+                            networkObject.transform.position - clientCharacter.transform.position
+                        ).sqrMagnitude < rangeSquared;
                 }
             }
 
@@ -286,19 +321,28 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// few types of actions -- it is not called for other actions.)
         /// </summary>
         /// <param name="finalChargeUpPercentage"></param>
-        public virtual void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage) { }
+        public virtual void OnStoppedChargingUpClient(
+            ClientCharacter clientCharacter,
+            float finalChargeUpPercentage
+        ) { }
 
         /// <summary>
         /// Utility function that instantiates all the graphics in the Spawns list.
         /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
         /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(Transform origin, bool parentToOrigin)
+        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(
+            Transform origin,
+            bool parentToOrigin
+        )
         {
             var returnList = new List<SpecialFXGraphic>();
             foreach (var prefab in Config.Spawns)
             {
-                if (!prefab) { continue; } // skip blank entries in our prefab list
+                if (!prefab)
+                {
+                    continue;
+                } // skip blank entries in our prefab list
                 returnList.Add(InstantiateSpecialFXGraphic(prefab, origin, parentToOrigin));
             }
             return returnList;
@@ -309,13 +353,24 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
         /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected SpecialFXGraphic InstantiateSpecialFXGraphic(GameObject prefab, Transform origin, bool parentToOrigin)
+        protected SpecialFXGraphic InstantiateSpecialFXGraphic(
+            GameObject prefab,
+            Transform origin,
+            bool parentToOrigin
+        )
         {
             if (prefab.GetComponent<SpecialFXGraphic>() == null)
             {
-                throw new System.Exception($"One of the Spawns on action {this.name} does not have a SpecialFXGraphic component and can't be instantiated!");
+                throw new System.Exception(
+                    $"One of the Spawns on action {this.name} does not have a SpecialFXGraphic component and can't be instantiated!"
+                );
             }
-            var graphicsGO = GameObject.Instantiate(prefab, origin.transform.position, origin.transform.rotation, (parentToOrigin ? origin.transform : null));
+            var graphicsGO = GameObject.Instantiate(
+                prefab,
+                origin.transform.position,
+                origin.transform.rotation,
+                (parentToOrigin ? origin.transform : null)
+            );
             return graphicsGO.GetComponent<SpecialFXGraphic>();
         }
 
@@ -334,6 +389,5 @@ namespace Unity.BossRoom.Gameplay.Actions
                 clientCharacter.OurAnimator.SetTrigger(Config.AnimAnticipation);
             }
         }
-
     }
 }

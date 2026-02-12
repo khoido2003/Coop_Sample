@@ -8,23 +8,27 @@ namespace Unity.BossRoom.Gameplay.Actions
 {
     public static class ActionFactory
     {
-        private static Dictionary<ActionID, ObjectPool<Action>> s_ActionPools = new Dictionary<ActionID, ObjectPool<Action>>();
+        private static Dictionary<ActionID, ObjectPool<Action>> s_ActionPools =
+            new Dictionary<ActionID, ObjectPool<Action>>();
 
         private static ObjectPool<Action> GetActionPool(ActionID actionID)
         {
             if (!s_ActionPools.TryGetValue(actionID, out var actionPool))
             {
                 actionPool = new ObjectPool<Action>(
-                    createFunc: () => Object.Instantiate(GameDataSource.Instance.GetActionPrototypeByID(actionID)),
+                    createFunc: () =>
+                        Object.Instantiate(
+                            GameDataSource.Instance.GetActionPrototypeByID(actionID)
+                        ),
                     actionOnRelease: action => action.Reset(),
-                    actionOnDestroy: Object.Destroy);
+                    actionOnDestroy: Object.Destroy
+                );
 
                 s_ActionPools.Add(actionID, actionPool);
             }
 
             return actionPool;
         }
-
 
         /// <summary>
         /// Factory method that creates Actions from their request data.

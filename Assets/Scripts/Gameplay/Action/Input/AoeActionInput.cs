@@ -43,7 +43,9 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         void Start()
         {
-            var radius = GameDataSource.Instance.GetActionPrototypeByID(m_ActionPrototypeID).Config.Radius;
+            var radius = GameDataSource
+                .Instance.GetActionPrototypeByID(m_ActionPrototypeID)
+                .Config.Radius;
 
             transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
@@ -52,13 +54,20 @@ namespace Unity.BossRoom.Gameplay.Actions
         void Update()
         {
             // TODO: convert to mouse position using new input system
-            if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(m_PointAction.action.ReadValue<Vector2>()), out Vector3 pointOnPlane) &&
-                NavMesh.SamplePosition(pointOnPlane, out m_NavMeshHit, 2f, NavMesh.AllAreas))
+            if (
+                PlaneRaycast(
+                    k_Plane,
+                    m_Camera.ScreenPointToRay(m_PointAction.action.ReadValue<Vector2>()),
+                    out Vector3 pointOnPlane
+                ) && NavMesh.SamplePosition(pointOnPlane, out m_NavMeshHit, 2f, NavMesh.AllAreas)
+            )
             {
                 transform.position = m_NavMeshHit.position;
             }
 
-            float range = GameDataSource.Instance.GetActionPrototypeByID(m_ActionPrototypeID).Config.Range;
+            float range = GameDataSource
+                .Instance.GetActionPrototypeByID(m_ActionPrototypeID)
+                .Config.Range;
             bool isInRange = (m_Origin - transform.position).sqrMagnitude <= range * range;
             m_InRangeVisualization.SetActive(isInRange);
             m_OutOfRangeVisualization.SetActive(!isInRange);
@@ -78,7 +87,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                         Position = transform.position,
                         ActionID = m_ActionPrototypeID,
                         ShouldQueue = false,
-                        TargetIds = null
+                        TargetIds = null,
                     };
                     m_SendInput(data);
                 }

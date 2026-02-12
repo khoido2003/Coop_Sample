@@ -51,7 +51,10 @@ namespace Unity.BossRoom.Infrastructure
 
         public virtual IDisposable Subscribe(Action<T> handler)
         {
-            Assert.IsTrue(!IsSubscribed(handler), "Attempting to subscribe with the same handler more than once");
+            Assert.IsTrue(
+                !IsSubscribed(handler),
+                "Attempting to subscribe with the same handler more than once"
+            );
 
             if (m_PendingHandlers.ContainsKey(handler))
             {
@@ -89,8 +92,10 @@ namespace Unity.BossRoom.Infrastructure
 
         bool IsSubscribed(Action<T> handler)
         {
-            var isPendingRemoval = m_PendingHandlers.ContainsKey(handler) && !m_PendingHandlers[handler];
-            var isPendingAdding = m_PendingHandlers.ContainsKey(handler) && m_PendingHandlers[handler];
+            var isPendingRemoval =
+                m_PendingHandlers.ContainsKey(handler) && !m_PendingHandlers[handler];
+            var isPendingAdding =
+                m_PendingHandlers.ContainsKey(handler) && m_PendingHandlers[handler];
             return m_MessageHandlers.Contains(handler) && !isPendingRemoval || isPendingAdding;
         }
     }

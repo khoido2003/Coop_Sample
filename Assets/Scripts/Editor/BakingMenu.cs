@@ -1,6 +1,6 @@
 using System;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Unity.BossRoom.Editor
@@ -10,7 +10,11 @@ namespace Unity.BossRoom.Editor
     /// </summary>
     public abstract class BakingMenu
     {
-        static void HandleEnvLights(bool realtimeLightsEnabled, bool bakedLightsEnabled, string lightingStatus)
+        static void HandleEnvLights(
+            bool realtimeLightsEnabled,
+            bool bakedLightsEnabled,
+            string lightingStatus
+        )
         {
             var bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
             var realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
@@ -46,7 +50,10 @@ namespace Unity.BossRoom.Editor
             }
         }
 
-        static void HandleReflectionProbes(ReflectionProbeMode reflectionProbeMode, string refProbesStatus)
+        static void HandleReflectionProbes(
+            ReflectionProbeMode reflectionProbeMode,
+            string refProbesStatus
+        )
         {
             var reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
 
@@ -113,7 +120,9 @@ namespace Unity.BossRoom.Editor
         {
             SetEnvLightsRealtime();
             SetRefProbesRealtime();
-            Debug.Log("All lights (except for area lights) and reflection probes in scene set to Realtime");
+            Debug.Log(
+                "All lights (except for area lights) and reflection probes in scene set to Realtime"
+            );
         }
     }
 }

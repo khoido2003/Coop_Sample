@@ -30,7 +30,13 @@ namespace Unity.BossRoom.Gameplay.Actions
         public override bool OnStart(ServerCharacter serverCharacter)
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetDashDestination(serverCharacter.physicsWrapper.Transform, Data.Position, true, Config.Range, Config.Range);
+            m_TargetSpot = ActionUtils.GetDashDestination(
+                serverCharacter.physicsWrapper.Transform,
+                Data.Position,
+                true,
+                Config.Range,
+                Config.Range
+            );
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
             serverCharacter.physicsWrapper.Transform.LookAt(m_TargetSpot);
@@ -75,18 +81,22 @@ namespace Unity.BossRoom.Gameplay.Actions
             // OtherAnimatorVariable contains the name of the cancellation trigger
             if (!string.IsNullOrEmpty(Config.OtherAnimatorVariable))
             {
-                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.OtherAnimatorVariable);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(
+                    Config.OtherAnimatorVariable
+                );
             }
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
             serverCharacter.clientCharacter.ClientCancelActionsByPrototypeIDRpc(ActionID);
-
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
-            if (TimeRunning >= Config.ExecTimeSeconds && buffType == BuffableValue.PercentDamageReceived)
+            if (
+                TimeRunning >= Config.ExecTimeSeconds
+                && buffType == BuffableValue.PercentDamageReceived
+            )
             {
                 // we suffer no damage during the "dash" (client-side pretend movement)
                 buffedValue = 0;
@@ -96,10 +106,13 @@ namespace Unity.BossRoom.Gameplay.Actions
         private void PerformMeleeAttack(ServerCharacter parent)
         {
             // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
-            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc,
+            IDamageable foe = MeleeAction.GetIdealMeleeFoe(
+                Config.IsFriendly ^ parent.IsNpc,
                 parent.physicsWrapper.DamageCollider,
-                                                            Config.Radius, 0.0f,
-                                                            (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0));
+                Config.Radius,
+                0.0f,
+                (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0)
+            );
 
             if (foe != null)
             {
@@ -109,7 +122,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
-            if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
+            if (m_Dashed)
+            {
+                return ActionConclusion.Stop;
+            } // we're done!
 
             return ActionConclusion.Continue;
         }

@@ -16,7 +16,10 @@ namespace Unity.BossRoom.Gameplay.UI
         PopupPanel m_CurrentReconnectPopup;
 
         [Inject]
-        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub, ISubscriber<ReconnectMessage> reconnectMessageSub)
+        void InjectDependencies(
+            ISubscriber<ConnectStatus> connectStatusSub,
+            ISubscriber<ReconnectMessage> reconnectMessageSub
+        )
         {
             m_Subscriptions = new DisposableGroup();
             m_Subscriptions.Add(connectStatusSub.Subscribe(OnConnectStatus));
@@ -44,21 +47,36 @@ namespace Unity.BossRoom.Gameplay.UI
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
+                    PopupManager.ShowPopupPanel(
+                        "Connection Failed",
+                        "The Host is full and cannot accept any additional connections."
+                    );
                     break;
                 case ConnectStatus.Success:
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account. If you still want to connect, select a different profile by using the 'Change Profile' button.");
+                    PopupManager.ShowPopupPanel(
+                        "Connection Failed",
+                        "You have logged in elsewhere using the same account. If you still want to connect, select a different profile by using the 'Change Profile' button."
+                    );
                     break;
                 case ConnectStatus.IncompatibleBuildType:
-                    PopupManager.ShowPopupPanel("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.");
+                    PopupManager.ShowPopupPanel(
+                        "Connection Failed",
+                        "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session."
+                    );
                     break;
                 case ConnectStatus.GenericDisconnect:
-                    PopupManager.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost.");
+                    PopupManager.ShowPopupPanel(
+                        "Disconnected From Host",
+                        "The connection to the host was lost."
+                    );
                     break;
                 case ConnectStatus.HostEndedSession:
-                    PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
+                    PopupManager.ShowPopupPanel(
+                        "Disconnected From Host",
+                        "The host has ended the game session."
+                    );
                     break;
                 case ConnectStatus.Reconnecting:
                     break;
@@ -69,7 +87,9 @@ namespace Unity.BossRoom.Gameplay.UI
                     PopupManager.ShowPopupPanel("Connection Failed", "Starting client failed.");
                     break;
                 default:
-                    Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
+                    Debug.LogWarning(
+                        $"New ConnectStatus {status} has been added, but no connect message defined for it."
+                    );
                     break;
             }
         }
@@ -82,11 +102,19 @@ namespace Unity.BossRoom.Gameplay.UI
             }
             else if (m_CurrentReconnectPopup != null)
             {
-                m_CurrentReconnectPopup.SetupPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}", closeableByUser: false);
+                m_CurrentReconnectPopup.SetupPopupPanel(
+                    "Connection lost",
+                    $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}",
+                    closeableByUser: false
+                );
             }
             else
             {
-                m_CurrentReconnectPopup = PopupManager.ShowPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}", closeableByUser: false);
+                m_CurrentReconnectPopup = PopupManager.ShowPopupPanel(
+                    "Connection lost",
+                    $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}",
+                    closeableByUser: false
+                );
             }
         }
 

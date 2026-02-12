@@ -20,7 +20,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             if (!HasValidTarget())
             {
-                Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore");
+                Debug.Log(
+                    "Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore"
+                );
                 return ActionConclusion.Stop;
             }
 
@@ -63,9 +65,11 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private bool HasValidTarget()
         {
-            return m_Data.TargetIds != null &&
-                   m_Data.TargetIds.Length > 0 &&
-                   NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+            return m_Data.TargetIds != null
+                && m_Data.TargetIds.Length > 0
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(
+                    m_Data.TargetIds[0]
+                );
         }
 
         /// <summary>
@@ -80,7 +84,9 @@ namespace Unity.BossRoom.Gameplay.Actions
                 return true;
             }
 
-            float distToTarget2 = (parent.physicsWrapper.Transform.position - m_TargetTransform.position).sqrMagnitude;
+            float distToTarget2 = (
+                parent.physicsWrapper.Transform.position - m_TargetTransform.position
+            ).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
             {
                 //we made it! we're done.
@@ -97,7 +103,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool OnUpdate(ServerCharacter clientCharacter)
         {
-            if (StopIfDone(clientCharacter)) { return ActionConclusion.Stop; }
+            if (StopIfDone(clientCharacter))
+            {
+                return ActionConclusion.Stop;
+            }
 
             // Keep re-assigning our chase target whenever possible.
             // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.

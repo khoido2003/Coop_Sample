@@ -17,6 +17,7 @@ namespace Unity.BossRoom.Utils
         [SerializeField]
         NetworkSimulator m_NetworkSimulator;
 #endif
+
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
@@ -48,7 +49,8 @@ namespace Unity.BossRoom.Utils
         [SerializeField]
         int m_RandomConnectionsSwapChangeIntervalMilliseconds;
 
-        Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets = new Dictionary<string, INetworkSimulatorPreset>();
+        Dictionary<string, INetworkSimulatorPreset> m_SimulatorPresets =
+            new Dictionary<string, INetworkSimulatorPreset>();
 #endif
         bool m_Shown;
 
@@ -82,7 +84,8 @@ namespace Unity.BossRoom.Utils
             NetworkManager.Singleton.OnClientStarted += OnNetworkManagerStarted;
             NetworkManager.Singleton.OnServerStarted += OnNetworkManagerStarted;
 
-            m_ToggleNetworkSimulatorAction.action.performed += OnToggleNetworkSimulatorActionPerformed;
+            m_ToggleNetworkSimulatorAction.action.performed +=
+                OnToggleNetworkSimulatorActionPerformed;
         }
 
         void OnDestroy()
@@ -93,7 +96,8 @@ namespace Unity.BossRoom.Utils
                 NetworkManager.Singleton.OnServerStarted -= OnNetworkManagerStarted;
             }
 
-            m_ToggleNetworkSimulatorAction.action.performed -= OnToggleNetworkSimulatorActionPerformed;
+            m_ToggleNetworkSimulatorAction.action.performed -=
+                OnToggleNetworkSimulatorActionPerformed;
         }
 
         void OnNetworkManagerStarted()
@@ -106,7 +110,9 @@ namespace Unity.BossRoom.Utils
 
         void OnPresetChanged(int optionIndex)
         {
-            m_NetworkSimulator.ChangeConnectionPreset(m_SimulatorPresets[m_PresetsDropdown.options[optionIndex].text]);
+            m_NetworkSimulator.ChangeConnectionPreset(
+                m_SimulatorPresets[m_PresetsDropdown.options[optionIndex].text]
+            );
         }
 
         void OnScenarioChanged(int optionIndex)
@@ -220,7 +226,10 @@ namespace Unity.BossRoom.Utils
                 {
                     for (var i = 0; i < m_PresetsDropdown.options.Count; i++)
                     {
-                        if (m_PresetsDropdown.options[i].text == m_NetworkSimulator.CurrentPreset.Name)
+                        if (
+                            m_PresetsDropdown.options[i].text
+                            == m_NetworkSimulator.CurrentPreset.Name
+                        )
                         {
                             m_PresetsDropdown.value = i;
                         }
@@ -270,7 +279,9 @@ namespace Unity.BossRoom.Utils
         {
             if (m_NetworkSimulator.Scenario != null)
             {
-                m_ScenariosButtonText.text = m_NetworkSimulator.Scenario.IsPaused ? k_ResumeString : k_PauseString;
+                m_ScenariosButtonText.text = m_NetworkSimulator.Scenario.IsPaused
+                    ? k_ResumeString
+                    : k_PauseString;
                 m_ScenariosButton.interactable = true;
                 m_ScenariosButtonText.color = m_ScenariosButton.colors.normalColor;
             }

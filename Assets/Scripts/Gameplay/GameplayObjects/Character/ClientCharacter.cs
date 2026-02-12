@@ -1,8 +1,8 @@
 using System;
 using Unity.BossRoom.CameraUtils;
-using Unity.BossRoom.Gameplay.UserInput;
-using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Utils;
 using Unity.Netcode;
 using UnityEngine;
@@ -127,20 +127,32 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             OnMovementStatusChanged(MovementStatus.Normal, m_ServerCharacter.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
-            transform.SetPositionAndRotation(serverCharacter.physicsWrapper.Transform.position,
-                serverCharacter.physicsWrapper.Transform.rotation);
+            transform.SetPositionAndRotation(
+                serverCharacter.physicsWrapper.Transform.position,
+                serverCharacter.physicsWrapper.Transform.rotation
+            );
             m_LerpedPosition = transform.position;
             m_LerpedRotation = transform.rotation;
 
             // similarly, initialize start position and rotation for smooth lerping purposes
-            m_PositionLerper = new PositionLerper(serverCharacter.physicsWrapper.Transform.position, k_LerpTime);
-            m_RotationLerper = new RotationLerper(serverCharacter.physicsWrapper.Transform.rotation, k_LerpTime);
+            m_PositionLerper = new PositionLerper(
+                serverCharacter.physicsWrapper.Transform.position,
+                k_LerpTime
+            );
+            m_RotationLerper = new RotationLerper(
+                serverCharacter.physicsWrapper.Transform.rotation,
+                k_LerpTime
+            );
 
             if (!m_ServerCharacter.IsNpc)
             {
                 name = "AvatarGraphics" + m_ServerCharacter.OwnerClientId;
 
-                if (m_ServerCharacter.TryGetComponent(out ClientPlayerAvatarNetworkAnimator characterNetworkAnimator))
+                if (
+                    m_ServerCharacter.TryGetComponent(
+                        out ClientPlayerAvatarNetworkAnimator characterNetworkAnimator
+                    )
+                )
                 {
                     m_ClientVisualsAnimator = characterNetworkAnimator.Animator;
                 }
@@ -152,7 +164,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
                 if (m_ServerCharacter.IsOwner)
                 {
-                    ActionRequestData data = new ActionRequestData { ActionID = GameDataSource.Instance.GeneralTargetActionPrototype.ActionID };
+                    ActionRequestData data = new ActionRequestData
+                    {
+                        ActionID = GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
+                    };
                     m_ClientActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
@@ -269,10 +284,14 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
                 // the starting point for each interpolation since the root's position and rotation are modified in
                 // FixedUpdate, thus altering this transform (being a child) in the process.
-                m_LerpedPosition = m_PositionLerper.LerpPosition(m_LerpedPosition,
-                    serverCharacter.physicsWrapper.Transform.position);
-                m_LerpedRotation = m_RotationLerper.LerpRotation(m_LerpedRotation,
-                    serverCharacter.physicsWrapper.Transform.rotation);
+                m_LerpedPosition = m_PositionLerper.LerpPosition(
+                    m_LerpedPosition,
+                    serverCharacter.physicsWrapper.Transform.position
+                );
+                m_LerpedRotation = m_RotationLerper.LerpRotation(
+                    m_LerpedRotation,
+                    serverCharacter.physicsWrapper.Transform.rotation
+                );
                 transform.SetPositionAndRotation(m_LerpedPosition, m_LerpedRotation);
             }
 
@@ -296,11 +315,17 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public bool IsAnimating()
         {
-            if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0) { return true; }
+            if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0)
+            {
+                return true;
+            }
 
             for (int i = 0; i < OurAnimator.layerCount; i++)
             {
-                if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_VisualizationConfiguration.BaseNodeTagID)
+                if (
+                    OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash
+                    != m_VisualizationConfiguration.BaseNodeTagID
+                )
                 {
                     //we are in an active node, not the default "nothing" node.
                     return true;

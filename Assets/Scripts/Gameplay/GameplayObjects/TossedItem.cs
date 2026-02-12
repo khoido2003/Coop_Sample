@@ -9,7 +9,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     public class TossedItem : NetworkBehaviour
     {
         [Header("Server")]
-
         [SerializeField]
         int m_DamagePoints;
 
@@ -46,7 +45,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         public UnityEvent detonatedCallback;
 
         [Header("Client")]
-
         [SerializeField]
         Transform m_TossedItemVisualTransform;
 
@@ -91,12 +89,16 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 m_TossedItemVisualTransform.gameObject.SetActive(false);
             }
-
         }
 
         void Detonate()
         {
-            var hits = Physics.OverlapSphereNonAlloc(transform.position, m_HitRadius, m_CollisionCache, m_LayerMask);
+            var hits = Physics.OverlapSphereNonAlloc(
+                transform.position,
+                m_HitRadius,
+                m_CollisionCache,
+                m_LayerMask
+            );
 
             for (int i = 0; i < hits; i++)
             {
@@ -104,10 +106,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 {
                     damageReceiver.ReceiveHitPoints(null, -m_DamagePoints);
 
-                    var serverCharacter = m_CollisionCache[i].gameObject.GetComponentInParent<ServerCharacter>();
+                    var serverCharacter = m_CollisionCache[i]
+                        .gameObject.GetComponentInParent<ServerCharacter>();
                     if (serverCharacter)
                     {
-                        serverCharacter.Movement.StartKnockback(transform.position, m_KnockbackSpeed, m_KnockbackDuration);
+                        serverCharacter.Movement.StartKnockback(
+                            transform.position,
+                            m_KnockbackSpeed,
+                            m_KnockbackDuration
+                        );
                     }
                 }
             }
@@ -154,7 +161,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 var tossedItemPosition = transform.position;
                 m_TossedItemVisualTransform.SetPositionAndRotation(
                     new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
-                    k_TossAttackRadiusDisplayRotation);
+                    k_TossAttackRadiusDisplayRotation
+                );
             }
         }
     }

@@ -25,25 +25,34 @@ namespace Unity.BossRoom.Gameplay.GameState
 
         [SerializeField]
         NameGenerationData m_NameGenerationData;
+
         [SerializeField]
         SessionUIMediator m_SessionUIMediator;
+
         [SerializeField]
         IPUIMediator m_IPUIMediator;
+
         [SerializeField]
         Button m_SessionButton;
+
         [SerializeField]
         GameObject m_SignInSpinner;
+
         [SerializeField]
         UIProfileSelector m_UIProfileSelector;
+
         [SerializeField]
         UITooltipDetector m_UGSSetupTooltipDetector;
 
         [Inject]
         AuthenticationServiceFacade m_AuthServiceFacade;
+
         [Inject]
         LocalSessionUser m_LocalUser;
+
         [Inject]
         LocalSession m_LocalSession;
+
         [Inject]
         ProfileManager m_ProfileManager;
 

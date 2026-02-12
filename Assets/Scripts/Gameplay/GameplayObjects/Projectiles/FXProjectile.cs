@@ -19,7 +19,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         private List<GameObject> m_TargetMissedGraphics;
 
         [SerializeField]
-        [Tooltip("If this projectile plays an impact particle, how long should we stay alive for it to keep playing?")]
+        [Tooltip(
+            "If this projectile plays an impact particle, how long should we stay alive for it to keep playing?"
+        )]
         private float m_PostImpactDurationSeconds = 1;
 
         private Vector3 m_StartPoint;
@@ -29,7 +31,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         private float m_Age;
         private bool m_HasImpacted;
 
-        public void Initialize(Vector3 startPoint, Transform target, Vector3 missPos, float flightTime)
+        public void Initialize(
+            Vector3 startPoint,
+            Transform target,
+            Vector3 missPos,
+            float flightTime
+        )
         {
             m_StartPoint = startPoint;
             m_TargetDestination = target;
@@ -63,7 +70,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 {
                     // we're flying through the air. Reposition ourselves to be closer to the destination
                     float progress = m_Age / m_FlightDuration;
-                    transform.position = Vector3.Lerp(m_StartPoint, m_TargetDestination ? m_TargetDestination.position : m_MissDestination, progress);
+                    transform.position = Vector3.Lerp(
+                        m_StartPoint,
+                        m_TargetDestination ? m_TargetDestination.position : m_MissDestination,
+                        progress
+                    );
                 }
             }
             else if (m_Age >= m_FlightDuration + m_PostImpactDurationSeconds)
@@ -71,7 +82,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 Destroy(gameObject);
             }
         }
-
 
         private void Impact()
         {

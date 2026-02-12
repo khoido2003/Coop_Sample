@@ -15,13 +15,23 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnStart(ServerCharacter serverCharacter)
         {
-            if (m_Data.TargetIds == null || m_Data.TargetIds.Length == 0 || !NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]))
+            if (
+                m_Data.TargetIds == null
+                || m_Data.TargetIds.Length == 0
+                || !NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(
+                    m_Data.TargetIds[0]
+                )
+            )
             {
-                Debug.Log("Failed to start ReviveAction. The target entity  wasn't submitted or doesn't exist anymore");
+                Debug.Log(
+                    "Failed to start ReviveAction. The target entity  wasn't submitted or doesn't exist anymore"
+                );
                 return false;
             }
 
-            var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[
+                m_Data.TargetIds[0]
+            ];
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
 
             serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
